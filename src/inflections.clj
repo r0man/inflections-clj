@@ -42,12 +42,19 @@
   (str2/replace word #"[-\s]+" "_"))
 
 (irregular
- person people
- man men
  child children
- sex sexes
+ cow kine
+ foot feet
+ louse lice
+ mailman mailmen
+ man men
+ mouse mice
  move moves
- cow kine)
+ ox oxen
+ person people
+ sex sexes
+ tooth teeth
+ woman women)
 
 (uncountable
     air alcohol art blood butter cheese chewing coffee
