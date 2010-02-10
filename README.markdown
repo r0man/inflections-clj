@@ -11,6 +11,10 @@ user> (dasherize "puni_puni")
 "puni-puni"
 user> (underscore "puni-puni")
 "puni_puni"
+user> (irregular? "person)
+true
+user> (irregular? "word)
+false
 user> (underscore "puni puni")
 "puni_puni"
 user> (uncountable? "sheep")

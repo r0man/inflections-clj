@@ -5,6 +5,12 @@
   (are [word expected] (= (dasherize word) expected)
        "puni_puni" "puni-puni"))
 
+(deftest test-irregular?
+  (is (every? irregular? (keys @*irregular-words*)))
+  (is (every? irregular? (vals @*irregular-words*)))
+  (are [word] (is (= (irregular? word) true))
+       "person" "people" "man" "men" "child" "children"))
+
 (deftest test-uncountable?
   (is (every? uncountable? (keys @*uncountable-words*)))
   (are [word] (is (= (uncountable? word) true))
