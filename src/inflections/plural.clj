@@ -19,7 +19,7 @@
   [word]
   (if (or (blank? word) (uncountable? word))
     word
-    (first (match-rules (rseq @*plural-rules*) word))))
+    (resolve-rules (rseq @*plural-rules*) word)))
 
 (defn init-plural-rules []
   (reset-rules! *plural-rules*)

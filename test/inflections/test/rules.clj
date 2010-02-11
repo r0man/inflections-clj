@@ -1,10 +1,23 @@
 (ns inflections.test.rules
   (:use clojure.test inflections.rules))
 
-(deftest test-match-rule
-  (let [rule (make-rule #"s$" "")]
-    (is (nil? (match-rule rule "word")))
-    (is (= (match-rule rule "words") "word"))))
+(defn make-example-rule []
+  (make-rule #"(n)ews$" "$1ews"))
+
+(deftest test-add-rule!
+  (let [rules (atom [])]
+    (add-rule! rules (make-example-rule))
+    (is (= (count @rules) 1))
+    (let [rule (first @rules)]
+      (is (= (str (:pattern rule)) "(n)ews$"))
+      (is (= (:replacement rule) "$1ews")))
+    (add-rule! rules (make-example-rule))
+    (is (= (count @rules) 1))))
+
+(deftest test-make-rule
+  (let [rule (make-rule #"(n)ews$" "$1ews")]
+    (is (= (str (:pattern rule)) "(n)ews$"))
+    (is (= (:replacement rule) "$1ews"))))
 
 (deftest test-map-rules-with-single-rule
   (let [{:keys [pattern replacement]} (first (map-rules #"s$" ""))]
@@ -20,3 +33,19 @@
 
 (deftest test-map-rules-with-too-view-arguments
   (is (thrown? IllegalArgumentException (map-rules #"s$"))))
+
+(deftest test-resolve-rule
+  (let [rule (make-rule #"s$" "")]
+    (is (nil? (resolve-rule rule "word")))
+    (is (= (resolve-rule rule "words") "word"))))
+   
+(deftest test-resolve-rules
+  (let [rules [(make-rule #"(vir)us$" "$1i") (make-rule #"$" "s")]]
+    (is (= (resolve-rules rules "word") "words"))
+    (is (= (resolve-rules rules "virus") "viri"))))
+
+(deftest test-reset-rules!
+  (let [rules (atom [])]
+    (add-rule! rules (make-example-rule))
+    (reset-rules! rules)
+    (is (= (count @rules) 0))))

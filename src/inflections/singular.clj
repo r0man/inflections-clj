@@ -19,7 +19,7 @@
   [word]
   (if (or (blank? word) (uncountable? word))
     word
-    (first (match-rules (rseq @*singular-rules*) word))))
+    (resolve-rules (rseq @*singular-rules*) word)))
 
 (defn init-singular-rules []
   (reset-rules! *singular-rules*)

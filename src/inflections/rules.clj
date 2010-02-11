@@ -20,16 +20,13 @@
   (assert-even-args patterns-and-replacements)
   (map #(apply make-rule %) (partition 2 patterns-and-replacements)))
 
-(defn match-rule [rule word]  
+(defn resolve-rule [rule word]  
   (let [inflection (replace word (:pattern rule) (:replacement rule))]
     (if-not (= inflection word)
       inflection)))
 
-(defn match-rules [rules word]
-  (for [{:keys [pattern replacement]} rules
-        :let [result (replace word pattern replacement)]
-        :when (not (= word result))]
-    result))
+(defn resolve-rules [rules word]
+  (first (remove nil? (map #(resolve-rule % word) rules))))
 
 (defn reset-rules!
   "Resets the list of plural rules."
