@@ -23,7 +23,7 @@
   [word]
   (if (or (blank? word) (uncountable? word))
     word
-    (first (apply-rules (rseq @*plural-rules*) word))))
+    (first (match-rules (rseq @*plural-rules*) word))))
 
 (defn init-plural-rules []
   (reset-plural-rules)

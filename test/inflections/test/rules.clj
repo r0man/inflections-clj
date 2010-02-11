@@ -1,6 +1,11 @@
 (ns inflections.test.rules
   (:use clojure.test inflections.rules))
 
+(deftest test-match-rule
+  (let [rule (make-rule #"s$" "")]
+    (is (nil? (match-rule rule "word")))
+    (is (= (match-rule rule "words") "word"))))
+
 (deftest test-map-rules-with-single-rule
   (let [{:keys [pattern replacement]} (first (map-rules #"s$" ""))]
     (is (= (str pattern) "s$"))
