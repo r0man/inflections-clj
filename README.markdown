@@ -15,11 +15,13 @@ user> (singularize "apples")
 "apple"
 user> (singularize "octopi")
 "octopus"
-user> 
 user> (underscore "puni-puni")
 "puni_puni"
-user> (uncountable? "sheep")
-true
+user> (ordinalize "52")
+"52nd"
+user> (capitalize "clojure")
+"Clojure"
+...
 </code>
 </pre>
 
