@@ -1,5 +1,5 @@
-(ns test.inflections
-  (:use clojure.test inflections))
+(ns inflections.test.helper
+  (:use clojure.test inflections.helper))
 
 (deftest test-capitalize
   (are [word expected]
@@ -16,12 +16,11 @@
        "street_address" "street-address"
        "person_street_address" "person-street-address"))
 
-(deftest test-irregular?
-  (is (every? irregular? (keys @*irregular-words*)))
-  (is (every? irregular? (vals @*irregular-words*)))
-  (are [word]
-       (is (= (irregular? word) true))
-       "person" "people" "man" "men" "child" "children"))
+(deftest test-normalize-word
+  (are [word expected]
+       (is (= (normalize-word word) expected))
+       "apple" "apple"
+       "Banana" "banana"))
 
 (deftest test-ordinalize
   (are [number expected]
@@ -58,14 +57,11 @@
        "1000" "1000th"
        "1001" "1001st"))
 
-(deftest test-uncountable?
-  (is (every? uncountable? @*uncountable-words*))
-  (are [word]
-       (is (= (uncountable? word) true))
-       "air" "alcohol" "art" "blood" "butter" "cheese"))
-
 (deftest test-underscore
   (are [word expected]
        (= (underscore word) expected)
        "puni-puni" "puni_puni"
        "puni puni" "puni_puni"))
+
+
+
