@@ -13,7 +13,7 @@
   [] (reset-rules! *singular-rules*))
 
 (defn singular
-  "Define rule(s) to map from singular to singular."
+  "Define rule(s) to map words from singular to plural."
   [& patterns-and-replacements]
   (doseq [rule (apply map-rules patterns-and-replacements)]
     (add-rule! *singular-rules* rule)))
