@@ -8,10 +8,6 @@
 
 (def *plural-rules* (atom []))
 
-(defn reset-plural-rules
-  "Resets the list of plural rules."
-  [] (reset-rules! *plural-rules*))
-
 (defn plural
   "Define rule(s) to map words from singular to plural."
   [& patterns-and-replacements]
@@ -26,7 +22,7 @@
     (first (match-rules (rseq @*plural-rules*) word))))
 
 (defn init-plural-rules []
-  (reset-plural-rules)
+  (reset-rules! *plural-rules*)
   (plural
    #"$" "s"
    #"s$" "s"

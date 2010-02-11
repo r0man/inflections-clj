@@ -8,10 +8,6 @@
 
 (def *singular-rules* (atom []))
 
-(defn reset-singular-rules
-  "Resets the list of singular rules."
-  [] (reset-rules! *singular-rules*))
-
 (defn singular
   "Define rule(s) to map words from singular to plural."
   [& patterns-and-replacements]
@@ -26,7 +22,7 @@
     (first (match-rules (rseq @*singular-rules*) word))))
 
 (defn init-singular-rules []
-  (reset-singular-rules)
+  (reset-rules! *singular-rules*)
   (singular
    #"s$" ""
    #"(n)ews$" "$1ews"

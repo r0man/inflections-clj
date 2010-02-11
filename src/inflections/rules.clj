@@ -10,16 +10,6 @@
   (if-not (includes? (deref rules) rule)
     (swap! rules conj rule)))
 
-
-;; (defn match-rules [rules word]
-;;   (first (remove nil? (map #(apply-rule % word) rules))))
-
-(defn match-rules [rules word]
-  (for [{:keys [pattern replacement]} rules
-        :let [result (replace word pattern replacement)]
-        :when (not (= word result))]
-    result))
-
 (defn make-rule [pattern replacement]
   (struct rule pattern replacement))
 
@@ -35,8 +25,17 @@
     (if-not (= inflection word)
       inflection)))
 
+(defn match-rules [rules word]
+  (for [{:keys [pattern replacement]} rules
+        :let [result (replace word pattern replacement)]
+        :when (not (= word result))]
+    result))
+
 (defn reset-rules!
   "Resets the list of plural rules."
   [rules] (reset! rules []))
 
-
+(defmacro with-reset-rules [rules & body]
+  `(do
+     (reset-rules! ~rules)
+     ~@body))

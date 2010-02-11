@@ -1,24 +1,24 @@
 (ns inflections.test.plural
-  (:use clojure.test inflections.plural))
+  (:use clojure.test inflections.plural inflections.rules))
 
 (deftest test-plural-with-single-rule
-  (reset-plural-rules)
-  (plural #"$" "s")
-  (is (= (count @*plural-rules*) 1))
-  (let [rule (first @*plural-rules*)]
-    (is (= (str (:pattern rule)) "$"))
-    (is (= (:replacement rule) "s"))))
+  (with-reset-rules *plural-rules*
+    (plural #"$" "s")
+    (is (= (count @*plural-rules*) 1))
+    (let [rule (first @*plural-rules*)]
+      (is (= (str (:pattern rule)) "$"))
+      (is (= (:replacement rule) "s")))))
 
 (deftest test-plural-with-multiple-rule
-  (reset-plural-rules)
-  (plural #"$" "s" #"s$" "s")
-  (is (= (count @*plural-rules*) 2))
-  (let [rule (first @*plural-rules*)]
-    (is (= (str (:pattern rule)) "$"))
-    (is (= (:replacement rule) "s")))
-  (let [rule (last @*plural-rules*)]
-    (is (= (str (:pattern rule)) "s$"))
-    (is (= (:replacement rule) "s"))))
+  (with-reset-rules *plural-rules*
+    (plural #"$" "s" #"s$" "s")
+    (is (= (count @*plural-rules*) 2))
+    (let [rule (first @*plural-rules*)]
+      (is (= (str (:pattern rule)) "$"))
+      (is (= (:replacement rule) "s")))
+    (let [rule (last @*plural-rules*)]
+      (is (= (str (:pattern rule)) "s$"))
+      (is (= (:replacement rule) "s")))))
 
 (deftest test-pluralize
   (init-plural-rules)
