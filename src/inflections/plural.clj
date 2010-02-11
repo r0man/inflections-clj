@@ -8,23 +8,15 @@
 
 (def *plural-rules* (atom []))
 
-(defn add-plural-rule
-  "Adds the given pattern and replacement to the pluralization rules."
-  [pattern replacement]
-  (let [rule (make-rule pattern replacement)]
-    (if-not (includes? @*plural-rules* rule)
-      (swap! *plural-rules* conj rule))))
-
 (defn reset-plural-rules
   "Resets the list of plural rules."
-  [] (reset! *plural-rules* []))
+  [] (reset-rules! *plural-rules*))
 
 (defn plural
   "Define rule(s) to map from singular to plural."
   [& patterns-and-replacements]
-  (assert-even-args patterns-and-replacements)
-  (doseq [[pattern replacement] (partition 2 patterns-and-replacements)]
-    (add-plural-rule pattern replacement)))
+  (doseq [rule (apply map-rules patterns-and-replacements)]
+    (add-rule! *plural-rules* rule)))
 
 (defn pluralize
   "Returns the plural of the given word."

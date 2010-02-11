@@ -8,23 +8,15 @@
 
 (def *singular-rules* (atom []))
 
-(defn add-singular-rule
-  "Adds the given pattern and replacement to the singularization rules."
-  [pattern replacement]
-  (let [rule (make-rule pattern replacement)]
-    (if-not (includes? @*singular-rules* rule)
-      (swap! *singular-rules* conj rule))))
-
 (defn reset-singular-rules
   "Resets the list of singular rules."
-  [] (reset! *singular-rules* []))
+  [] (reset-rules! *singular-rules*))
 
 (defn singular
   "Define rule(s) to map from singular to singular."
   [& patterns-and-replacements]
-  (assert-even-args patterns-and-replacements)
-  (doseq [[pattern replacement] (partition 2 patterns-and-replacements)]
-    (add-singular-rule pattern replacement)))
+  (doseq [rule (apply map-rules patterns-and-replacements)]
+    (add-rule! *singular-rules* rule)))
 
 (defn singularize
   "Returns the singular of the given word."

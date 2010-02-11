@@ -1,18 +1,6 @@
 (ns inflections.test.plural
   (:use clojure.test inflections.plural))
 
-(deftest test-add-plural-rule
-  (reset-plural-rules)
-  (add-plural-rule #"$" "s")
-  (is (= (count @*plural-rules*) 1)))
-
-(deftest test-reset-plural-rules
-  (reset-plural-rules)
-  (add-plural-rule #"$" "s")
-  (is (= (count @*plural-rules*) 1))
-  (reset-plural-rules)
-  (is (= (count @*plural-rules*) 0)))
-
 (deftest test-plural-with-single-rule
   (reset-plural-rules)
   (plural #"$" "s")
