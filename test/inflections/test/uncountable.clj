@@ -1,9 +1,33 @@
-(ns inflections.test.helper
+(ns inflections.test.uncountable
   (:use clojure.test inflections.uncountable))
 
-(deftest test-uncountable?
-  (is (every? uncountable? @*uncountable-words*))
-  (are [word]
-       (is (= (uncountable? word) true))
-       "air" "alcohol" "art" "blood" "butter" "cheese"))
+(deftest test-add-uncountable-word
+  (reset-uncountable-words)
+  (add-uncountable-word "air")
+  (is (= (count @*uncountable-words*) 1))
+  (add-uncountable-word "air")
+  (is (= (count @*uncountable-words*) 1)))
 
+(deftest test-delete-uncountable-word
+  (reset-uncountable-words)
+  (add-uncountable-word "air")
+  (is (= (count @*uncountable-words*) 1))
+  (delete-uncountable-word "air")
+  (is (= (count @*uncountable-words*) 0)))
+
+(deftest test-reset-uncountable-words
+  (add-uncountable-word "air")
+  (reset-uncountable-words)
+  (is (= (count @*uncountable-words*) 0)))
+
+(deftest test-uncountable?
+  (reset-uncountable-words)
+  (is (not (uncountable? "air")))
+  (add-uncountable-word "air")
+  (is (uncountable? "air")))
+
+(deftest test-uncountable
+  (reset-uncountable-words)
+  (uncountable "air" "rice")
+  (is (uncountable? "air"))
+  (is (uncountable? "rice")))
