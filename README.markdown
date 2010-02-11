@@ -4,11 +4,9 @@ Rails-like inflections for Clojure.
 
 ## Installation
 
-The JAR is available on [Clojars](http://clojars.org/inflections), or use
-[Leiningen](http://github.com/technomancy/leiningen) to build your own
-...
+The JAR is available on [Clojars](http://clojars.org/inflections).
 
-Examples:
+### Examples
 <pre>
 <code>
 user> (use 'inflections)
