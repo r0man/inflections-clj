@@ -4,9 +4,10 @@
 (deftest test-add-uncountable-word
   (reset-uncountable-words)
   (add-uncountable-word "air")
-  (is (= (count @*uncountable-words*) 1))
+  (is (= (seq @*uncountable-words*) ["air"]))
   (add-uncountable-word "air")
-  (is (= (count @*uncountable-words*) 1)))
+  (add-uncountable-word "rice")
+  (is (= (seq @*uncountable-words*) ["air" "rice"])))
 
 (deftest test-delete-uncountable-word
   (reset-uncountable-words)
@@ -28,6 +29,9 @@
 
 (deftest test-uncountable
   (reset-uncountable-words)
-  (uncountable "air" "rice")
+  (is (not (uncountable? "air")))
+  (add-uncountable-word "air")
   (is (uncountable? "air"))
-  (is (uncountable? "rice")))
+  (init-uncountable-words)
+  (is (every? uncountable? (seq @*uncountable-words*))))
+

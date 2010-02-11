@@ -2,10 +2,9 @@
   (:use clojure.contrib.seq-utils
         inflections.helper
         inflections.plural
-        inflections.uncountable
-        ))
+        inflections.uncountable))
 
-(def *irregular-words* (atom (set [])))
+(def *irregular-words*)
 
 (defn add-irregular-word
   "Adds a the given word to the list of irregular words."
@@ -20,7 +19,7 @@
 (defn reset-irregular-words
   "Resets the set of irregular words."
   []
-  (reset! *irregular-words* (set [])))
+  (reset! *irregular-words* (sorted-set)))
 
 (defn irregular?
   "Returns true if the given word is irregular, else false."

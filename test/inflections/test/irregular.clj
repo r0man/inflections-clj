@@ -5,8 +5,9 @@
   (reset-irregular-words)
   (add-irregular-word "man")
   (is (= (seq @*irregular-words*) ["man"]))
+  (add-irregular-word "man")
   (add-irregular-word "men")
-  (is (= (seq @*irregular-words*) ["men" "man"])))
+  (is (= (seq @*irregular-words*) ["man" "men"])))
 
 (deftest test-delete-irregular-word
   (reset-irregular-words)
