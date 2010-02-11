@@ -2,20 +2,63 @@
   (:require [clojure.contrib.str-utils2 :as str2])
   (:use clojure.contrib.seq-utils))
 
-(def *irregular-words* (atom {}))
-(def *uncountable-words* (atom {}))
-
 (defn- normalize-word [word]
   (str2/lower-case (str2/trim (if (symbol? word) (name word) word))))
 
 (defn- parse-integer [string]
-  (try (Integer/parseInt string)
+  (try (Integer/parseInt (str2/trim string))
        (catch NumberFormatException exception nil)))
 
-(defn- irregular! [singular plural]
+ ;; IRREGULAR WORDS
+
+(def *irregular-words* (atom {}))
+
+(defn irregular! [singular plural]
   (let [singular (normalize-word singular)]
     (if-not (@*irregular-words* singular)
       (swap! *irregular-words* assoc singular (normalize-word plural)))))
+
+(defn irregular?
+  "Returns true if the given word is irregular, else false."
+  [word]
+  (let [word (normalize-word word)]
+    (or (includes? (keys @*irregular-words*) word)
+        (includes? (vals @*irregular-words*) word))))
+
+(defmacro irregular [& words]
+  (if-not (= (mod (count words) 2) 0)
+    (throw (IllegalArgumentException. "Odd number of words given. Pairs of singular and plural words expected.")))
+  (doseq [[singular plural] (partition 2 words)]
+    (irregular! singular plural)))
+
+;; UNCOUNTABLE WORDS
+
+(def *uncountable-words* (atom (set [])))
+
+(defn- add-uncountable
+  "Adds a the given word to the list of uncountable words."
+  [word]
+  (swap! *uncountable-words* conj (normalize-word word)))
+
+(defn- delete-uncountable
+  "Deletes the given word from the list of uncountable words."
+  [word]
+  (swap! *uncountable-words* disj (normalize-word word)))
+
+(defn uncountable?
+  "Returns true if the given word is uncountable, else false."
+  [word]
+  (contains? @*uncountable-words* (normalize-word word)))
+
+(defn uncountable!
+  "Adds the given word to the list of uncountable words."
+  [word]
+  (add-uncountable word))
+
+(defmacro uncountable [& words]
+  (doseq [word words] (uncountable! word)))
+
+;; HELPER
 
 (defn capitalize
   "Returns a string with the first character of the given word
@@ -25,37 +68,10 @@
    (str2/upper-case (str (first word)))
    (str2/lower-case (apply str (rest word)))))
 
-(defmacro irregular [& words]
-  (if-not (= (mod (count words) 2) 0)
-    (throw (IllegalArgumentException. "Odd number of words given. Pairs of singular and plural words expected.")))
-  (doseq [[singular plural] (partition 2 words)]
-    (irregular! singular plural)))
-
-(defn irregular? [word]
-  (let [word (normalize-word word)]
-    (or (includes? (keys @*irregular-words*) word)
-        (includes? (vals @*irregular-words*) word))))
-
-(defn- uncountable! [word]
-  (let [normalized-word (normalize-word word)]
-    (if-not (@*uncountable-words* normalized-word)
-      (swap! *uncountable-words* assoc normalized-word word))))
-
-(defmacro uncountable [& words]
-  (doseq [word words] (uncountable! word)))
-
 (defn dasherize
   "Replaces underscores with dashes in the string."
   [word]
   (str2/replace word #"_" "-"))
-
-(defn uncountable? [word]
-  (not (nil? (@*uncountable-words* (normalize-word word)))))
-
-(defn underscore
-  "Makes an underscored, lowercased version from the given word."
-  [word]
-  (str2/replace word #"[-\s]+" "_"))
 
 (defn ordinalize
   "Turns a number into an ordinal string used to denote the position
@@ -70,6 +86,11 @@
          (= modulus 2) (str number "nd")
          (= modulus 3) (str number "rd")
          :else (str number "th"))))))
+
+(defn underscore
+  "Makes an underscored, lowercased version from the given word."
+  [word]
+  (str2/replace word #"[-\s]+" "_"))
 
 (irregular
  child children

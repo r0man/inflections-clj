@@ -23,18 +23,6 @@
        (is (= (irregular? word) true))
        "person" "people" "man" "men" "child" "children"))
 
-(deftest test-uncountable?
-  (is (every? uncountable? (keys @*uncountable-words*)))
-  (are [word]
-       (is (= (uncountable? word) true))
-       "air" "alcohol" "art" "blood" "butter" "cheese"))
-
-(deftest test-underscore
-  (are [word expected]
-       (= (underscore word) expected)
-       "puni-puni" "puni_puni"
-       "puni puni" "puni_puni"))
-
 (deftest test-ordinalize
   (are [number expected]
        (= (ordinalize number) expected)
@@ -69,3 +57,15 @@
        "113" "113th"
        "1000" "1000th"
        "1001" "1001st"))
+
+(deftest test-uncountable?
+  (is (every? uncountable? @*uncountable-words*))
+  (are [word]
+       (is (= (uncountable? word) true))
+       "air" "alcohol" "art" "blood" "butter" "cheese"))
+
+(deftest test-underscore
+  (are [word expected]
+       (= (underscore word) expected)
+       "puni-puni" "puni_puni"
+       "puni puni" "puni_puni"))
