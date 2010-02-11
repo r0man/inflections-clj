@@ -3,6 +3,7 @@
   (:use [clojure.contrib.str-utils2 :only (blank? replace)]
         clojure.contrib.seq-utils
         inflections.helper
+        inflections.rules
         inflections.uncountable))
 
 (def *plural-rules* (atom []))
