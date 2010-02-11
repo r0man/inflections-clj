@@ -7,20 +7,19 @@ Examples:
 <code>
 user> (use 'inflections)
 nil
-user> (dasherize "puni_puni")
-"puni-puni"
+user> (pluralize "word")
+"words"
+user> (pluralize "virus")
+"viri"
+user> (singularize "apples")
+"apple"
+user> (singularize "octopi")
+"octopus"
+user> 
 user> (underscore "puni-puni")
-"puni_puni"
-user> (irregular? "person)
-true
-user> (irregular? "word)
-false
-user> (underscore "puni puni")
 "puni_puni"
 user> (uncountable? "sheep")
 true
-user> (uncountable? "word")
-false
 </code>
 </pre>
 
