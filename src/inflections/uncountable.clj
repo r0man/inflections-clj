@@ -1,7 +1,7 @@
 (ns inflections.uncountable
   (:use inflections.helper))
 
-(def *uncountable-words*)
+(def *uncountable-words* (atom (sorted-set)))
 
 (defn add-uncountable-word
   "Adds a the given word to the list of uncountable words."
@@ -42,8 +42,3 @@
       "shopping" "silver" "snow" "space" "species" "speed" "steam" "sugar" "sunshine" "tea"
       "tennis" "thunder" "time" "toothpaste" "traffic" "up" "vinegar" "washing" "wine"
       "wood" "wool"))
-
-
-
-
-

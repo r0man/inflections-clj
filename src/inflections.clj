@@ -4,4 +4,12 @@
 (immigrate
  'inflections.helper
  'inflections.irregular
+ 'inflections.plural
  'inflections.uncountable)
+
+(defn load-rules []
+  (require 'inflections.rules))
+
+(load-rules)
+
+(pluralize "woman")

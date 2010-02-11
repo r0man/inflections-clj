@@ -4,6 +4,16 @@
         clojure.contrib.seq-utils
         inflections.helper))
 
+(defn assert-even-args [args]
+  (if-not (even? (count args))
+    (throw (IllegalArgumentException. "Expected even number of arguments."))))
+
+(defn apply-rules [rules word]
+  (for [{:keys [pattern replacement]} rules
+        :let [result (replace word pattern replacement)]
+        :when (not (= word result))]
+    result))
+
 (defn normalize-word [word]
   (lower-case (trim (if (symbol? word) (name word) word))))
 

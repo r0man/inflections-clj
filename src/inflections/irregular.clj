@@ -4,7 +4,7 @@
         inflections.plural
         inflections.uncountable))
 
-(def *irregular-words*)
+(def *irregular-words* (atom (sorted-set)))
 
 (defn add-irregular-word
   "Adds a the given word to the list of irregular words."
@@ -52,4 +52,3 @@
    "sex" "sexes"
    "tooth" "teeth"
    "woman" "women"))
-

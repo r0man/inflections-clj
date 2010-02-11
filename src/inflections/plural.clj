@@ -58,30 +58,3 @@
    #"^(ox)$" "$1en"
    #"(quiz)$" "$1zes"))
 
-
-
-;; (defn reset-)
-
-;; (defn plural! [pattern replacement]
-;;   (if (isa? (class pattern) String) (delete-uncountable pattern))
-;;   (delete-uncountable replacement)
-;;   (if-not (includes? @*plural-rules* [pattern replacement])
-;;     (swap! *plural-rules* conj [pattern replacement])))
-
-;; (defmacro plural [& rules]
-;;   (if-not (= (mod (count rules) 2) 0)
-;;     (throw (IllegalArgumentException. "Odd number of words given. Pairs of pattern and replacement expected.")))
-;;   (doseq [[pattern replacement] (partition 2 rules)]
-;;     (plural! pattern replacement)))
-
-;; (defn pluralize
-;;   "Returns the plural of the given word."
-;;   [word]
-;;   (if (or (blank? word) (uncountable? word))
-;;     word
-;;     (first (apply-rules (rseq @*plural-rules*) word))))
-
-;; (rseq @*plural-rules*)
-
-;; (pluralize "woman")
-
