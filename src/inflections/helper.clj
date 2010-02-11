@@ -8,6 +8,11 @@
   (if-not (even? (count args))
     (throw (IllegalArgumentException. "Expected even number of arguments."))))
 
+(defstruct rule :pattern :replacement)
+
+(defn make-rule [pattern replacement]
+  (struct rule pattern replacement))
+
 (defn apply-rules [rules word]
   (for [{:keys [pattern replacement]} rules
         :let [result (replace word pattern replacement)]

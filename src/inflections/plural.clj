@@ -7,11 +7,6 @@
 
 (def *plural-rules* (atom []))
 
-(defstruct rule :pattern :replacement)
-
-(defn make-rule [pattern replacement]
-  (struct rule pattern replacement))
-
 (defn add-plural-rule
   "Adds the given pattern and replacement to the pluralization rules."
   [pattern replacement]
