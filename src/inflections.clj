@@ -2,10 +2,10 @@
   (:use [clojure.contrib.ns-utils :only (immigrate)]))
 
 (immigrate
- 'inflections.helper
  'inflections.irregular
  'inflections.plural
  'inflections.singular
+ 'inflections.transform
  'inflections.uncountable)
 
 (defn init-inflections []
