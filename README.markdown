@@ -1,4 +1,4 @@
-## Clojure Inflection Library
+# Clojure Inflection Library
 
 Rails-like inflections for Clojure.
 
