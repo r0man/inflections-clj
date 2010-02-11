@@ -1,5 +1,4 @@
 (ns inflections.singular
-  (:refer-clojure :exclude (replace))
   (:use [clojure.contrib.str-utils2 :only (blank?)]
         inflections.rules
         inflections.uncountable))
