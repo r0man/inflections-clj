@@ -7,9 +7,8 @@
 (defn make-rule [pattern replacement]
   (struct rule pattern replacement))
 
-(defn apply-rule [rule word]
-  (if-let [{:keys [pattern replacement]} rule]
-    (replace word pattern replacement)))
+(defn apply-rule [rule word]  
+  (replace word (:pattern rule) (:replacement rule)))
 
 (defn apply-rules [rules word]
   (for [{:keys [pattern replacement]} rules
