@@ -1,4 +1,4 @@
-(defproject inflections "0.1"
+(defproject inflections "0.2-SNAPSHOT"
   :description "Clojure Inflection Library."
   :url "http://github.com/r0man/inflections-clj"
   :dependencies [[org.clojure/clojure "1.1.0"]
