@@ -1,6 +1,13 @@
 (ns test.inflections
   (:use clojure.test inflections))
 
+(deftest test-capitalize
+  (are [word expected]
+       (= (capitalize word) expected)
+       "hello" "Hello"
+       "HELLO" "Hello"
+       "123ABC" "123abc"))
+
 (deftest test-dasherize
   (are [word expected]
        (= (dasherize word) expected)

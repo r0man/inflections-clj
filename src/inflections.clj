@@ -17,6 +17,14 @@
     (if-not (@*irregular-words* singular)
       (swap! *irregular-words* assoc singular (normalize-word plural)))))
 
+(defn capitalize
+  "Returns a string with the first character of the given word
+  converted to uppercase and the remainder to lowercase."
+  [word]
+  (str
+   (str2/upper-case (str (first word)))
+   (str2/lower-case (apply str (rest word)))))
+
 (defmacro irregular [& words]
   (if-not (= (mod (count words) 2) 0)
     (throw (IllegalArgumentException. "Odd number of words given. Pairs of singular and plural words expected.")))
