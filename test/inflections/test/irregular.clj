@@ -24,16 +24,30 @@
 (deftest test-irregular-with-single-rule
   (reset-irregular-words)
   (irregular "child" "children")
-  (is (= @*irregular-words* #{"child" "children"})))
+  (is (irregular? "child"))
+  (is (irregular? "children")))
 
-(deftest test-irregular-with-multiple-rule
+(deftest test-irregular-with-multiple-rules
   (reset-irregular-words)
-  (irregular "child" "children" "cow" "kine")
-  (is (= @*irregular-words* #{"cow" "kine" "child" "children"})))
+  (irregular "child" "children"
+             "cow" "kine")
+  (is (every? irregular? ["child" "children" "cow" "kine"])))
 
 (deftest test-irregular?
-  (init-irregular-words)
-  (are [word] (is (irregular? word))
+  (reset-irregular-words)
+  (is (not (every? irregular? ["child" "children"])))
+  (irregular "child" "children")
+  (is (every? irregular? ["child" "children"])))
+
+(deftest test-irregular
+  (reset-irregular-words)
+  (are [singular plural]
+       (do
+         (is (not (irregular? singular)))
+         (is (not (irregular? plural)))
+         (irregular singular plural)
+         (is (irregular? singular))
+         (is (irregular? plural)))
        "child" "children"
        "cow" "kine"
        "foot" "feet"
@@ -47,4 +61,6 @@
        "sex" "sexes"
        "tooth" "teeth"
        "woman" "women"))
+
+  
 

@@ -28,10 +28,5 @@
   (is (uncountable? "air")))
 
 (deftest test-uncountable
-  (reset-uncountable-words)
-  (is (not (uncountable? "air")))
-  (add-uncountable-word "air")
-  (is (uncountable? "air"))
   (init-uncountable-words)
-  (is (every? uncountable? (seq @*uncountable-words*))))
-
+  (is (every? uncountable? @*uncountable-words*)))
