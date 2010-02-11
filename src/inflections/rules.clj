@@ -13,7 +13,7 @@
 (defn make-rule [pattern replacement]
   (struct rule pattern replacement))
 
-(defn map-rules
+(defn make-rules
   "Returns a seq of rules, where the pattern and replacement must be
   given in pairs of two elements."
   [& patterns-and-replacements]  
