@@ -19,20 +19,20 @@
     (is (= (str (:pattern rule)) "(n)ews$"))
     (is (= (:replacement rule) "$1ews"))))
 
-(deftest test-make-rules-with-single-rule
-  (let [{:keys [pattern replacement]} (first (make-rules #"s$" ""))]
+(deftest test-slurp-rules-with-single-rule
+  (let [{:keys [pattern replacement]} (first (slurp-rules #"s$" ""))]
     (is (= (str pattern) "s$"))
     (is (= replacement ""))))
 
-(deftest test-make-rules-with-multiple-rules
-  (let [[rule-1 rule-2] (make-rules #"s$" "" #"(n)ews$" "$1ews")]
+(deftest test-slurp-rules-with-multiple-rules
+  (let [[rule-1 rule-2] (slurp-rules #"s$" "" #"(n)ews$" "$1ews")]
     (is (= (str (:pattern rule-1)) "s$"))
     (is (= (:replacement rule-1) ""))
     (is (= (str (:pattern rule-2)) "(n)ews$"))
     (is (= (:replacement rule-2) "$1ews"))))
 
-(deftest test-make-rules-with-too-view-arguments
-  (is (thrown? IllegalArgumentException (make-rules #"s$"))))
+(deftest test-slurp-rules-with-too-view-arguments
+  (is (thrown? IllegalArgumentException (slurp-rules #"s$"))))
 
 (deftest test-resolve-rule
   (let [rule (make-rule #"s$" "")]

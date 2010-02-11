@@ -8,7 +8,7 @@
 (defn singular
   "Define rule(s) to map words from singular to plural."
   [& patterns-and-replacements]
-  (doseq [rule (apply make-rules patterns-and-replacements)]
+  (doseq [rule (apply slurp-rules patterns-and-replacements)]
     (add-rule! *singular-rules* rule)))
 
 (defn singularize
