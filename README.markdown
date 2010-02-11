@@ -1,8 +1,8 @@
-# Clojure Inflection Library
+## Clojure Inflection Library
 
 Rails-like inflections for Clojure.
 
-## Installation
+### Installation
 
 The JAR is available on [Clojars](http://clojars.org/inflections).
 
