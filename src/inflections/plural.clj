@@ -1,8 +1,6 @@
 (ns inflections.plural
   (:refer-clojure :exclude (replace))
-  (:use [clojure.contrib.str-utils2 :only (blank? replace)]
-        clojure.contrib.seq-utils
-        inflections.helper
+  (:use [clojure.contrib.str-utils2 :only (blank?)]
         inflections.rules
         inflections.uncountable))
 
