@@ -8,6 +8,10 @@
 (defn- normalize-word [word]
   (str2/lower-case (str2/trim (if (symbol? word) (name word) word))))
 
+(defn- parse-integer [string]
+  (try (Integer/parseInt string)
+       (catch NumberFormatException exception nil)))
+
 (defn- irregular! [singular plural]
   (let [singular (normalize-word singular)]
     (if-not (@*irregular-words* singular)
@@ -32,14 +36,32 @@
 (defmacro uncountable [& words]
   (doseq [word words] (uncountable! word)))
 
-(defn dasherize [word]
+(defn dasherize
+  "Replaces underscores with dashes in the string."
+  [word]
   (str2/replace word #"_" "-"))
 
 (defn uncountable? [word]
   (not (nil? (@*uncountable-words* (normalize-word word)))))
 
-(defn underscore [word]
+(defn underscore
+  "Makes an underscored, lowercased version from the given word."
+  [word]
   (str2/replace word #"[-\s]+" "_"))
+
+(defn ordinalize
+  "Turns a number into an ordinal string used to denote the position
+  in an ordered sequence such as 1st, 2nd, 3rd, 4th."
+  [number]
+  (if-let [number (parse-integer number)]
+    (if (includes? (range 11 14) (mod number 100))
+      (str number "th")
+      (let [modulus (mod number 10)]
+        (cond
+         (= modulus 1) (str number "st")
+         (= modulus 2) (str number "nd")
+         (= modulus 3) (str number "rd")
+         :else (str number "th"))))))
 
 (irregular
  child children
