@@ -6,13 +6,17 @@
 (def *singular-rules* (atom []))
 
 (defn singular!
-  "Define rule(s) to map words from singular to plural."
+  "Define rule(s) to map words from singular to plural.\n
+  Examples: (singular! #\"(n)ews$(?i)\" \"$1ews\")
+            (singular! #\"(m)ovies$(?i)\" \"$1ovie\"
+                       #\"([m|l])ice$(?i)\" \"$1ouse\")"
   [& patterns-and-replacements]
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
     (add-rule! *singular-rules* rule)))
 
 (defn singularize
-  "Returns the singular of the given word."
+  "Returns the singular of the given word.\n
+  Example: (singularize \"mice\") => \"mouse\""
   [word]
   (if (or (blank? word) (uncountable? word))
     word

@@ -19,12 +19,17 @@
   (reset! *irregular-words* (sorted-set)))
 
 (defn irregular?
-  "Returns true if the given word is irregular, else false."
+  "Returns true if the given word is irregular, else false.\n
+  Examples: (irregular? \"child\") => true
+            (irregular? \"word\") => false"
   [word]
   (contains? @*irregular-words* (normalize-word word)))
 
 (defn irregular!
-  "Define words that are irregular in singular and plural."
+  "Define words that are irregular in singular and plural.\n
+  Examples: (irregular! \"child\" \"children\")
+            (irregular! \"cow\" \"kine\"
+                        \"louse\" \"lice\")"
   [& singulars-and-plurals]
   (assert-even-args singulars-and-plurals)
   (doseq [[singular plural] (partition 2 singulars-and-plurals)]

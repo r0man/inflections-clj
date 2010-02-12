@@ -13,12 +13,16 @@
   (reset! *uncountable-words* (sorted-set)))
 
 (defn uncountable?
-  "Returns true if the given word is uncountable, else false."
+  "Returns true if the given word is uncountable, else false.\n
+  Examples: (uncountable? \"alcohol\") => true
+            (uncountable? \"word\") => false"
   [word]
   (contains? @*uncountable-words* (normalize-word word)))
 
 (defn uncountable!
-  "Adds the given word(s) to the list of uncountable words."
+  "Adds the given word(s) to the list of uncountable words.\n
+  Examples: (uncountable! \"air\")
+            (uncountable! \"alcohol\" \"blood\" \"butter\")"
   [& words]
   (doseq [word words]
     (swap! *uncountable-words* conj (normalize-word word))))

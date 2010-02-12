@@ -6,13 +6,17 @@
 (def *plural-rules* (atom []))
 
 (defn plural!
-  "Define rule(s) to map words from singular to plural."
+  "Define rule(s) to map words from singular to plural.\n
+  Examples: (plural! #\"$(?i)\" \"s\")
+            (plural! #\"(ax|test)is$(?i)\" \"$1es\"
+                     #\"(octop|vir)us$(?i)\" \"$1i\")"
   [& patterns-and-replacements]
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
     (add-rule! *plural-rules* rule)))
 
 (defn pluralize
-  "Returns the plural of the given word."
+  "Returns the plural of the given word.\n
+  Example: (pluralize \"virus\") => \"virii\""
   [word]
   (if (or (blank? word) (uncountable? word))
     word
