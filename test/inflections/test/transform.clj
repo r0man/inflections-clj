@@ -1,6 +1,22 @@
 (ns inflections.test.transform
   (:use clojure.test inflections.transform))
 
+(deftest test-camelize
+  (are [word expected]
+       (= (camelize word) expected)
+       "active_record" "ActiveRecord"
+       "active_record/errors" "ActiveRecord::Errors"))
+
+(deftest test-camelize-with-lower
+  (are [word expected]
+       (= (camelize word :lower) expected)
+       "active_record" "activeRecord"
+       "active_record/errors" "activeRecord::Errors"
+       "product" "product"
+       "special_guest" "specialGuest"
+       "application_controller" "applicationController"
+       "area51_controller" "area51Controller"))
+
 (deftest test-capitalize
   (are [word expected]
        (= (capitalize word) expected)

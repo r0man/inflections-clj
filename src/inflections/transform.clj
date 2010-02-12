@@ -4,6 +4,25 @@
         clojure.contrib.seq-utils
         inflections.helper))
 
+(defn camelize
+  "By default, camelize converts strings to UpperCamelCase. If the
+  argument to camelize is set to :lower then camelize produces
+  lowerCamelCase. camelize will also convert \"/\" to \"::\" which is
+  useful for converting paths to namespaces.\n
+ Examples: (campelize \"active_record\") => \"ActiveRecord\"
+           (campelize \"active_record\") => \"activeRecord\"
+           (campelize \"active_record/errors\") => \"ActiveRecord::Errors\"
+           (campelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
+  ([word]
+     (-> word
+         (replace #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
+         (replace #"(?:^|_)(.)" #(upper-case (nth % 1)))))
+  ([word mode]
+     (cond
+      (= mode :lower) (camelize word lower-case)
+      (= mode :upper) (camelize word upper-case)
+      (fn? mode) (str (mode (str (first word))) (apply str (rest (camelize word)))))))
+
 (defn capitalize
   "Returns a string with the first character of the word converted to
   uppercase and the remaining to lowercase.\n
