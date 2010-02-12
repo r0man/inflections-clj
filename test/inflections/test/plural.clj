@@ -1,5 +1,9 @@
 (ns inflections.test.plural
-  (:use clojure.test inflections.irregular inflections.plural inflections.rules inflections.uncountable))
+  (:use clojure.test
+        inflections.irregular
+        inflections.plural
+        inflections.rules
+        inflections.uncountable))
 
 (deftest test-plural-with-single-rule
   (with-reset-rules *plural-rules*
@@ -112,22 +116,7 @@
          "series" "series"
          "species" "species"
          "news" "news"
-;         "old_news" "old_news"
          "rice" "rice"
          "equipment" "equipment"
          "fish" "fish"
-         "information" "information"
-         )))
-
-;; (with-reset-rules *plural-rules*
-;;   (init-plural-rules)
-;;   (init-irregular-words)
-;;   (pluralize "child")
-;;   )
-
-;; (reset-rules! *plural-rules*)
-;; (init-plural-rules)
-;; (init-irregular-words)
-;; (pluralize "sex")
-;; (pluralize "child")
-;; @*plural-rules*
+         "information" "information")))

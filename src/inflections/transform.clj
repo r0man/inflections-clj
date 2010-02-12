@@ -1,8 +1,7 @@
 (ns inflections.transform
   (:refer-clojure :exclude (replace))
   (:use [clojure.contrib.str-utils2 :only (lower-case replace upper-case trim)]
-        clojure.contrib.seq-utils
-        inflections.helper))
+        clojure.contrib.seq-utils inflections.helper))
 
 (defn camelize
   "By default, camelize converts strings to UpperCamelCase. If the

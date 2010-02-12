@@ -1,7 +1,7 @@
 (ns inflections.rules
   (:refer-clojure :exclude (replace))
   (:use [clojure.contrib.str-utils2 :only (replace)]
-        clojure.contrib.seq-utils
+        [clojure.contrib.seq-utils :only (includes?)]
         inflections.helper))
 
 (defstruct rule :pattern :replacement)
