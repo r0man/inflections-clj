@@ -16,6 +16,12 @@
        "street_address" "street-address"
        "person_street_address" "person-street-address"))
 
+(deftest test-demodulize
+  (are [word expected]
+       (= (demodulize word) expected)
+       "Inflections" "Inflections"
+       "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
+
 (deftest test-ordinalize
   (are [number expected]
        (= (ordinalize number) expected)

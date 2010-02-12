@@ -21,10 +21,17 @@
   [word]
   (replace word #"_" "-"))
 
+(defn demodulize
+  "Removes the module part from the expression in the string. \n
+  Examples: (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\") => \"Inflections\"
+            (demodulize \"Inflections\") => \"Inflections\""
+  [word] (replace word #"^.*::" ""))
+
 (defn ordinalize
   "Turns a number into an ordinal string used to denote the position
   in an ordered sequence such as 1st, 2nd, 3rd, 4th, etc.\n
-  Example: (ordinalize \"52\") => \"52nd\""
+  Examples: (ordinalize \"1\") => \"1st\"
+            (ordinalize \"23\") => \"23rd\""
   [number]
   (if-let [number (parse-integer number)]
     (if (includes? (range 11 14) (mod number 100))
@@ -40,7 +47,7 @@
   "The reverse of camelize. Makes an underscored, lowercase form from
   the expression in the string. Changes \"::\" to \"/\" to convert
   namespaces to paths.\n
-  Example: (dasherize \"ActiveRecord\") => \"active_record\"
+  Examples: (dasherize \"ActiveRecord\") => \"active_record\"
            (dasherize \"ActiveRecord::Errors\") => \"active_record/errors\""
   [word]
   (-> word
