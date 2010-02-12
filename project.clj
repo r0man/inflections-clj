@@ -7,4 +7,5 @@
   :dev-dependencies [[autodoc "0.7.0"]
                      [lein-clojars "0.5.0-SNAPSHOT"]
                      [swank-clojure "1.1.0"]]
-  :autodoc {:name "inflections-clj"})
+  :autodoc {:copyright "Copyright (c) 2010 Roman Scherer"
+            :name "inflections-clj"})
