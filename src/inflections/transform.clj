@@ -44,7 +44,8 @@
   "Removes the module part from the expression in the string. \n
   Examples: (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\") => \"Inflections\"
             (demodulize \"Inflections\") => \"Inflections\""
-  [word] (replace word #"^.*::" ""))
+  [word]
+  (replace word #"^.*::" ""))
 
 (defn ordinalize
   "Turns a number into an ordinal string used to denote the position
@@ -76,4 +77,14 @@
       (replace "-" "_")
       (lower-case)))
 
-
+(defn foreign-key
+  "Creates a foreign key name from a class name. The
+  separate-id-with-underscore option controls whether the function
+  should put '_' between the name and 'id'.\n
+  Examples: (foreign-key \"Message\") => \"message_id\"
+            (foreign-key \"Message\" false) => \"messageid\"
+            (foreign-key \"Admin::Post\") => \"post_id\"
+"
+  ([word] (foreign-key word true))
+  ([word separate-id-with-underscore]
+     (str (underscore (demodulize word)) (if separate-id-with-underscore "_" "") "id")))

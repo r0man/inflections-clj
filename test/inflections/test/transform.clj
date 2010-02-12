@@ -38,6 +38,20 @@
        "Inflections" "Inflections"
        "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
 
+(deftest test-foreign-key
+  (are [word expected]
+       (= (foreign-key word) expected)
+       "Message" "message_id"
+       "Admin::Post" "post_id"
+       "MyApplication::Billing::Account" "account_id"))
+
+(deftest test-foreign-key-without-underscore
+  (are [word expected]
+       (= (foreign-key word false) expected)
+       "Message" "messageid"
+       "Admin::Post" "postid"
+       "MyApplication::Billing::Account" "accountid"))
+
 (deftest test-ordinalize
   (are [number expected]
        (= (ordinalize number) expected)
