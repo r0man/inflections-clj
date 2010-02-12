@@ -7,7 +7,7 @@
 
 (deftest test-plural-with-single-rule
   (with-reset-rules *plural-rules*
-    (plural #"$" "s")
+    (plural! #"$" "s")
     (is (= (count @*plural-rules*) 1))
     (let [rule (first @*plural-rules*)]
       (is (= (str (:pattern rule)) "$"))
@@ -15,7 +15,7 @@
 
 (deftest test-plural-with-multiple-rule
   (with-reset-rules *plural-rules*
-    (plural #"$" "s" #"s$" "s")
+    (plural! #"$" "s" #"s$" "s")
     (is (= (count @*plural-rules*) 2))
     (let [rule (first @*plural-rules*)]
       (is (= (str (:pattern rule)) "$"))

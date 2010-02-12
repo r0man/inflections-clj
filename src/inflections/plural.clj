@@ -5,7 +5,7 @@
 
 (def *plural-rules* (atom []))
 
-(defn plural
+(defn plural!
   "Define rule(s) to map words from singular to plural."
   [& patterns-and-replacements]
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
@@ -20,7 +20,7 @@
 
 (defn init-plural-rules []
   (reset-rules! *plural-rules*)
-  (plural
+  (plural!
    #"$(?i)" "s"
    #"s$(?i)" "s"
    #"(ax|test)is$(?i)" "$1es"

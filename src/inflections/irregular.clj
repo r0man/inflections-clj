@@ -31,13 +31,13 @@
   "Define words that are irregular in singular and plural."
   [& singulars-and-plurals]
   (assert-even-args singulars-and-plurals)
-  (doseq [[singular-word plural-word] (partition 2 singulars-and-plurals)]
-    (delete-uncountable-word singular-word)
-    (delete-uncountable-word plural-word)
-    (singular plural-word singular-word)
-    (plural singular-word plural-word)
-    (add-irregular-word singular-word)
-    (add-irregular-word plural-word)))
+  (doseq [[singular plural] (partition 2 singulars-and-plurals)]
+    (delete-uncountable-word singular)
+    (delete-uncountable-word plural)
+    (singular! plural singular)
+    (plural! singular plural)
+    (add-irregular-word singular)
+    (add-irregular-word plural)))
 
 (defn init-irregular-words []
   (reset-irregular-words)

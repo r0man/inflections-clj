@@ -5,7 +5,7 @@
 
 (def *singular-rules* (atom []))
 
-(defn singular
+(defn singular!
   "Define rule(s) to map words from singular to plural."
   [& patterns-and-replacements]
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
@@ -20,7 +20,7 @@
 
 (defn init-singular-rules []
   (reset-rules! *singular-rules*)
-  (singular
+  (singular!
    #"s$(?i)" ""
    #"(n)ews$(?i)" "$1ews"
    #"([ti])a$(?i)" "$1um"
