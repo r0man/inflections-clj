@@ -6,13 +6,13 @@
 
 (defn camelize
   "By default, camelize converts strings to UpperCamelCase. If the
-  argument to camelize is set to :lower then camelize produces
-  lowerCamelCase. camelize will also convert \"/\" to \"::\" which is
-  useful for converting paths to namespaces.\n
- Examples: (campelize \"active_record\") => \"ActiveRecord\"
-           (campelize \"active_record\") => \"activeRecord\"
-           (campelize \"active_record/errors\") => \"ActiveRecord::Errors\"
-           (campelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
+ argument to camelize is set to :lower then camelize produces
+ lowerCamelCase. camelize will also convert \"/\" to \"::\" which is
+ useful for converting paths to namespaces.\n
+ Examples: (camelize \"active_record\") => \"ActiveRecord\"
+           (camelize \"active_record\") => \"activeRecord\"
+           (camelize \"active_record/errors\") => \"ActiveRecord::Errors\"
+           (camelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
   ([word]
      (-> word
          (replace #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
@@ -30,9 +30,8 @@
             (capitalize \"HELLO\") => \"Hello\"
             (capitalize \"abc123\") => \"abc123\""
   [word]
-  (str
-   (upper-case (str (first word)))
-   (lower-case (apply str (rest word)))))
+  (str (upper-case (str (first word)))
+       (lower-case (apply str (rest word)))))
 
 (defn dasherize
   "Replaces all underscores in the word with dashes.\n
@@ -67,8 +66,8 @@
   "The reverse of camelize. Makes an underscored, lowercase form from
   the expression in the string. Changes \"::\" to \"/\" to convert
   namespaces to paths.\n
-  Examples: (dasherize \"ActiveRecord\") => \"active_record\"
-           (dasherize \"ActiveRecord::Errors\") => \"active_record/errors\""
+  Examples: (underscore \"ActiveRecord\") => \"active_record\"
+            (underscore \"ActiveRecord::Errors\") => \"active_record/errors\""
   [word]
   (-> word
       (replace #"::" "/")
@@ -78,13 +77,11 @@
       (lower-case)))
 
 (defn foreign-key
-  "Creates a foreign key name from a class name. The
-  separate-id-with-underscore option controls whether the function
-  should put '_' between the name and 'id'.\n
+  "Creates a foreign key name from a class name. The default separator
+  \"_\" is placed between the name and \"id\".\n
   Examples: (foreign-key \"Message\") => \"message_id\"
             (foreign-key \"Message\" false) => \"messageid\"
-            (foreign-key \"Admin::Post\") => \"post_id\"
-"
-  ([word] (foreign-key word true))
-  ([word separate-id-with-underscore]
-     (str (underscore (demodulize word)) (if separate-id-with-underscore "_" "") "id")))
+            (foreign-key \"Admin::Post\") => \"post_id\""
+  ([word] (foreign-key word "_"))
+  ([word separator]
+     (str (underscore (demodulize word)) (or separator "") "id")))
