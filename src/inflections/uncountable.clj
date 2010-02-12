@@ -3,14 +3,12 @@
 
 (def *uncountable-words* (atom (sorted-set)))
 
-(defn delete-uncountable-word
-  "Deletes the given word from the list of uncountable words."
-  [word]
+(defn delete-uncountable [word]
   (if (string? word)
     (swap! *uncountable-words* disj (normalize-word word))))
 
-(defn reset-uncountable-words
-  "Resets the set of uncountable words."
+(defn reset-uncountable-words!
+  "Resets the uncountable words."
   []
   (reset! *uncountable-words* (sorted-set)))
 
@@ -26,7 +24,7 @@
     (swap! *uncountable-words* conj (normalize-word word))))
 
 (defn init-uncountable-words []
-  (reset-uncountable-words)
+  (reset-uncountable-words!)
   (uncountable!
       "air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"
       "confusion" "cotton" "education" "electricity" "entertainment" "equipment"

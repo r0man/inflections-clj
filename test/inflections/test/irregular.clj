@@ -1,46 +1,46 @@
 (ns inflections.test.irregular
   (:use clojure.test inflections.irregular))
 
-(deftest test-add-irregular-word
-  (reset-irregular-words)
-  (add-irregular-word "man")
+(deftest test-add-irregular
+  (reset-irregular-words!)
+  (add-irregular "man")
   (is (= (seq @*irregular-words*) ["man"]))
-  (add-irregular-word "man")
-  (add-irregular-word "men")
+  (add-irregular "man")
+  (add-irregular "men")
   (is (= (seq @*irregular-words*) ["man" "men"])))
 
-(deftest test-delete-irregular-word
-  (reset-irregular-words)
-  (add-irregular-word "man")
+(deftest test-delete-irregular
+  (reset-irregular-words!)
+  (add-irregular "man")
   (is (= (seq @*irregular-words*) ["man"]))
-  (delete-irregular-word "man")
+  (delete-irregular "man")
   (is (nil?  (seq @*irregular-words*))))
 
-(deftest test-reset-irregular-words
-  (add-irregular-word "man")
-  (reset-irregular-words)
+(deftest test-reset-irregular-words!
+  (add-irregular "man")
+  (reset-irregular-words!)
   (is (nil?  (seq @*irregular-words*))))
 
 (deftest test-irregular-with-single-rule
-  (reset-irregular-words)
+  (reset-irregular-words!)
   (irregular! "child" "children")
   (is (irregular? "child"))
   (is (irregular? "children")))
 
 (deftest test-irregular-with-multiple-rules
-  (reset-irregular-words)
+  (reset-irregular-words!)
   (irregular! "child" "children"
              "cow" "kine")
   (is (every? irregular? ["child" "children" "cow" "kine"])))
 
 (deftest test-irregular?
-  (reset-irregular-words)
+  (reset-irregular-words!)
   (is (not (every? irregular? ["child" "children"])))
   (irregular! "child" "children")
   (is (every? irregular? ["child" "children"])))
 
 (deftest test-irregular
-  (reset-irregular-words)
+  (reset-irregular-words!)
   (are [singular plural]
        (do
          (is (not (irregular? singular)))

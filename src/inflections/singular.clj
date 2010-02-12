@@ -18,8 +18,12 @@
     word
     (resolve-rules (rseq @*singular-rules*) word)))
 
+(defn reset-singular-rules!
+  "Resets the rules used to map from singular to plural."
+  [] (reset-rules! *singular-rules*))
+
 (defn init-singular-rules []
-  (reset-rules! *singular-rules*)
+  (reset-singular-rules!)
   (singular!
    #"s$(?i)" ""
    #"(n)ews$(?i)" "$1ews"

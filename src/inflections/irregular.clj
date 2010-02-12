@@ -7,18 +7,14 @@
 
 (def *irregular-words* (atom (sorted-set)))
 
-(defn add-irregular-word
-  "Adds a the given word to the list of irregular words."
-  [word]
+(defn add-irregular [word]
   (swap! *irregular-words* conj (normalize-word word)))
 
-(defn delete-irregular-word
-  "Deletes the given word from the list of irregular words."
-  [word]
+(defn delete-irregular [word]
   (swap! *irregular-words* disj (normalize-word word)))
 
-(defn reset-irregular-words
-  "Resets the set of irregular words."
+(defn reset-irregular-words!
+  "Resets the irregular words."
   []
   (reset! *irregular-words* (sorted-set)))
 
@@ -32,15 +28,15 @@
   [& singulars-and-plurals]
   (assert-even-args singulars-and-plurals)
   (doseq [[singular plural] (partition 2 singulars-and-plurals)]
-    (delete-uncountable-word singular)
-    (delete-uncountable-word plural)
+    (delete-uncountable singular)
+    (delete-uncountable plural)
     (singular! plural singular)
     (plural! singular plural)
-    (add-irregular-word singular)
-    (add-irregular-word plural)))
+    (add-irregular singular)
+    (add-irregular plural)))
 
 (defn init-irregular-words []
-  (reset-irregular-words)
+  (reset-irregular-words!)
   (irregular!
    "child" "children"
    "cow" "kine"
