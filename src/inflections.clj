@@ -1,4 +1,6 @@
-(ns inflections
+(ns #^{:doc "Rails-like inflections for Clojure."
+       :author "Roman Scherer"}
+  inflections
   (:use [clojure.contrib.ns-utils :only (immigrate)]))
 
 (immigrate
