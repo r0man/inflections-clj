@@ -54,8 +54,11 @@
 (deftest test-underscore
   (are [word expected]
        (= (underscore word) expected)
-       "puni-puni" "puni_puni"
-       "puni puni" "puni_puni"))
-
-
-
+       "Product" "product"
+       "SpecialGuest" "special_guest"
+       "ApplicationController" "application_controller"
+       "Area51Controller" "area51_controller"
+       "HTMLTidy" "html_tidy"
+       "HTMLTidyGenerator" "html_tidy_generator"
+       "FreeBSD" "free_bsd"
+       "HTML" "html"))
