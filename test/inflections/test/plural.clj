@@ -1,5 +1,5 @@
 (ns inflections.test.plural
-  (:use clojure.test inflections.plural inflections.rules))
+  (:use clojure.test inflections.irregular inflections.plural inflections.rules inflections.uncountable))
 
 (deftest test-plural-with-single-rule
   (with-reset-rules *plural-rules*
@@ -21,92 +21,113 @@
       (is (= (:replacement rule) "s")))))
 
 (deftest test-pluralize
-  (init-plural-rules)
-  (are [word expected]
-       (is (= (pluralize word) expected))
-       " " " " 
-       "" ""
-       "ability" "abilities"
-       "address" "addresses"
-       "agency" "agencies"
-       "alias" "aliases"
-       "analysis" "analyses"
-       "archive" "archives"
-       "axis" "axes"
-       "basis" "bases"
-       "box" "boxes"
-       "buffalo" "buffaloes"
-       "bus" "buses"
-       "case" "cases"
-       "category" "categories"
-       "comment" "comments"
-       "crisis" "crises"
-       "database" "databases"
-       "datum" "data"
-       "day" "days"
-       "diagnosis" "diagnoses"
-       "diagnosis_a" "diagnosis_as"
-       "dwarf" "dwarves"
-       "edge" "edges"
-       "elf" "elves"
-       "experience" "experiences"
-       "fix" "fixes"
-       "foobar" "foobars"
-       "half" "halves"
-       "horse" "horses"
-       "house" "houses"
-       "index" "indices"
-       "louse" "lice"
-       "matrix" "matrices"
-       "matrix_fu" "matrix_fus"
-       "medium" "media"
-       "mouse" "mice"
-       "move" "moves"
-       "movie" "movies"
-       "newsletter" "newsletters"
-       "octopus" "octopi"
-       "ox" "oxen"
-       "perspective" "perspectives"
-       "photo" "photos"
-       "portfolio" "portfolios"
-       "prize" "prizes"
-       "process" "processes"
-       "query" "queries"
-       "quiz" "quizzes"
-       "safe" "saves"
-       "search" "searches"
-       "shoe" "shoes"
-       "stack" "stacks"
-       "status" "statuses"
-       "status_code" "status_codes"
-       "switch" "switches"
-       "testis" "testes"
-       "tomato" "tomatoes"
-       "vertex" "vertices"
-       "virus" "viri"
-       "wife" "wives"
-       "wish" "wishes"))
+  (with-reset-rules *plural-rules*
+    (init-plural-rules)
+    (are [word expected]
+         (is (= (pluralize word) expected))
+         " " " " 
+         "" ""
+         "ability" "abilities"
+         "address" "addresses"
+         "agency" "agencies"
+         "alias" "aliases"
+         "analysis" "analyses"
+         "archive" "archives"
+         "axis" "axes"
+         "basis" "bases"
+         "box" "boxes"
+         "buffalo" "buffaloes"
+         "bus" "buses"
+         "case" "cases"
+         "category" "categories"
+         "comment" "comments"
+         "crisis" "crises"
+         "database" "databases"
+         "datum" "data"
+         "day" "days"
+         "diagnosis" "diagnoses"
+         "diagnosis_a" "diagnosis_as"
+         "dwarf" "dwarves"
+         "edge" "edges"
+         "elf" "elves"
+         "fix" "fixes"
+         "foobar" "foobars"
+         "half" "halves"
+         "horse" "horses"
+         "house" "houses"
+         "index" "indices"
+         "louse" "lice"
+         "matrix" "matrices"
+         "matrix_fu" "matrix_fus"
+         "medium" "media"
+         "mouse" "mice"
+         "move" "moves"
+         "movie" "movies"
+         "newsletter" "newsletters"
+         "octopus" "octopi"
+         "ox" "oxen"
+         "perspective" "perspectives"
+         "photo" "photos"
+         "portfolio" "portfolios"
+         "prize" "prizes"
+         "process" "processes"
+         "query" "queries"
+         "quiz" "quizzes"
+         "safe" "saves"
+         "search" "searches"
+         "shoe" "shoes"
+         "stack" "stacks"
+         "status" "statuses"
+         "status_code" "status_codes"
+         "switch" "switches"
+         "testis" "testes"
+         "tomato" "tomatoes"
+         "vertex" "vertices"
+         "virus" "viri"
+         "wife" "wives"
+         "wish" "wishes")))
 
 (deftest test-pluralize-with-irregular-words
-  (init-plural-rules)
-  (are [word expected]
-       (is (= (pluralize word) expected))
-       ;; "child" "children"
-       ;; "cow" "kine"
-       ;; "woman" "women"
-       ;; "salesperson" "salespeople"
-       ;; "series" "series"
-       ;; "species" "species"
-       ;; "spokesman" "spokesmen"
-       ;; "news" "news"
-       ;; "node_child" "node_children"
-       ;; "old_news" "old_news"
-       ;; "person" "people"
-       ;; "rice" "rice"
-       ;; "equipment" "equipment"
-       ;; "fish" "fish"
-       ;; "information" "information"
-       ;; "man" "men"
-       ))
+  (with-reset-rules *plural-rules*
+    (init-plural-rules)
+    (init-irregular-words)
+    (are [word expected]
+         (is (= (pluralize word) expected))
+         "child" "children"
+         "cow" "kine"
+         "woman" "women"
+         "salesperson" "salespeople"
+         "spokesman" "spokesmen"
+         "node_child" "node_children"
+         "person" "people"
+         "man" "men")))
 
+(deftest test-pluralize-with-uncountable-words
+  (with-reset-rules *plural-rules*
+    (init-plural-rules)
+    (init-uncountable-words)
+    (are [word expected]
+         (is (= (pluralize word) expected))
+         "experience" "experience"
+         "series" "series"
+         "species" "species"
+         "news" "news"
+;         "old_news" "old_news"
+         "rice" "rice"
+         "equipment" "equipment"
+         "fish" "fish"
+         "information" "information"
+         )))
 
+;; (with-reset-rules *plural-rules*
+;;   (init-plural-rules)
+;;   (init-irregular-words)
+;;   (pluralize "child")
+;;   )
+
+;; (reset-rules! *plural-rules*)
+;; (init-plural-rules)
+;; (init-irregular-words)
+;; (pluralize "sex")
+;; (pluralize "child")
+;; @*plural-rules*
