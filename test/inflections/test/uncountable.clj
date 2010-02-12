@@ -3,20 +3,20 @@
 
 (deftest test-delete-uncountable-word
   (reset-uncountable-words)
-  (uncountable "air")
+  (uncountable! "air")
   (is (= (count @*uncountable-words*) 1))
   (delete-uncountable-word "air")
   (is (= (count @*uncountable-words*) 0)))
 
 (deftest test-reset-uncountable-words
-  (uncountable "air")
+  (uncountable! "air")
   (reset-uncountable-words)
   (is (= (count @*uncountable-words*) 0)))
 
 (deftest test-uncountable?
   (reset-uncountable-words)
   (is (not (uncountable? "air")))
-  (uncountable "air")
+  (uncountable! "air")
   (is (uncountable? "air")))
 
 (deftest test-uncountable

@@ -19,7 +19,7 @@
   [word]
   (contains? @*uncountable-words* (normalize-word word)))
 
-(defn uncountable
+(defn uncountable!
   "Adds the given word(s) to the list of uncountable words."
   [& words]
   (doseq [word words]
@@ -27,7 +27,7 @@
 
 (defn init-uncountable-words []
   (reset-uncountable-words)
-  (uncountable
+  (uncountable!
       "air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"
       "confusion" "cotton" "education" "electricity" "entertainment" "equipment"
       "experience" "fiction" "fish" "food" "forgiveness" "fresh" "gold" "gossip" "grass"

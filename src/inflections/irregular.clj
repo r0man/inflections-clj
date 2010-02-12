@@ -27,7 +27,7 @@
   [word]
   (contains? @*irregular-words* (normalize-word word)))
 
-(defn irregular
+(defn irregular!
   "Define words that are irregular in singular and plural."
   [& singulars-and-plurals]
   (assert-even-args singulars-and-plurals)
@@ -41,7 +41,7 @@
 
 (defn init-irregular-words []
   (reset-irregular-words)
-  (irregular
+  (irregular!
    "child" "children"
    "cow" "kine"
    "foot" "feet"
