@@ -20,7 +20,8 @@
      (cond
       (= mode :lower) (camelize word lower-case)
       (= mode :upper) (camelize word upper-case)
-      (fn? mode) (str (mode (str (first word))) (apply str (rest (camelize word)))))))
+      (fn? mode) (str (mode (str (first word)))
+                      (apply str (rest (camelize word)))))))
 
 (defn capitalize
   "Returns a string with the first character of the word converted to
