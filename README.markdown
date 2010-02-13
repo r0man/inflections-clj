@@ -6,6 +6,10 @@ Rails-like inflections for Clojure.
 
 The JAR is available on [Clojars](http://clojars.org/inflections).
 
+## Documentation 
+
+The API documentation is available [here](http://r0man.github.com/inflections-clj).
+
 ### Examples
 <pre>
 <code>
