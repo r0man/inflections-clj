@@ -23,7 +23,7 @@
     (resolve-rules (rseq @*singular-rules*) word)))
 
 (defn reset-singular-rules!
-  "Resets the rules used to map from singular to plural."
+  "Resets the rules used to map from plural to singular."
   [] (reset-rules! *singular-rules*))
 
 (defn init-singular-rules []
