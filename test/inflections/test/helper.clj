@@ -6,3 +6,4 @@
        (is (= (normalize-word word) expected))
        "apple" "apple"
        "Banana" "banana"))
+

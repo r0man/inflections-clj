@@ -1,5 +1,5 @@
 (ns inflections.helper
-  (:use [clojure.contrib.str-utils2 :only (lower-case trim)]))
+  (:use [clojure.contrib.string :only (lower-case trim)]))
 
 (defn assert-even-args [args]
   (if-not (even? (count args))
