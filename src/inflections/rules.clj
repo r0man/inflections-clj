@@ -1,6 +1,5 @@
 (ns inflections.rules
-  (:refer-clojure :exclude (replace))
-  (:use [clojure.contrib.str-utils2 :only (replace)]
+  (:use [clojure.contrib.string :only (replace-re)]
         [clojure.contrib.seq-utils :only (includes?)]
         inflections.helper))
 
@@ -21,7 +20,7 @@
   (map #(apply make-rule %) (partition 2 patterns-and-replacements)))
 
 (defn resolve-rule [rule word]  
-  (let [inflection (replace word (:pattern rule) (:replacement rule))]
+  (let [inflection (replace-re (:pattern rule) (:replacement rule) word)]
     (if-not (= inflection word)
       inflection)))
 
