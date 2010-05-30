@@ -1,0 +1,712 @@
+<html>
+  <head>
+    <title>inflections API reference (inflections-clj)</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">inflections-clj</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="inflections-api.html" class="wiki_link">inflections</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#toc0">Overview</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/add-irregular">add-irregular</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/camelize">camelize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/capitalize">capitalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/dasherize">dasherize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/delete-irregular">delete-irregular</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/demodulize">demodulize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/foreign-key">foreign-key</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/irregular!">irregular!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/irregular?">irregular?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/ordinalize">ordinalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/plural!">plural!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/pluralize">pluralize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/reset-irregular-words!">reset-irregular-words!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/reset-plural-rules!">reset-plural-rules!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/reset-singular-rules!">reset-singular-rules!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/reset-uncountable-words!">reset-uncountable-words!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/singular!">singular!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/singularize">singularize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/uncountable!">uncountable!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/uncountable?">uncountable?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/underscore">underscore</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#inflections.irregular">inflections.irregular</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.irregular/add-irregular">add-irregular</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.irregular/delete-irregular">delete-irregular</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.irregular/irregular!">irregular!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.irregular/irregular?">irregular?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.irregular/reset-irregular-words!">reset-irregular-words!</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#inflections.plural">inflections.plural</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.plural/plural!">plural!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.plural/pluralize">pluralize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.plural/reset-plural-rules!">reset-plural-rules!</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#inflections.rules">inflections.rules</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.rules/reset-rules!">reset-rules!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.rules/slurp-rules">slurp-rules</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#inflections.singular">inflections.singular</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.singular/reset-singular-rules!">reset-singular-rules!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.singular/singular!">singular!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.singular/singularize">singularize</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#inflections.transform">inflections.transform</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/camelize">camelize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/capitalize">capitalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/dasherize">dasherize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/demodulize">demodulize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/foreign-key">foreign-key</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/ordinalize">ordinalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/underscore">underscore</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#inflections.uncountable">inflections.uncountable</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.uncountable/reset-uncountable-words!">reset-uncountable-words!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.uncountable/uncountable!">uncountable!</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.uncountable/uncountable?">uncountable?</a>
+    </div>
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">inflections</span></h1>
+by <span id="author">Roman Scherer</span><br />
+<br />Usage:
+<pre>
+(ns your-namespace
+  (:require <span id="long-name">inflections</span>))
+</pre><pre>
+</pre><h2>Overview</h2>
+<pre id="namespace-docstr">Rails-like inflections for Clojure.</pre>
+<br />
+<h2>Public Variables and Functions</h2>
+<div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/add-irregular">add-irregular</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (add-irregular word)
+</pre>
+  <pre id="var-docstr">Adds the given word to *irregular-words*.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/camelize">camelize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (camelize word)
+       (camelize word mode)
+</pre>
+  <pre id="var-docstr">By default, camelize converts strings to UpperCamelCase. If the
+argument to camelize is set to :lower then camelize produces
+lowerCamelCase. camelize will also convert "/" to "::" which is
+useful for converting paths to namespaces.
+
+Examples: (camelize "active_record") =&gt; "ActiveRecord"
+          (camelize "active_record") =&gt; "activeRecord"
+          (camelize "active_record/errors") =&gt; "ActiveRecord::Errors"
+          (camelize "active_record/errors" :lower) =&gt; "activeRecord::Errors"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/capitalize">capitalize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (capitalize word)
+</pre>
+  <pre id="var-docstr">Returns a string with the first character of the word converted to
+uppercase and the remaining to lowercase.
+
+Examples: (capitalize "hello") =&gt; "Hello"
+          (capitalize "HELLO") =&gt; "Hello"
+          (capitalize "abc123") =&gt; "abc123"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/dasherize">dasherize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (dasherize word)
+</pre>
+  <pre id="var-docstr">Replaces all underscores in the word with dashes.
+
+Example: (dasherize "puni_puni") =&gt; "puni-puni"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/delete-irregular">delete-irregular</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (delete-irregular word)
+</pre>
+  <pre id="var-docstr">Deletes the given word from *irregular-words*.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/demodulize">demodulize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (demodulize word)
+</pre>
+  <pre id="var-docstr">Removes the module part from the expression in the string. 
+
+Examples: (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt; "Inflections"
+          (demodulize "Inflections") =&gt; "Inflections"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/foreign-key">foreign-key</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (foreign-key word)
+       (foreign-key word separator)
+</pre>
+  <pre id="var-docstr">Creates a foreign key name from a class name. The default separator
+"_" is placed between the name and "id".
+
+Examples: (foreign-key "Message") =&gt; "message_id"
+          (foreign-key "Message" false) =&gt; "messageid"
+          (foreign-key "Admin::Post") =&gt; "post_id"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/irregular!">irregular!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (irregular! &amp; singulars-and-plurals)
+</pre>
+  <pre id="var-docstr">Define words that are irregular in singular and plural.
+
+Examples: (irregular! "child" "children")
+          (irregular! "cow" "kine"
+                      "louse" "lice")</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/irregular?">irregular?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (irregular? word)
+</pre>
+  <pre id="var-docstr">Returns true if the given word is irregular, else false.
+
+Examples: (irregular? "child") =&gt; true
+          (irregular? "word") =&gt; false</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/ordinalize">ordinalize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ordinalize number)
+</pre>
+  <pre id="var-docstr">Turns a number into an ordinal string used to denote the position
+in an ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
+
+Examples: (ordinalize "1") =&gt; "1st"
+          (ordinalize "23") =&gt; "23rd"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/plural!">plural!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (plural! &amp; patterns-and-replacements)
+</pre>
+  <pre id="var-docstr">Define rule(s) to map words from singular to plural.
+
+Examples: (plural! #"$(?i)" "s")
+          (plural! #"(ax|test)is$(?i)" "$1es"
+                   #"(octop|vir)us$(?i)" "$1i")</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/pluralize">pluralize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pluralize word)
+</pre>
+  <pre id="var-docstr">Returns the plural of the given word.
+
+Example: (pluralize "virus") =&gt; "virii"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/reset-irregular-words!">reset-irregular-words!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-irregular-words!)
+</pre>
+  <pre id="var-docstr">Resets the irregular words.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/reset-plural-rules!">reset-plural-rules!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-plural-rules!)
+</pre>
+  <pre id="var-docstr">Resets the rules used to map from singular to plural.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/reset-singular-rules!">reset-singular-rules!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-singular-rules!)
+</pre>
+  <pre id="var-docstr">Resets the rules used to map from plural to singular.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/reset-uncountable-words!">reset-uncountable-words!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-uncountable-words!)
+</pre>
+  <pre id="var-docstr">Resets the uncountable words.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/singular!">singular!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (singular! &amp; patterns-and-replacements)
+</pre>
+  <pre id="var-docstr">Define rule(s) to map words from singular to plural.
+
+Examples: (singular! #"(n)ews$(?i)" "$1ews")
+          (singular! #"(m)ovies$(?i)" "$1ovie"
+                     #"([m|l])ice$(?i)" "$1ouse")</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/singularize">singularize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (singularize word)
+</pre>
+  <pre id="var-docstr">Returns the singular of the given word.
+
+Example: (singularize "mice") =&gt; "mouse"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/uncountable!">uncountable!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (uncountable! &amp; words)
+</pre>
+  <pre id="var-docstr">Adds the given word(s) to the list of uncountable words.
+
+Examples: (uncountable! "air")
+          (uncountable! "alcohol" "blood" "butter")</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/uncountable?">uncountable?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (uncountable? word)
+</pre>
+  <pre id="var-docstr">Returns true if the given word is uncountable, else false.
+
+Examples: (uncountable? "alcohol") =&gt; true
+          (uncountable? "word") =&gt; false</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/underscore">underscore</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (underscore word)
+</pre>
+  <pre id="var-docstr">The reverse of camelize. Makes an underscored, lowercase form from
+the expression in the string. Changes "::" to "/" to convert
+namespaces to paths.
+
+Examples: (underscore "ActiveRecord") =&gt; "active_record"
+          (underscore "ActiveRecord::Errors") =&gt; "active_record/errors"</pre>
+  
+</div>
+<h2 id="namespace-name">inflections.irregular</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="inflections.irregular/add-irregular">add-irregular</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (add-irregular word)
+</pre>
+  <pre id="var-docstr">Adds the given word to *irregular-words*.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.irregular/delete-irregular">delete-irregular</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (delete-irregular word)
+</pre>
+  <pre id="var-docstr">Deletes the given word from *irregular-words*.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.irregular/irregular!">irregular!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (irregular! &amp; singulars-and-plurals)
+</pre>
+  <pre id="var-docstr">Define words that are irregular in singular and plural.
+
+Examples: (irregular! "child" "children")
+          (irregular! "cow" "kine"
+                      "louse" "lice")</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.irregular/irregular?">irregular?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (irregular? word)
+</pre>
+  <pre id="var-docstr">Returns true if the given word is irregular, else false.
+
+Examples: (irregular? "child") =&gt; true
+          (irregular? "word") =&gt; false</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.irregular/reset-irregular-words!">reset-irregular-words!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-irregular-words!)
+</pre>
+  <pre id="var-docstr">Resets the irregular words.</pre>
+  
+</div>
+<h2 id="namespace-name">inflections.plural</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="inflections.plural/plural!">plural!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (plural! &amp; patterns-and-replacements)
+</pre>
+  <pre id="var-docstr">Define rule(s) to map words from singular to plural.
+
+Examples: (plural! #"$(?i)" "s")
+          (plural! #"(ax|test)is$(?i)" "$1es"
+                   #"(octop|vir)us$(?i)" "$1i")</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.plural/pluralize">pluralize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pluralize word)
+</pre>
+  <pre id="var-docstr">Returns the plural of the given word.
+
+Example: (pluralize "virus") =&gt; "virii"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.plural/reset-plural-rules!">reset-plural-rules!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-plural-rules!)
+</pre>
+  <pre id="var-docstr">Resets the rules used to map from singular to plural.</pre>
+  
+</div>
+<h2 id="namespace-name">inflections.rules</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="inflections.rules/reset-rules!">reset-rules!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-rules! rules)
+</pre>
+  <pre id="var-docstr">Resets the list of plural rules.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.rules/slurp-rules">slurp-rules</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (slurp-rules &amp; patterns-and-replacements)
+</pre>
+  <pre id="var-docstr">Returns a seq of rules, where the pattern and replacement must be
+given in pairs of two elements.</pre>
+  
+</div>
+<h2 id="namespace-name">inflections.singular</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="inflections.singular/reset-singular-rules!">reset-singular-rules!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-singular-rules!)
+</pre>
+  <pre id="var-docstr">Resets the rules used to map from plural to singular.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.singular/singular!">singular!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (singular! &amp; patterns-and-replacements)
+</pre>
+  <pre id="var-docstr">Define rule(s) to map words from singular to plural.
+
+Examples: (singular! #"(n)ews$(?i)" "$1ews")
+          (singular! #"(m)ovies$(?i)" "$1ovie"
+                     #"([m|l])ice$(?i)" "$1ouse")</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.singular/singularize">singularize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (singularize word)
+</pre>
+  <pre id="var-docstr">Returns the singular of the given word.
+
+Example: (singularize "mice") =&gt; "mouse"</pre>
+  
+</div>
+<h2 id="namespace-name">inflections.transform</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/camelize">camelize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (camelize word)
+       (camelize word mode)
+</pre>
+  <pre id="var-docstr">By default, camelize converts strings to UpperCamelCase. If the
+argument to camelize is set to :lower then camelize produces
+lowerCamelCase. camelize will also convert "/" to "::" which is
+useful for converting paths to namespaces.
+
+Examples: (camelize "active_record") =&gt; "ActiveRecord"
+          (camelize "active_record") =&gt; "activeRecord"
+          (camelize "active_record/errors") =&gt; "ActiveRecord::Errors"
+          (camelize "active_record/errors" :lower) =&gt; "activeRecord::Errors"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/capitalize">capitalize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (capitalize word)
+</pre>
+  <pre id="var-docstr">Returns a string with the first character of the word converted to
+uppercase and the remaining to lowercase.
+
+Examples: (capitalize "hello") =&gt; "Hello"
+          (capitalize "HELLO") =&gt; "Hello"
+          (capitalize "abc123") =&gt; "abc123"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/dasherize">dasherize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (dasherize word)
+</pre>
+  <pre id="var-docstr">Replaces all underscores in the word with dashes.
+
+Example: (dasherize "puni_puni") =&gt; "puni-puni"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/demodulize">demodulize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (demodulize word)
+</pre>
+  <pre id="var-docstr">Removes the module part from the expression in the string. 
+
+Examples: (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt; "Inflections"
+          (demodulize "Inflections") =&gt; "Inflections"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/foreign-key">foreign-key</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (foreign-key word)
+       (foreign-key word separator)
+</pre>
+  <pre id="var-docstr">Creates a foreign key name from a class name. The default separator
+"_" is placed between the name and "id".
+
+Examples: (foreign-key "Message") =&gt; "message_id"
+          (foreign-key "Message" false) =&gt; "messageid"
+          (foreign-key "Admin::Post") =&gt; "post_id"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/ordinalize">ordinalize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ordinalize number)
+</pre>
+  <pre id="var-docstr">Turns a number into an ordinal string used to denote the position
+in an ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
+
+Examples: (ordinalize "1") =&gt; "1st"
+          (ordinalize "23") =&gt; "23rd"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/underscore">underscore</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (underscore word)
+</pre>
+  <pre id="var-docstr">The reverse of camelize. Makes an underscored, lowercase form from
+the expression in the string. Changes "::" to "/" to convert
+namespaces to paths.
+
+Examples: (underscore "ActiveRecord") =&gt; "active_record"
+          (underscore "ActiveRecord::Errors") =&gt; "active_record/errors"</pre>
+  
+</div>
+<h2 id="namespace-name">inflections.uncountable</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="inflections.uncountable/reset-uncountable-words!">reset-uncountable-words!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (reset-uncountable-words!)
+</pre>
+  <pre id="var-docstr">Resets the uncountable words.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.uncountable/uncountable!">uncountable!</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (uncountable! &amp; words)
+</pre>
+  <pre id="var-docstr">Adds the given word(s) to the list of uncountable words.
+
+Examples: (uncountable! "air")
+          (uncountable! "alcohol" "blood" "butter")</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.uncountable/uncountable?">uncountable?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (uncountable? word)
+</pre>
+  <pre id="var-docstr">Returns true if the given word is uncountable, else false.
+
+Examples: (uncountable? "alcohol") =&gt; true
+          (uncountable? "word") =&gt; false</pre>
+  
+</div>
+
+
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">Copyright (c) 2010 Roman Scherer</div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>
