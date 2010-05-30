@@ -1,5 +1,24 @@
-(ns #^{:doc "Rails-like inflections for Clojure."
-       :author "Roman Scherer"}
+(ns #^{:author "Roman Scherer"
+       :doc "Rails-like inflections for Clojure.
+
+Examples:
+user> (use 'inflections)
+nil
+user> (pluralize \"word\")
+\"words\"
+user> (pluralize \"virus\")
+\"viri\"
+user> (singularize \"apples\")
+\"apple\"
+user> (singularize \"octopi\")
+\"octopus\"
+user> (underscore \"puni-puni\")
+\"puni_puni\"
+user> (ordinalize \"52\")
+\"52nd\"
+user> (capitalize \"clojure\")
+\"Clojure\"
+"}
   inflections
   (:use [clojure.contrib.ns-utils :only (immigrate)]))
 
