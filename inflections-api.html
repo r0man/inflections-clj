@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>inflections API reference (inflections-clj)</title>
+    <title>inflections API reference (inflections)</title>
     <link href="static/favicon.png" rel="icon" />
     <link href="static/favicon.png" rel="shortcut icon" />
     <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
@@ -25,7 +25,7 @@ namespace.
     <div id="AllContentContainer">
       <div id="Header">
 	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
-	<h1><a title="page header title" id="page-header" href="index.html">inflections-clj</a></h1>
+	<h1><a title="page header title" id="page-header" href="index.html">inflections</a></h1>
       </div>
       <div id="leftcolumn"><div style="text-align: center;"></div>
 <div class="menu">
@@ -172,7 +172,25 @@ by <span id="author">Roman Scherer</span><br />
   (:require <span id="long-name">inflections</span>))
 </pre><pre>
 </pre><h2>Overview</h2>
-<pre id="namespace-docstr">Rails-like inflections for Clojure.</pre>
+<pre id="namespace-docstr">Rails-like inflections for Clojure.
+
+Examples:
+user&gt; (use 'inflections)
+nil
+user&gt; (pluralize "word")
+"words"
+user&gt; (pluralize "virus")
+"viri"
+user&gt; (singularize "apples")
+"apple"
+user&gt; (singularize "octopi")
+"octopus"
+user&gt; (underscore "puni-puni")
+"puni_puni"
+user&gt; (ordinalize "52")
+"52nd"
+user&gt; (capitalize "clojure")
+"Clojure"</pre>
 <br />
 <h2>Public Variables and Functions</h2>
 <div id="var-entry">

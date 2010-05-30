@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>inflections-clj - Overview</title>
+    <title>inflections - Overview</title>
     <link href="static/favicon.png" rel="icon" />
     <link href="static/favicon.png" rel="shortcut icon" />
     <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
@@ -25,7 +25,7 @@ namespace.
     <div id="AllContentContainer">
       <div id="Header">
 	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
-	<h1><a title="page header title" id="page-header" href="index.html">inflections-clj</a></h1>
+	<h1><a title="page header title" id="page-header" href="index.html">inflections</a></h1>
       </div>
       <div id="leftcolumn"><div style="text-align: center;"></div>
 <div class="menu">
@@ -52,7 +52,7 @@ namespace.
   </div>
 </div>
 </div>
-                <div id="content-tag"><h1 id="toc0">An Overview of the <span id="header-project">inflections-clj</span> API</h1>
+                <div id="content-tag"><h1 id="toc0">An Overview of the <span id="header-project">inflections</span> API</h1>
 <br />
 <div id="project-description">Rails-like inflections for Clojure.</div>
 <br />
@@ -62,7 +62,25 @@ namespace.
   <h2 id="inflections">inflections</h2>
   by <span id="author">Roman Scherer</span><br />
   <a href="inflections-api.html" id="api-link">Detailed API documentation</a><br />
-  <pre id="namespace-docstr">Rails-like inflections for Clojure.</pre>
+  <pre id="namespace-docstr">Rails-like inflections for Clojure.
+
+Examples:
+user&gt; (use 'inflections)
+nil
+user&gt; (pluralize "word")
+"words"
+user&gt; (pluralize "virus")
+"viri"
+user&gt; (singularize "apples")
+"apple"
+user&gt; (singularize "octopi")
+"octopus"
+user&gt; (underscore "puni-puni")
+"puni_puni"
+user&gt; (ordinalize "52")
+"52nd"
+user&gt; (capitalize "clojure")
+"Clojure"</pre>
   
   Public variables and functions:
   <span id="var-link"><a href="inflections-api.html#inflections/add-irregular" id="var-tag">add-irregular</a> </span><span id="var-link"><a href="inflections-api.html#inflections/camelize" id="var-tag">camelize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/capitalize" id="var-tag">capitalize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/dasherize" id="var-tag">dasherize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/delete-irregular" id="var-tag">delete-irregular</a> </span><span id="var-link"><a href="inflections-api.html#inflections/demodulize" id="var-tag">demodulize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/foreign-key" id="var-tag">foreign-key</a> </span><span id="var-link"><a href="inflections-api.html#inflections/irregular!" id="var-tag">irregular!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/irregular?" id="var-tag">irregular?</a> </span><span id="var-link"><a href="inflections-api.html#inflections/ordinalize" id="var-tag">ordinalize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/plural!" id="var-tag">plural!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/pluralize" id="var-tag">pluralize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/reset-irregular-words!" id="var-tag">reset-irregular-words!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/reset-plural-rules!" id="var-tag">reset-plural-rules!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/reset-singular-rules!" id="var-tag">reset-singular-rules!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/reset-uncountable-words!" id="var-tag">reset-uncountable-words!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/singular!" id="var-tag">singular!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/singularize" id="var-tag">singularize</a> </span><span id="var-link"><a href="inflections-api.html#inflections/uncountable!" id="var-tag">uncountable!</a> </span><span id="var-link"><a href="inflections-api.html#inflections/uncountable?" id="var-tag">uncountable?</a> </span><span id="var-link"><a href="inflections-api.html#inflections/underscore" id="var-tag">underscore</a> </span><br />
