@@ -1,6 +1,5 @@
 (ns inflections.transform
-  (:refer-clojure :exclude (replace))
-  (:use [clojure.contrib.str-utils2 :only (lower-case replace upper-case trim)]
+  (:use [clojure.contrib.string :only (lower-case replace-by replace-str replace-re upper-case trim)]
         clojure.contrib.seq-utils inflections.helper))
 
 (defn camelize
@@ -13,9 +12,9 @@
            (camelize \"active_record/errors\") => \"ActiveRecord::Errors\"
            (camelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
   ([word]
-     (-> word
-         (replace #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
-         (replace #"(?:^|_)(.)" #(upper-case (nth % 1)))))
+     (->> word
+          (replace-by #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
+          (replace-by #"(?:^|_)(.)" #(upper-case (nth % 1)))))
   ([word mode]
      (cond
       (= mode :lower) (camelize word lower-case)
@@ -37,14 +36,14 @@
   "Replaces all underscores in the word with dashes.\n
   Example: (dasherize \"puni_puni\") => \"puni-puni\""
   [word]
-  (replace word #"_" "-"))
+  (replace-re #"_" "-" word))
 
 (defn demodulize
   "Removes the module part from the expression in the string. \n
   Examples: (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\") => \"Inflections\"
             (demodulize \"Inflections\") => \"Inflections\""
   [word]
-  (replace word #"^.*::" ""))
+  (replace-re #"^.*::" "" word))
 
 (defn ordinalize
   "Turns a number into an ordinal string used to denote the position
@@ -69,12 +68,12 @@
   Examples: (underscore \"ActiveRecord\") => \"active_record\"
             (underscore \"ActiveRecord::Errors\") => \"active_record/errors\""
   [word]
-  (-> word
-      (replace #"::" "/")
-      (replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
-      (replace #"([a-z\d])([A-Z])" "$1_$2")
-      (replace "-" "_")
-      (lower-case)))
+  (->> word
+       (replace-re #"::" "/")
+       (replace-re #"([A-Z]+)([A-Z][a-z])" "$1_$2")
+       (replace-re #"([a-z\d])([A-Z])" "$1_$2")
+       (replace-re #"-" "_")
+       (lower-case)))
 
 (defn foreign-key
   "Creates a foreign key name from a class name. The default separator
