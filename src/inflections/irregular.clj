@@ -1,29 +1,24 @@
 (ns inflections.irregular
-  (:use clojure.contrib.seq-utils
-        inflections.helper
+  (:use inflections.helper
         inflections.plural
         inflections.singular
         inflections.uncountable))
 
 (def *irregular-words* (atom (sorted-set)))
 
-(defn add-irregular [word]
-  (swap! *irregular-words* conj (normalize-word word)))
+(defn add-irregular
+  "Adds the given word to *irregular-words*."
+  [word] (swap! *irregular-words* conj (normalize-word word)))
 
-(defn delete-irregular [word]
-  (swap! *irregular-words* disj (normalize-word word)))
-
-(defn reset-irregular-words!
-  "Resets the irregular words."
-  []
-  (reset! *irregular-words* (sorted-set)))
+(defn delete-irregular
+  "Deletes the given word from *irregular-words*."
+  [word] (swap! *irregular-words* disj (normalize-word word)))
 
 (defn irregular?
   "Returns true if the given word is irregular, else false.\n
   Examples: (irregular? \"child\") => true
             (irregular? \"word\") => false"
-  [word]
-  (contains? @*irregular-words* (normalize-word word)))
+  [word] (contains? @*irregular-words* (normalize-word word)))
 
 (defn irregular!
   "Define words that are irregular in singular and plural.\n
@@ -39,6 +34,10 @@
     (plural! singular plural)
     (add-irregular singular)
     (add-irregular plural)))
+
+(defn reset-irregular-words!
+  "Resets the irregular words."
+  [] (reset! *irregular-words* (sorted-set)))
 
 (defn init-irregular-words []
   (reset-irregular-words!)
