@@ -7,4 +7,4 @@
                  [org.clojure/clojure-contrib "1.2.0-SNAPSHOT"]]
   :dev-dependencies [[autodoc "0.7.0"]
                      [lein-clojars "0.5.0"]
-		     [leiningen/lein-swank "1.2.0-SNAPSHOT"]])
+                     [swank-clojure "1.2.1"]])
