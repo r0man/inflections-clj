@@ -1,5 +1,6 @@
-classes
-lib
 /inflections-standalone.jar
 /inflections.jar
 /pom.xml
+autodoc/**
+classes
+lib
