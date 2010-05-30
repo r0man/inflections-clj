@@ -83,3 +83,4 @@
         (is (= (singularize word) expected))
         "air" "air"
         "alcohol" "alcohol")))
+
