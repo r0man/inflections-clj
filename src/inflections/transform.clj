@@ -85,3 +85,18 @@
   ([word] (foreign-key word "_"))
   ([word separator]
      (str (underscore (demodulize word)) (or separator "") "id")))
+
+(defn hyphenize
+  "Returns a string by threading word, which can be a string or a
+  symbol, through the functions str, underscore and dasherize.
+
+Examples:
+
+  (camelcase->identifier 'Continent)
+  ; => \"continent\"
+
+  (camelcase->identifier \"CountryFlag\")
+  ; => \"country-flag\""
+  [word]
+  (-> word str underscore dasherize))
+
