@@ -4,12 +4,16 @@
 (deftest test-camelize
   (are [word expected]
     (= (camelize word) expected)
+    nil nil
+    "" ""
     "active_record" "ActiveRecord"
     "active_record/errors" "ActiveRecord::Errors"))
 
 (deftest test-camelize-with-lower
   (are [word expected]
     (= (camelize word :lower) expected)
+    nil nil
+    "" ""
     "active_record" "activeRecord"
     "active_record/errors" "activeRecord::Errors"
     "product" "product"
@@ -20,6 +24,8 @@
 (deftest test-capitalize
   (are [word expected]
     (= (capitalize word) expected)
+    nil nil
+    "" ""
     "hello" "Hello"
     "HELLO" "Hello"
     "123ABC" "123abc"))
@@ -27,6 +33,8 @@
 (deftest test-dasherize
   (are [word expected]
     (= (dasherize word) expected)
+    nil nil
+    "" ""
     "puni_puni" "puni-puni"
     "street"  "street"
     "street_address" "street-address"
@@ -35,12 +43,17 @@
 (deftest test-demodulize
   (are [word expected]
     (= (demodulize word) expected)
+    nil nil
+    "" ""
+    "inflections.MyRecord" "MyRecord"
     "Inflections" "Inflections"
     "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
 
 (deftest test-foreign-key
   (are [word expected]
     (= (foreign-key word) expected)
+    nil nil
+    "" nil
     "Message" "message_id"
     "Admin::Post" "post_id"
     "MyApplication::Billing::Account" "account_id"))
@@ -55,12 +68,16 @@
 (deftest test-hyphenize
   (are [word expected]
     (= (hyphenize word) expected)
+    nil nil
+    "" ""
     'street  "street"
     "StreetAddress" "street-address"))
 
 (deftest test-ordinalize
   (are [number expected]
     (= (ordinalize number) expected)
+    nil nil
+    "" nil
     "0" "0th"
     "1" "1st"
     "2" "2nd"
@@ -96,6 +113,8 @@
 (deftest test-underscore
   (are [word expected]
     (= (underscore word) expected)
+    nil nil
+    "" ""
     "Product" "product"
     "SpecialGuest" "special_guest"
     "ApplicationController" "application_controller"

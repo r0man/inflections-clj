@@ -1,7 +1,15 @@
 (ns inflections.transform
-  (:use [clojure.contrib.string :only (lower-case replace-by replace-str replace-re upper-case trim)]
+  (:use [clojure.contrib.string :only (blank? lower-case replace-by replace-str replace-re upper-case trim)]
         [clojure.contrib.seq-utils :only (includes?)]
         inflections.helper))
+
+(defn normalize
+  "Normalize a word."
+  [arg]
+  (cond
+   (nil? arg) nil
+   (isa? (class arg) String) arg
+   :else (pr-str arg)))
 
 (defn camelize
   "By default, camelize converts strings to UpperCamelCase. If the
@@ -13,15 +21,17 @@
            (camelize \"active_record/errors\") => \"ActiveRecord::Errors\"
            (camelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
   ([word]
-     (->> word
-          (replace-by #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
-          (replace-by #"(?:^|_)(.)" #(upper-case (nth % 1)))))
+     (if-let [word (normalize word)]
+       (->> word
+            (replace-by #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
+            (replace-by #"(?:^|_)(.)" #(upper-case (nth % 1))))))
   ([word mode]
-     (cond
-      (= mode :lower) (camelize word lower-case)
-      (= mode :upper) (camelize word upper-case)
-      (fn? mode) (str (mode (str (first word)))
-                      (apply str (rest (camelize word)))))))
+     (if-let [word (normalize word)]
+       (cond
+        (= mode :lower) (camelize word lower-case)
+        (= mode :upper) (camelize word upper-case)
+        (fn? mode) (str (mode (str (first word)))
+                        (apply str (rest (camelize word))))))))
 
 (defn capitalize
   "Returns a string with the first character of the word converted to
@@ -30,21 +40,25 @@
             (capitalize \"HELLO\") => \"Hello\"
             (capitalize \"abc123\") => \"abc123\""
   [word]
-  (str (upper-case (str (first word)))
-       (lower-case (apply str (rest word)))))
+  (if-let [word (normalize word)]
+    (str (upper-case (str (first word)))
+         (lower-case (apply str (rest word))))))
 
 (defn dasherize
   "Replaces all underscores in the word with dashes.\n
   Example: (dasherize \"puni_puni\") => \"puni-puni\""
   [word]
-  (replace-re #"_" "-" word))
+  (if-let [word (normalize word)]
+    (replace-re #"_" "-" word)))
 
 (defn demodulize
   "Removes the module part from the expression in the string. \n
-  Examples: (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\") => \"Inflections\"
+  Examples: (demodulize \"inflections.MyRecord\") => \"MyRecord\"
+            (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\") => \"Inflections\"
             (demodulize \"Inflections\") => \"Inflections\""
   [word]
-  (replace-re #"^.*::" "" word))
+  (if-let [word (normalize word)]
+    (replace-re #"^.*(::|\.)" "" word)))
 
 (defn ordinalize
   "Turns a number into an ordinal string used to denote the position
@@ -52,15 +66,16 @@
   Examples: (ordinalize \"1\") => \"1st\"
             (ordinalize \"23\") => \"23rd\""
   [number]
-  (if-let [number (parse-integer number)]
-    (if (includes? (range 11 14) (mod number 100))
-      (str number "th")
-      (let [modulus (mod number 10)]
-        (cond
-         (= modulus 1) (str number "st")
-         (= modulus 2) (str number "nd")
-         (= modulus 3) (str number "rd")
-         :else (str number "th"))))))
+  (if-not (blank? number)
+    (if-let [number (parse-integer number)]    
+     (if (includes? (range 11 14) (mod number 100))
+       (str number "th")
+       (let [modulus (mod number 10)]
+         (cond
+          (= modulus 1) (str number "st")
+          (= modulus 2) (str number "nd")
+          (= modulus 3) (str number "rd")
+          :else (str number "th")))))))
 
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
@@ -69,12 +84,13 @@
   Examples: (underscore \"ActiveRecord\") => \"active_record\"
             (underscore \"ActiveRecord::Errors\") => \"active_record/errors\""
   [word]
-  (->> word
-       (replace-re #"::" "/")
-       (replace-re #"([A-Z]+)([A-Z][a-z])" "$1_$2")
-       (replace-re #"([a-z\d])([A-Z])" "$1_$2")
-       (replace-re #"-" "_")
-       (lower-case)))
+  (if-let [word (normalize word)]
+    (->> word
+         (replace-re #"::" "/")
+         (replace-re #"([A-Z]+)([A-Z][a-z])" "$1_$2")
+         (replace-re #"([a-z\d])([A-Z])" "$1_$2")
+         (replace-re #"-" "_")
+         (lower-case))))
 
 (defn foreign-key
   "Creates a foreign key name from a class name. The default separator
@@ -84,7 +100,9 @@
             (foreign-key \"Admin::Post\") => \"post_id\""
   ([word] (foreign-key word "_"))
   ([word separator]
-     (str (underscore (demodulize word)) (or separator "") "id")))
+     (if-let [word (normalize word)]
+       (if-not (blank? word)
+         (str (underscore (demodulize word)) (or separator "") "id")))))
 
 (defn hyphenize
   "Returns a string by threading word, which can be a string or a
@@ -98,5 +116,6 @@ Examples:
   (camelcase->identifier \"CountryFlag\")
   ; => \"country-flag\""
   [word]
-  (-> word str underscore dasherize))
+  (if-let [word (normalize word)]
+    (-> word str underscore dasherize)))
 
