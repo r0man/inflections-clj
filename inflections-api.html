@@ -62,11 +62,17 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections/foreign-key">foreign-key</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/hyphenize">hyphenize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections/irregular!">irregular!</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections/irregular?">irregular?</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/normalize">normalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections/ordinalize">ordinalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections/parameterize">parameterize</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections/plural!">plural!</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -146,7 +152,13 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections.transform/foreign-key">foreign-key</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/hyphenize">hyphenize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/normalize">normalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections.transform/ordinalize">ordinalize</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#inflections.transform/parameterize">parameterize</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#inflections.transform/underscore">underscore</a>
     </div>
@@ -263,7 +275,8 @@ Example: (dasherize "puni_puni") =&gt; "puni-puni"</pre>
 </pre>
   <pre id="var-docstr">Removes the module part from the expression in the string. 
 
-Examples: (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt; "Inflections"
+Examples: (demodulize "inflections.MyRecord") =&gt; "MyRecord"
+          (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt; "Inflections"
           (demodulize "Inflections") =&gt; "Inflections"</pre>
   
 </div><div id="var-entry">
@@ -280,6 +293,24 @@ Examples: (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt;
 Examples: (foreign-key "Message") =&gt; "message_id"
           (foreign-key "Message" false) =&gt; "messageid"
           (foreign-key "Admin::Post") =&gt; "post_id"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/hyphenize">hyphenize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (hyphenize word)
+</pre>
+  <pre id="var-docstr">Returns a string by threading word, which can be a string or a
+  symbol, through the functions str, underscore and dasherize.
+
+Examples:
+
+  (camelcase-&gt;identifier 'Continent)
+  ; =&gt; "continent"
+
+  (camelcase-&gt;identifier "CountryFlag")
+  ; =&gt; "country-flag"</pre>
   
 </div><div id="var-entry">
   <br />
@@ -309,6 +340,15 @@ Examples: (irregular? "child") =&gt; true
 </div><div id="var-entry">
   <br />
   <hr />
+  <h2 id="inflections/normalize">normalize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (normalize arg)
+</pre>
+  <pre id="var-docstr">Normalize a word.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
   <h2 id="inflections/ordinalize">ordinalize</h2>
   <span id="var-type">function</span><br />
   <pre id="var-usage">Usage: (ordinalize number)
@@ -318,6 +358,24 @@ in an ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
 
 Examples: (ordinalize "1") =&gt; "1st"
           (ordinalize "23") =&gt; "23rd"</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="inflections/parameterize">parameterize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (parameterize string &amp; [separator])
+</pre>
+  <pre id="var-docstr">Replaces special characters in a string so that it may be used as
+part of a pretty URL.
+
+Examples:
+
+  (parameterize "Donald E. Knuth")
+  ; =&gt; "donald-e-knuth"
+
+  (parameterize "Donald E. Knuth" "_")
+  ; =&gt; "donald_e_knuth"</pre>
   
 </div><div id="var-entry">
   <br />
@@ -633,7 +691,8 @@ Example: (dasherize "puni_puni") =&gt; "puni-puni"</pre>
 </pre>
   <pre id="var-docstr">Removes the module part from the expression in the string. 
 
-Examples: (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt; "Inflections"
+Examples: (demodulize "inflections.MyRecord") =&gt; "MyRecord"
+          (demodulize "ActiveRecord::CoreExtensions::String::Inflections") =&gt; "Inflections"
           (demodulize "Inflections") =&gt; "Inflections"</pre>
   
 </div><div id="var-entry">
@@ -652,6 +711,31 @@ Examples: (foreign-key "Message") =&gt; "message_id"
   
 </div><div id="var-entry">
   <hr />
+  <h2 id="inflections.transform/hyphenize">hyphenize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (hyphenize word)
+</pre>
+  <pre id="var-docstr">Returns a string by threading word, which can be a string or a
+  symbol, through the functions str, underscore and dasherize.
+
+Examples:
+
+  (camelcase-&gt;identifier 'Continent)
+  ; =&gt; "continent"
+
+  (camelcase-&gt;identifier "CountryFlag")
+  ; =&gt; "country-flag"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/normalize">normalize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (normalize arg)
+</pre>
+  <pre id="var-docstr">Normalize a word.</pre>
+  
+</div><div id="var-entry">
+  <hr />
   <h2 id="inflections.transform/ordinalize">ordinalize</h2>
   <span id="var-type">function</span><br />
   <pre id="var-usage">Usage: (ordinalize number)
@@ -661,6 +745,23 @@ in an ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
 
 Examples: (ordinalize "1") =&gt; "1st"
           (ordinalize "23") =&gt; "23rd"</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="inflections.transform/parameterize">parameterize</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (parameterize string &amp; [separator])
+</pre>
+  <pre id="var-docstr">Replaces special characters in a string so that it may be used as
+part of a pretty URL.
+
+Examples:
+
+  (parameterize "Donald E. Knuth")
+  ; =&gt; "donald-e-knuth"
+
+  (parameterize "Donald E. Knuth" "_")
+  ; =&gt; "donald_e_knuth"</pre>
   
 </div><div id="var-entry">
   <hr />
