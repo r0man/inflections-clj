@@ -1,4 +1,5 @@
 (ns inflections.transform
+  (:import java.util.regex.Pattern)
   (:use [clojure.contrib.string :only (blank? lower-case replace-by replace-str replace-re upper-case trim)]
         [clojure.contrib.seq-utils :only (includes?)]
         inflections.helper))
@@ -119,3 +120,24 @@ Examples:
   (if-let [word (normalize word)]
     (-> word str underscore dasherize)))
 
+(defn parameterize
+  "Replaces special characters in a string so that it may be used as
+part of a pretty URL.
+
+Examples:
+
+  (parameterize \"Donald E. Knuth\")
+  ; => \"donald-e-knuth\"
+
+  (parameterize \"Donald E. Knuth\" \"_\")
+  ; => \"donald_e_knuth\"
+"
+  [string & [separator]]
+  (if-let [string (normalize string)]
+    (let [separator (or separator "-")]      
+      (->> string
+           (replace-re #"(?i)[^a-z0-9_]+" separator)
+           (replace-re #"\++" separator)
+           (replace-re (Pattern/compile (str separator "{2,}")) separator)
+           (replace-re (Pattern/compile (str "(?i)(^" separator ")|(" separator "$)")) "")
+           lower-case))))
