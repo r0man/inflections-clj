@@ -49,8 +49,10 @@
   "Replaces all underscores in the word with dashes.\n
   Example: (dasherize \"puni_puni\") => \"puni-puni\""
   [word]
-  (if-let [word (normalize word)]
-    (replace-re #"_" "-" word)))
+  (if (keyword? word)
+    (keyword (dasherize (name word)))
+    (if-let [word (normalize word)]
+      (replace-re #"_" "-" word))))
 
 (defn demodulize
   "Removes the module part from the expression in the string. \n
@@ -85,13 +87,15 @@
   Examples: (underscore \"ActiveRecord\") => \"active_record\"
             (underscore \"ActiveRecord::Errors\") => \"active_record/errors\""
   [word]
-  (if-let [word (normalize word)]
-    (->> word
-         (replace-re #"::" "/")
-         (replace-re #"([A-Z]+)([A-Z][a-z])" "$1_$2")
-         (replace-re #"([a-z\d])([A-Z])" "$1_$2")
-         (replace-re #"-" "_")
-         (lower-case))))
+  (if (keyword? word)
+    (keyword (underscore (name word)))
+    (if-let [word (normalize word)]
+     (->> word
+          (replace-re #"::" "/")
+          (replace-re #"([A-Z]+)([A-Z][a-z])" "$1_$2")
+          (replace-re #"([a-z\d])([A-Z])" "$1_$2")
+          (replace-re #"-" "_")
+          (lower-case)))))
 
 (defn foreign-key
   "Creates a foreign key name from a class name. The default separator

@@ -38,7 +38,8 @@
     "puni_puni" "puni-puni"
     "street"  "street"
     "street_address" "street-address"
-    "person_street_address" "person-street-address"))
+    "person_street_address" "person-street-address"
+    :iso_3166_alpha_2 :iso-3166-alpha-2))
 
 (deftest test-demodulize
   (are [word expected]
@@ -122,7 +123,8 @@
     "HTMLTidy" "html_tidy"
     "HTMLTidyGenerator" "html_tidy_generator"
     "FreeBSD" "free_bsd"
-    "HTML" "html"))
+    "HTML" "html"
+    :iso-3166-alpha-2 :iso_3166_alpha_2))
 
 (deftest test-parameterize
   (are [string expected]
