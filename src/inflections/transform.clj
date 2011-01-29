@@ -24,8 +24,8 @@
   ([word]
      (if-let [word (normalize word)]
        (->> word
-            (replace-by #"/(.?)" #(str "::" (upper-case (nth % 1)))) 
-            (replace-by #"(?:^|_)(.)" #(upper-case (nth % 1))))))
+            (replace-by #"/(.?)" #(str "::" (upper-case (nth % 1))))
+            (replace-by #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
   ([word mode]
      (if-let [word (normalize word)]
        (cond
@@ -70,7 +70,7 @@
             (ordinalize \"23\") => \"23rd\""
   [number]
   (if-not (blank? number)
-    (if-let [number (parse-integer number)]    
+    (if-let [number (parse-integer number)]
      (if (includes? (range 11 14) (mod number 100))
        (str number "th")
        (let [modulus (mod number 10)]
@@ -138,7 +138,7 @@ Examples:
 "
   [string & [separator]]
   (if-let [string (normalize string)]
-    (let [separator (or separator "-")]      
+    (let [separator (or separator "-")]
       (->> string
            (replace-re #"(?i)[^a-z0-9_]+" separator)
            (replace-re #"\++" separator)

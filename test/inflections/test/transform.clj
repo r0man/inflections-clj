@@ -7,6 +7,7 @@
     nil nil
     "" ""
     "active_record" "ActiveRecord"
+    "active-record" "ActiveRecord"
     "active_record/errors" "ActiveRecord::Errors"))
 
 (deftest test-camelize-with-lower
@@ -15,6 +16,7 @@
     nil nil
     "" ""
     "active_record" "activeRecord"
+    "active-record" "activeRecord"
     "active_record/errors" "activeRecord::Errors"
     "product" "product"
     "special_guest" "specialGuest"
