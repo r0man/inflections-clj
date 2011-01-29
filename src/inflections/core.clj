@@ -19,7 +19,7 @@ user> (ordinalize \"52\")
 user> (capitalize \"clojure\")
 \"Clojure\"
 "}
-  inflections
+  inflections.core
   (:use [clojure.contrib.ns-utils :only (immigrate)]))
 
 (immigrate
