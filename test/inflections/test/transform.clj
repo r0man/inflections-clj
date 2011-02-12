@@ -133,9 +133,9 @@
     (is (= (parameterize string) expected))
     "Donald E. Knuth" "donald-e-knuth"
     "Random text with *(bad)* characters" "random-text-with-bad-characters"
-    "Allow_Under_Scores" "allow_under_scores"
     "Trailing bad characters!@#" "trailing-bad-characters"
     "!@#Leading bad characters" "leading-bad-characters"
     "Squeeze separators" "squeeze-separators"
+    "dasherize_underscores" "dasherize-underscores"
     "Test with + sign" "test-with-sign"
     "Test with malformed utf8 \251" "test-with-malformed-utf8"))

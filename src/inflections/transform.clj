@@ -140,7 +140,7 @@ Examples:
   (if-let [string (normalize string)]
     (let [separator (or separator "-")]
       (->> string
-           (replace-re #"(?i)[^a-z0-9_]+" separator)
+           (replace-re #"(?i)[^a-z0-9]+" separator)
            (replace-re #"\++" separator)
            (replace-re (Pattern/compile (str separator "{2,}")) separator)
            (replace-re (Pattern/compile (str "(?i)(^" separator ")|(" separator "$)")) "")
