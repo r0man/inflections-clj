@@ -1,7 +1,8 @@
 (ns inflections.transform
   (:import java.util.regex.Pattern)
-  (:use [clojure.contrib.string :only (blank? lower-case replace-by replace-str replace-re upper-case trim)]
-        [clojure.contrib.seq-utils :only (includes?)]
+  (:use [clojure.contrib.seq-utils :only (includes?)]
+        [clojure.contrib.string :only (blank? lower-case replace-by replace-re replace-str trim upper-case)]
+        [clojure.walk :only (postwalk)]
         inflections.helper))
 
 (defn normalize
@@ -96,6 +97,13 @@
           (replace-re #"([a-z\d])([A-Z])" "$1_$2")
           (replace-re #"-" "_")
           (lower-case)))))
+
+(defn underscore-keys
+  "Recursively replaces all dashes with underscore of all keys in m."
+  [m] (let [f (fn [[k v]]
+                [(underscore k)
+                 (if (map? v) (underscore-keys v) v)])]
+        (postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
 (defn foreign-key
   "Creates a foreign key name from a class name. The default separator
