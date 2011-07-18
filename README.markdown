@@ -15,7 +15,7 @@ The API documentation is available [here](http://r0man.github.com/inflections-cl
 ### Examples
 <pre>
 <code>
-user> (use 'inflections)
+user> (use 'inflections.core)
 nil
 user> (pluralize "word")
 "words"
