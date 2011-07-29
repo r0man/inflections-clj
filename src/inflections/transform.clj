@@ -1,6 +1,5 @@
 (ns inflections.transform
   (:refer-clojure :exclude [replace])
-  (:import java.util.regex.Pattern)
   (:use [clojure.string :only (blank? lower-case replace trim upper-case)]
         [clojure.walk :only (postwalk)]
         inflections.helper))
@@ -150,6 +149,6 @@ Examples:
       (-> string
           (replace #"(?i)[^a-z0-9]+" separator)
           (replace #"\++" separator)
-          (replace (Pattern/compile (str separator "{2,}")) separator)
-          (replace (Pattern/compile (str "(?i)(^" separator ")|(" separator "$)")) "")
+          (replace (re-pattern (str separator "{2,}")) separator)
+          (replace (re-pattern (str "(?i)(^" separator ")|(" separator "$)")) "")
           lower-case))))
