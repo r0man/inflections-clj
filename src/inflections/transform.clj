@@ -122,10 +122,10 @@
 
 Examples:
 
-  (camelcase->identifier 'Continent)
+  (hyphenize 'Continent)
   ; => \"continent\"
 
-  (camelcase->identifier \"CountryFlag\")
+  (hyphenize \"CountryFlag\")
   ; => \"country-flag\""
   [word]
   (if-let [word (normalize word)]
