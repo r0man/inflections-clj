@@ -1,7 +1,8 @@
 (ns inflections.uncountable
   (:use inflections.helper))
 
-(def *uncountable-words* (atom (sorted-set)))
+(def ^:dynamic *uncountable-words*
+  (atom (sorted-set)))
 
 (defn delete-uncountable [word]
   (if (string? word)

@@ -1,0 +1,43 @@
+# Clojure Inflection Library
+
+Rails-like inflections for Clojure.
+
+## Installation
+
+Via Clojars: http://clojars.org/inflections.
+
+## Documentation
+
+The API documentation is available at: http://r0man.github.com/inflections-clj.
+
+## Examples
+
+(use 'inflections.core)
+
+(pluralize "word")
+;=> "words"
+
+(pluralize "virus")
+;=> "viri"
+
+(singularize "apples")
+;=> "apple"
+
+(singularize "octopi")
+;=> "octopus"
+
+(underscore "puni-puni")
+;=> "puni_puni"
+
+(ordinalize "52")
+;=> "52nd"
+
+(capitalize "clojure")
+;=> "Clojure"
+
+## License
+
+Copyright (C) 2011 Roman Scherer
+
+Distributed under the Eclipse Public License, the same as Clojure.
+

@@ -1,7 +1,7 @@
 (ns inflections.transform
+  (:refer-clojure :exclude [replace])
   (:import java.util.regex.Pattern)
-  (:use [clojure.contrib.seq-utils :only (includes?)]
-        [clojure.contrib.string :only (blank? lower-case replace-by replace-re replace-str trim upper-case)]
+  (:use [clojure.string :only (blank? lower-case replace trim upper-case)]
         [clojure.walk :only (postwalk)]
         inflections.helper))
 
@@ -24,9 +24,9 @@
            (camelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
   ([word]
      (if-let [word (normalize word)]
-       (->> word
-            (replace-by #"/(.?)" #(str "::" (upper-case (nth % 1))))
-            (replace-by #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
+       (-> word
+           (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
+           (replace #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
   ([word mode]
      (if-let [word (normalize word)]
        (cond
@@ -53,7 +53,7 @@
   (if (keyword? word)
     (keyword (dasherize (name word)))
     (if-let [word (normalize word)]
-      (replace-re #"_" "-" word))))
+      (replace word #"_" "-"))))
 
 (defn demodulize
   "Removes the module part from the expression in the string. \n
@@ -62,7 +62,7 @@
             (demodulize \"Inflections\") => \"Inflections\""
   [word]
   (if-let [word (normalize word)]
-    (replace-re #"^.*(::|\.)" "" word)))
+    (replace word #"^.*(::|\.)" "")))
 
 (defn ordinalize
   "Turns a number into an ordinal string used to denote the position
@@ -72,14 +72,14 @@
   [number]
   (if-not (blank? number)
     (if-let [number (parse-integer number)]
-     (if (includes? (range 11 14) (mod number 100))
-       (str number "th")
-       (let [modulus (mod number 10)]
-         (cond
-          (= modulus 1) (str number "st")
-          (= modulus 2) (str number "nd")
-          (= modulus 3) (str number "rd")
-          :else (str number "th")))))))
+      (if (contains? (set (range 11 14)) (mod number 100))
+        (str number "th")
+        (let [modulus (mod number 10)]
+          (cond
+           (= modulus 1) (str number "st")
+           (= modulus 2) (str number "nd")
+           (= modulus 3) (str number "rd")
+           :else (str number "th")))))))
 
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
@@ -91,11 +91,11 @@
   (if (keyword? word)
     (keyword (underscore (name word)))
     (if-let [word (normalize word)]
-     (->> word
-          (replace-re #"::" "/")
-          (replace-re #"([A-Z]+)([A-Z][a-z])" "$1_$2")
-          (replace-re #"([a-z\d])([A-Z])" "$1_$2")
-          (replace-re #"-" "_")
+      (-> word
+          (replace #"::" "/")
+          (replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
+          (replace #"([a-z\d])([A-Z])" "$1_$2")
+          (replace #"-" "_")
           (lower-case)))))
 
 (defn underscore-keys
@@ -147,9 +147,9 @@ Examples:
   [string & [separator]]
   (if-let [string (normalize string)]
     (let [separator (or separator "-")]
-      (->> string
-           (replace-re #"(?i)[^a-z0-9]+" separator)
-           (replace-re #"\++" separator)
-           (replace-re (Pattern/compile (str separator "{2,}")) separator)
-           (replace-re (Pattern/compile (str "(?i)(^" separator ")|(" separator "$)")) "")
-           lower-case))))
+      (-> string
+          (replace #"(?i)[^a-z0-9]+" separator)
+          (replace #"\++" separator)
+          (replace (Pattern/compile (str separator "{2,}")) separator)
+          (replace (Pattern/compile (str "(?i)(^" separator ")|(" separator "$)")) "")
+          lower-case))))
