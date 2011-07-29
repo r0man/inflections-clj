@@ -1,76 +1,120 @@
 (ns inflections.transform
   (:refer-clojure :exclude [replace])
   (:use [clojure.string :only (blank? lower-case replace trim upper-case)]
-        [clojure.walk :only (postwalk)]
         inflections.helper))
 
-(defn normalize
-  "Normalize a word."
-  [arg]
-  (cond
-   (nil? arg) nil
-   (isa? (class arg) String) arg
-   :else (pr-str arg)))
+(defprotocol Inflection
+  (camelize [object mode] "Camelize object.")
+  (capitalize [object] "Capitalize object.")
+  (dasherize [object] "Dasherize object.")
+  (demodulize [object] "Demodulize object.")
+  (foreign-key [object sep] "Make object a foreign key.")
+  (hyphenize [object] "Hyphenize object.")
+  (ordinalize [object] "Ordinalize object.")
+  (parameterize [object sep] "Parameterize object.")
+  (underscore [object] "Underscore object.")
+  (underscore-keys [object] "Underscore all keys in object."))
 
-(defn camelize
-  "By default, camelize converts strings to UpperCamelCase. If the
- argument to camelize is set to :lower then camelize produces
- lowerCamelCase. camelize will also convert \"/\" to \"::\" which is
- useful for converting paths to namespaces.\n
- Examples: (camelize \"active_record\") => \"ActiveRecord\"
-           (camelize \"active_record\") => \"activeRecord\"
-           (camelize \"active_record/errors\") => \"ActiveRecord::Errors\"
-           (camelize \"active_record/errors\" :lower) => \"activeRecord::Errors\""
-  ([word]
-     (if-let [word (normalize word)]
-       (-> word
-           (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
-           (replace #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
-  ([word mode]
-     (if-let [word (normalize word)]
-       (cond
-        (= mode :lower) (camelize word lower-case)
-        (= mode :upper) (camelize word upper-case)
-        (fn? mode) (str (mode (str (first word)))
-                        (apply str (rest (camelize word))))))))
+(extend-type nil
+  Inflection
+  (camelize [_ mode]
+    nil)
+  (capitalize [_]
+    nil)
+  (dasherize [_]
+    nil)
+  (demodulize [_]
+    nil)
+  (foreign-key [_ sep]
+    nil)
+  (hyphenize [_]
+    nil)
+  (ordinalize [_]
+    nil)
+  (parameterize [_ sep]
+    nil)
+  (underscore [_]
+    nil))
 
-(defn capitalize
-  "Returns a string with the first character of the word converted to
-  uppercase and the remaining to lowercase.\n
-  Examples: (capitalize \"hello\") => \"Hello\"
-            (capitalize \"HELLO\") => \"Hello\"
-            (capitalize \"abc123\") => \"abc123\""
-  [word]
-  (if-let [word (normalize word)]
-    (str (upper-case (str (first word)))
-         (lower-case (apply str (rest word))))))
+(extend-type clojure.lang.Keyword
+  Inflection
+  (camelize [k mode]
+    (keyword (camelize (name k) mode)))
+  (capitalize [k]
+    (keyword (capitalize (name k))))
+  (dasherize [k]
+    (keyword (dasherize (name k))))
+  (demodulize [k]
+    (keyword (demodulize (name k))))
+  (foreign-key [k sep]
+    (keyword (foreign-key (name k) sep)))
+  (hyphenize [k]
+    (keyword (hyphenize (name k))))
+  (ordinalize [k]
+    (keyword (ordinalize (name k))))
+  (parameterize [k sep]
+    (keyword (parameterize (name k sep) sep)))
+  (underscore [k]
+    (keyword (underscore (name k)))))
 
-(defn dasherize
-  "Replaces all underscores in the word with dashes.\n
-  Example: (dasherize \"puni_puni\") => \"puni-puni\""
-  [word]
-  (if (keyword? word)
-    (keyword (dasherize (name word)))
-    (if-let [word (normalize word)]
-      (replace word #"_" "-"))))
+(extend-type java.lang.Integer
+  Inflection
+  (ordinalize [n]
+    (ordinalize (str n))))
 
-(defn demodulize
-  "Removes the module part from the expression in the string. \n
-  Examples: (demodulize \"inflections.MyRecord\") => \"MyRecord\"
-            (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\") => \"Inflections\"
-            (demodulize \"Inflections\") => \"Inflections\""
-  [word]
-  (if-let [word (normalize word)]
-    (replace word #"^.*(::|\.)" "")))
+(extend-type clojure.lang.Symbol
+  Inflection
+  (camelize [s mode]
+    (symbol (camelize (name s) mode)))
+  (capitalize [s]
+    (symbol (capitalize (name s))))
+  (dasherize [s]
+    (symbol (dasherize (name s))))
+  (demodulize [s]
+    (symbol (demodulize (name s))))
+  (foreign-key [s sep]
+    (symbol (foreign-key (name s) sep)))
+  (hyphenize [s]
+    (symbol (hyphenize (name s))))
+  (ordinalize [s]
+    (symbol (ordinalize (name s))))
+  (parameterize [s sep]
+    (symbol (parameterize (name s sep) sep)))
+  (underscore [s]
+    (symbol (underscore (name s)))))
 
-(defn ordinalize
-  "Turns a number into an ordinal string used to denote the position
-  in an ordered sequence such as 1st, 2nd, 3rd, 4th, etc.\n
-  Examples: (ordinalize \"1\") => \"1st\"
-            (ordinalize \"23\") => \"23rd\""
-  [number]
-  (if-not (blank? number)
-    (if-let [number (parse-integer number)]
+(extend-type java.lang.String
+  Inflection
+
+  (camelize [s mode]
+    (cond
+     (= mode :lower) (camelize s lower-case)
+     (= mode :upper) (camelize s upper-case)
+     (fn? mode) (str (mode (str (first s)))
+                     (apply str (rest (camelize s nil))))
+     :else (-> s
+               (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
+               (replace #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
+
+  (capitalize [s]
+    (str (upper-case (str (first s)))
+         (lower-case (apply str (rest s)))))
+
+  (dasherize [s]
+    (replace s #"_" "-"))
+
+  (demodulize [s]
+    (replace s #"^.*(::|\.)" ""))
+
+  (foreign-key [s sep]
+    (if-not (blank? s)
+      (str (underscore (demodulize s)) (or sep "_") "id")))
+
+  (hyphenize [s]
+    (-> s underscore dasherize))
+
+  (ordinalize [s]
+    (if-let [number (parse-integer s)]
       (if (contains? (set (range 11 14)) (mod number 100))
         (str number "th")
         (let [modulus (mod number 10)]
@@ -78,77 +122,21 @@
            (= modulus 1) (str number "st")
            (= modulus 2) (str number "nd")
            (= modulus 3) (str number "rd")
-           :else (str number "th")))))))
+           :else (str number "th"))))))
 
-(defn underscore
-  "The reverse of camelize. Makes an underscored, lowercase form from
-  the expression in the string. Changes \"::\" to \"/\" to convert
-  namespaces to paths.\n
-  Examples: (underscore \"ActiveRecord\") => \"active_record\"
-            (underscore \"ActiveRecord::Errors\") => \"active_record/errors\""
-  [word]
-  (if (keyword? word)
-    (keyword (underscore (name word)))
-    (if-let [word (normalize word)]
-      (-> word
-          (replace #"::" "/")
-          (replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
-          (replace #"([a-z\d])([A-Z])" "$1_$2")
-          (replace #"-" "_")
-          (lower-case)))))
+  (parameterize [s sep]
+    (let [sep (or sep "-")]
+      (-> s
+          (replace #"(?i)[^a-z0-9]+" sep)
+          (replace #"\++" sep)
+          (replace (re-pattern (str sep "{2,}")) sep)
+          (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")
+          lower-case)))
 
-(defn underscore-keys
-  "Recursively replaces all dashes with underscore of all keys in m."
-  [m] (let [f (fn [[k v]]
-                [(underscore k)
-                 (if (map? v) (underscore-keys v) v)])]
-        (postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
-
-(defn foreign-key
-  "Creates a foreign key name from a class name. The default separator
-  \"_\" is placed between the name and \"id\".\n
-  Examples: (foreign-key \"Message\") => \"message_id\"
-            (foreign-key \"Message\" false) => \"messageid\"
-            (foreign-key \"Admin::Post\") => \"post_id\""
-  ([word] (foreign-key word "_"))
-  ([word separator]
-     (if-let [word (normalize word)]
-       (if-not (blank? word)
-         (str (underscore (demodulize word)) (or separator "") "id")))))
-
-(defn hyphenize
-  "Returns a string by threading word, which can be a string or a
-  symbol, through the functions str, underscore and dasherize.
-
-Examples:
-
-  (hyphenize 'Continent)
-  ; => \"continent\"
-
-  (hyphenize \"CountryFlag\")
-  ; => \"country-flag\""
-  [word]
-  (if-let [word (normalize word)]
-    (-> word str underscore dasherize)))
-
-(defn parameterize
-  "Replaces special characters in a string so that it may be used as
-part of a pretty URL.
-
-Examples:
-
-  (parameterize \"Donald E. Knuth\")
-  ; => \"donald-e-knuth\"
-
-  (parameterize \"Donald E. Knuth\" \"_\")
-  ; => \"donald_e_knuth\"
-"
-  [string & [separator]]
-  (if-let [string (normalize string)]
-    (let [separator (or separator "-")]
-      (-> string
-          (replace #"(?i)[^a-z0-9]+" separator)
-          (replace #"\++" separator)
-          (replace (re-pattern (str separator "{2,}")) separator)
-          (replace (re-pattern (str "(?i)(^" separator ")|(" separator "$)")) "")
-          lower-case))))
+  (underscore [s]
+    (-> s
+        (replace #"::" "/")
+        (replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
+        (replace #"([a-z\d])([A-Z])" "$1_$2")
+        (replace #"-" "_")
+        (lower-case))))
