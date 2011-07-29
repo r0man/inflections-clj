@@ -1,4 +1,4 @@
-(defproject inflections "0.5.0"
+(defproject inflections "0.5.1-SNAPSHOT"
   :author "Roman Scherer"
   :autodoc {:copyright "Copyright (c) 2011 Roman Scherer" :name "inflections"}
   :description "Rails-like inflections for Clojure."
