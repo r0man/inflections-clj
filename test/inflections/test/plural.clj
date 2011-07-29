@@ -29,10 +29,11 @@
     (init-plural-rules)
     (are [word expected]
          (is (= (pluralize word) expected))
-         " " " " 
+         " " " "
          "" ""
          "ability" "abilities"
          "address" "addresses"
+         "amenity" "amenities"
          "agency" "agencies"
          "alias" "aliases"
          "analysis" "analyses"

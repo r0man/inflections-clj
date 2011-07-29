@@ -6,12 +6,13 @@
     (init-singular-rules)
     (are [word expected]
         (is (= (singularize word) expected))
-        " " " " 
+        " " " "
         "" ""
         "abilities" "ability"
         "addresses" "address"
         "agencies" "agency"
         "aliases" "alias"
+        "amenities" "amenity"
         "analyses" "analysis"
         "archives" "archive"
         "axes" "axis"

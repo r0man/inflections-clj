@@ -43,6 +43,7 @@
 (defn init-irregular-words []
   (reset-irregular-words!)
   (irregular!
+   "amenity" "amenities"
    "child" "children"
    "cow" "kine"
    "foot" "feet"

@@ -48,6 +48,7 @@
          (irregular! singular plural)
          (is (irregular? singular))
          (is (irregular? plural)))
+       "amenity" "amenities"
        "child" "children"
        "cow" "kine"
        "foot" "feet"
@@ -62,5 +63,5 @@
        "tooth" "teeth"
        "woman" "women"))
 
-  
+
 
