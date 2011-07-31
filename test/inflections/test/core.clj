@@ -206,11 +206,11 @@
     "Test with + sign" "test-with-sign"
     "Test with malformed utf8 \251" "test-with-malformed-utf8"))
 
-(deftest test-pluralize
+(deftest test-plural
   (are [word expected]
-    (do (is (= expected (pluralize word)))
-        (is (= (keyword expected) (pluralize (keyword word))))
-        (is (= (symbol expected) (pluralize (symbol word)))))
+    (do (is (= expected (plural word)))
+        (is (= (keyword expected) (plural (keyword word))))
+        (is (= (symbol expected) (plural (symbol word)))))
     " " " "
     "" ""
     "ability" "abilities"
@@ -274,11 +274,11 @@
     "wife" "wives"
     "wish" "wishes"))
 
-(deftest test-pluralize-with-irregular-words
+(deftest test-plural-with-irregular-words
   (are [word expected]
-    (do (is (= expected (pluralize word)))
-        (is (= (keyword expected) (pluralize (keyword word))))
-        (is (= (symbol expected) (pluralize (symbol word)))))
+    (do (is (= expected (plural word)))
+        (is (= (keyword expected) (plural (keyword word))))
+        (is (= (symbol expected) (plural (symbol word)))))
     "amenity" "amenities"
     "child" "children"
     "cow" "kine"
@@ -294,17 +294,17 @@
     "tooth" "teeth"
     "woman" "women"))
 
-(deftest test-pluralize-with-uncountable-words
+(deftest test-plural-with-uncountable-words
   (doseq [word @*uncountable-words*]
-    (is (= word (pluralize word)))
-    (is (= (keyword word) (pluralize (keyword word))))
-    (is (= (symbol word) (pluralize (symbol word))))))
+    (is (= word (plural word)))
+    (is (= (keyword word) (plural (keyword word))))
+    (is (= (symbol word) (plural (symbol word))))))
 
-(deftest test-singularize
+(deftest test-singular
   (are [word expected]
-    (do (is (= expected (singularize word)))
-        (is (= (keyword expected) (singularize (keyword word))))
-        (is (= (symbol expected) (singularize (symbol word)))))
+    (do (is (= expected (singular word)))
+        (is (= (keyword expected) (singular (keyword word))))
+        (is (= (symbol expected) (singular (symbol word)))))
     " " " "
     "" ""
     "abilities" "ability"

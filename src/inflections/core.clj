@@ -1,31 +1,4 @@
-(ns #^{:author "Roman Scherer"
-       :doc "Rails-like inflections for Clojure.
-
-Examples:
-
-  (use 'inflections)
-  ;=> nil
-
-  (pluralize \"word\")
-  ;=> \"words\"
-
-  (pluralize \"virus\")
-  ;=> \"viri\"
-
-  (singularize \"apples\")
-  ;=> \"apple\"
-
-  (singularize \"octopi\")
-  ;=> \"octopus\"
-
-  (underscore \"puni-puni\")
-  ;=> \"puni_puni\"
-
-  (ordinalize \"52\")
-  ;=> \"52nd\"
-
-  (capitalize \"clojure\")
-  ;=> \"Clojure\""}
+(ns #^{:author "Roman Scherer" :doc "Rails-like inflections for Clojure."}
   inflections.core
   (:require [inflections.transform :as t]
             [inflections.irregular :as i]
@@ -162,21 +135,21 @@ Examples:
     ; => \"donald_e_knuth\""
   [obj & [separator]] (t/parameterize obj separator))
 
-(defn pluralize
+(defn plural
   "Returns the plural of obj.
 
   Example:
 
-    (pluralize \"virus\")
+    (plural \"virus\")
     ; => \"virii\""
   [obj] (p/plural obj))
 
-(defn singularize
+(defn singular
   "Returns the singular of obj.
 
   Example:
 
-    (singularize \"mice\")
+    (singular \"mice\")
     ;=> \"mouse\""
   [obj] (s/singular obj))
 
@@ -220,3 +193,6 @@ Examples:
   (i/init-irregular-words))
 
 (init-inflections)
+
+(def singularize singular)
+(def pluralize plural)
