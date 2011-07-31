@@ -14,16 +14,16 @@ The API documentation is available at: http://r0man.github.com/inflections-clj.
 
 (use 'inflections.core)
 
-(pluralize "word")
+(plural "word")
 ;=> "words"
 
-(pluralize "virus")
+(plural "virus")
 ;=> "viri"
 
-(singularize "apples")
+(singular "apples")
 ;=> "apple"
 
-(singularize "octopi")
+(singular "octopi")
 ;=> "octopus"
 
 (underscore "puni-puni")
