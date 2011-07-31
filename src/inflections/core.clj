@@ -27,7 +27,11 @@ Examples:
   (capitalize \"clojure\")
   ;=> \"Clojure\""}
   inflections.core
-  (:require [inflections.transform :as t])
+  (:require [inflections.transform :as t]
+            [inflections.irregular :as i]
+            [inflections.uncountable :as u]
+            [inflections.plural :as p]
+            [inflections.singular :as s])
   (:use [clojure.walk :only (postwalk)]))
 
 (defn camelize
@@ -120,6 +124,18 @@ Examples:
     ; => \"country-flag\""
   [obj] (t/hyphenize obj))
 
+(defn irregular?
+  "Returns true if obj is a irregular word, otherwise false
+
+  Examples:
+
+    (irregular? \"child\")
+    ;=> true
+
+    (irregular? \"word\")
+    ;=> false"
+  [obj] (i/irregular? obj))
+
 (defn ordinalize
   "Turns obj into an ordinal string used to denote the position in an
   ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
@@ -146,6 +162,24 @@ Examples:
     ; => \"donald_e_knuth\""
   [obj & [separator]] (t/parameterize obj separator))
 
+(defn pluralize
+  "Returns the plural of obj.
+
+  Example:
+
+    (pluralize \"virus\")
+    ; => \"virii\""
+  [obj] (p/plural obj))
+
+(defn singularize
+  "Returns the singular of obj.
+
+  Example:
+
+    (singularize \"mice\")
+    ;=> \"mouse\""
+  [obj] (s/singular obj))
+
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
   the expression in the string. Changes \"::\" to \"/\" to convert
@@ -167,31 +201,22 @@ Examples:
                  (if (map? v) (underscore-keys v) v)])]
         (postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
+(defn uncountable?
+  "Returns true if obj is a uncountable word, otherwise false.
 
-(defn- immigrate
-  "Create a public var in this namespace for each public var in the
-  namespaces named by ns-names. The created vars have the same name, root
-  binding, and metadata as the original except that their :ns metadata
-  value is this namespace."
-  [& ns-names]
-  (doseq [ns ns-names]
-    (require ns)
-    (doseq [[sym var] (ns-publics ns)]
-      (let [sym (with-meta sym (assoc (meta var) :ns *ns*))]
-        (if (.hasRoot var)
-          (intern *ns* sym (.getRawRoot var))
-          (intern *ns* sym))))))
+  Examples:
 
-(immigrate
- 'inflections.irregular
- 'inflections.plural
- 'inflections.singular
- 'inflections.uncountable)
+    (uncountable? \"alcohol\")
+    ;=> true
+
+    (uncountable? \"word\")
+    ;=> false"
+  [obj] (u/uncountable? obj))
 
 (defn init-inflections []
-  (init-plural-rules)
-  (init-singular-rules)
-  (init-uncountable-words)
-  (init-irregular-words))
+  (p/init-plural-rules)
+  (s/init-singular-rules)
+  (u/init-uncountable-words)
+  (i/init-irregular-words))
 
 (init-inflections)

@@ -1,5 +1,8 @@
 (ns inflections.test.core
-  (:use clojure.test inflections.core))
+  (:use clojure.test
+        [inflections.irregular :only (*irregular-words*)]
+        [inflections.uncountable :only (*uncountable-words*)]
+        inflections.core))
 
 (deftest test-camelize
   (are [word expected]
@@ -47,9 +50,7 @@
     'HELLO 'Hello
     :HELLO :Hello
     "123ABC" "123abc"
-    :123ABC :123abc
-    ;; '123ABC '123abc TODO: invalid symbol?
-    ))
+    :123ABC :123abc))
 
 (deftest test-dasherize
   (are [word expected]
@@ -118,11 +119,18 @@
     'StreetAddress 'street-address
     :StreetAddress :street-address))
 
+(deftest test-irregular?
+  (is (not (empty? @*irregular-words*)))
+  (is (every? irregular? @*irregular-words*))
+  (is (every? irregular? (map keyword @*irregular-words*)))
+  (is (every? irregular? (map symbol @*irregular-words*))))
+
 (deftest test-ordinalize
+  (is (thrown? IllegalArgumentException (ordinalize "")))
+  (is (thrown? IllegalArgumentException (ordinalize "x")))
   (are [number expected]
     (= (ordinalize number) expected)
     nil nil
-    "" nil
     "0" "0th"
     "1" "1st"
     "2" "2nd"
@@ -197,6 +205,172 @@
     "dasherize_underscores" "dasherize-underscores"
     "Test with + sign" "test-with-sign"
     "Test with malformed utf8 \251" "test-with-malformed-utf8"))
+
+(deftest test-pluralize
+  (are [word expected]
+    (do (is (= expected (pluralize word)))
+        (is (= (keyword expected) (pluralize (keyword word))))
+        (is (= (symbol expected) (pluralize (symbol word)))))
+    " " " "
+    "" ""
+    "ability" "abilities"
+    "address" "addresses"
+    "amenity" "amenities"
+    "agency" "agencies"
+    "alias" "aliases"
+    "analysis" "analyses"
+    "archive" "archives"
+    "axis" "axes"
+    "basis" "bases"
+    "box" "boxes"
+    "buffalo" "buffaloes"
+    "bus" "buses"
+    "case" "cases"
+    "category" "categories"
+    "comment" "comments"
+    "crisis" "crises"
+    "database" "databases"
+    "datum" "data"
+    "day" "days"
+    "diagnosis" "diagnoses"
+    "diagnosis_a" "diagnosis_as"
+    "dwarf" "dwarves"
+    "edge" "edges"
+    "elf" "elves"
+    "fix" "fixes"
+    "foobar" "foobars"
+    "half" "halves"
+    "horse" "horses"
+    "house" "houses"
+    "index" "indices"
+    "louse" "lice"
+    "matrix" "matrices"
+    "matrix_fu" "matrix_fus"
+    "medium" "media"
+    "mouse" "mice"
+    "move" "moves"
+    "movie" "movies"
+    "newsletter" "newsletters"
+    "octopus" "octopi"
+    "ox" "oxen"
+    "perspective" "perspectives"
+    "photo" "photos"
+    "portfolio" "portfolios"
+    "prize" "prizes"
+    "process" "processes"
+    "query" "queries"
+    "quiz" "quizzes"
+    "safe" "saves"
+    "search" "searches"
+    "shoe" "shoes"
+    "stack" "stacks"
+    "status" "statuses"
+    "status_code" "status_codes"
+    "switch" "switches"
+    "testis" "testes"
+    "tomato" "tomatoes"
+    "vertex" "vertices"
+    "virus" "viri"
+    "wife" "wives"
+    "wish" "wishes"))
+
+(deftest test-pluralize-with-irregular-words
+  (are [word expected]
+    (do (is (= expected (pluralize word)))
+        (is (= (keyword expected) (pluralize (keyword word))))
+        (is (= (symbol expected) (pluralize (symbol word)))))
+    "amenity" "amenities"
+    "child" "children"
+    "cow" "kine"
+    "foot" "feet"
+    "louse" "lice"
+    "mailman" "mailmen"
+    "man" "men"
+    "mouse" "mice"
+    "move" "moves"
+    "ox" "oxen"
+    "person" "people"
+    "sex" "sexes"
+    "tooth" "teeth"
+    "woman" "women"))
+
+(deftest test-pluralize-with-uncountable-words
+  (doseq [word @*uncountable-words*]
+    (is (= word (pluralize word)))
+    (is (= (keyword word) (pluralize (keyword word))))
+    (is (= (symbol word) (pluralize (symbol word))))))
+
+(deftest test-singularize
+  (are [word expected]
+    (do (is (= expected (singularize word)))
+        (is (= (keyword expected) (singularize (keyword word))))
+        (is (= (symbol expected) (singularize (symbol word)))))
+    " " " "
+    "" ""
+    "abilities" "ability"
+    "addresses" "address"
+    "agencies" "agency"
+    "aliases" "alias"
+    "amenities" "amenity"
+    "analyses" "analysis"
+    "archives" "archive"
+    "axes" "axis"
+    "bases" "basis"
+    "boxes" "box"
+    "buffaloes" "buffalo"
+    "buses" "bus"
+    "cases" "case"
+    "categories" "category"
+    "comments" "comment"
+    "crises" "crisis"
+    "databases" "database"
+    "data" "datum"
+    "days" "day"
+    "diagnoses" "diagnosis"
+    "dwarves" "dwarf"
+    "edges" "edge"
+    "elves" "elf"
+    "experiences" "experience"
+    "fixes" "fix"
+    "foobars" "foobar"
+    "halves" "half"
+    "horses" "horse"
+    "houses" "house"
+    "indices" "index"
+    "lice" "louse"
+    "matrices" "matrix"
+    "media" "medium"
+    "mice" "mouse"
+    "movies" "movie"
+    "newsletters" "newsletter"
+    "octopi" "octopus"
+    "oxen" "ox"
+    "perspectives" "perspective"
+    "photos" "photo"
+    "portfolios" "portfolio"
+    "prizes" "prize"
+    "processes" "process"
+    "queries" "query"
+    "quizzes" "quiz"
+    "saves" "safe"
+    "searches" "search"
+    "shoes" "shoe"
+    "stacks" "stack"
+    "statuses" "status"
+    "switches" "switch"
+    "testes" "testis"
+    "tomatoes" "tomato"
+    "vertices" "vertex"
+    "viri" "virus"
+    "wives" "wife"
+    "wishes" "wish"
+    ))
+
+(deftest test-uncountable?
+  (is (not (empty? @*uncountable-words*)))
+  (is (every? uncountable? @*uncountable-words*))
+  (is (every? uncountable? (map keyword @*uncountable-words*)))
+  (is (every? uncountable? (map symbol @*uncountable-words*))))
 
 (deftest test-underscore
   (are [word expected]

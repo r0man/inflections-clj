@@ -1,24 +1,16 @@
 (ns inflections.test.uncountable
-  (:use clojure.test inflections.uncountable))
+  (:use clojure.test
+        inflections.uncountable))
 
-(deftest test-delete-uncountable
-  (reset-uncountable-words!)
-  (uncountable! "air")
-  (is (= (count @*uncountable-words*) 1))
-  (delete-uncountable "air")
-  (is (= (count @*uncountable-words*) 0)))
+(deftest test-add-uncountable
+  (is (not (uncountable? "test")))
+  (add-uncountable! "test")
+  (is (contains? @*uncountable-words* "test"))
+  (is (uncountable? "test"))
+  (delete-uncountable! "test"))
 
-(deftest test-reset-uncountable-words!
-  (uncountable! "air")
-  (reset-uncountable-words!)
-  (is (= (count @*uncountable-words*) 0)))
-
-(deftest test-uncountable?
-  (reset-uncountable-words!)
-  (is (not (uncountable? "air")))
-  (uncountable! "air")
-  (is (uncountable? "air")))
-
-(deftest test-uncountable
-  (init-uncountable-words)
-  (is (every? uncountable? @*uncountable-words*)))
+(deftest test-delete-uncountable!
+  (add-uncountable! "test")
+  (is (contains? @*uncountable-words* "test"))
+  (delete-uncountable! "test")
+  (is (not (contains? @*uncountable-words* "test"))))

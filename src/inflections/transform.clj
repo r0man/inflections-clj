@@ -1,19 +1,28 @@
 (ns inflections.transform
   (:refer-clojure :exclude [replace])
-  (:use [clojure.string :only (blank? lower-case replace trim upper-case)]
-        inflections.helper))
+  (:use [clojure.string :only (blank? lower-case replace upper-case)]))
 
 (defprotocol Inflection
-  (camelize [object mode] "Camelize object.")
-  (capitalize [object] "Capitalize object.")
-  (dasherize [object] "Dasherize object.")
-  (demodulize [object] "Demodulize object.")
-  (foreign-key [object sep] "Make object a foreign key.")
-  (hyphenize [object] "Hyphenize object.")
-  (ordinalize [object] "Ordinalize object.")
-  (parameterize [object sep] "Parameterize object.")
-  (underscore [object] "Underscore object.")
-  (underscore-keys [object] "Underscore all keys in object."))
+  (camelize [object mode]
+    "Camelize object.")
+  (capitalize [object]
+    "Capitalize object.")
+  (dasherize [object]
+    "Dasherize object.")
+  (demodulize [object]
+    "Demodulize object.")
+  (foreign-key [object sep]
+    "Make object a foreign key.")
+  (hyphenize [object]
+    "Hyphenize object.")
+  (ordinalize [object]
+    "Ordinalize object.")
+  (parameterize [object sep]
+    "Parameterize object.")
+  (underscore [object]
+    "Underscore object.")
+  (underscore-keys [object]
+    "Underscore all keys in object."))
 
 (extend-type nil
   Inflection
@@ -114,7 +123,7 @@
     (-> s underscore dasherize))
 
   (ordinalize [s]
-    (if-let [number (parse-integer s)]
+    (let [number (Integer/parseInt s)]
       (if (contains? (set (range 11 14)) (mod number 100))
         (str number "th")
         (let [modulus (mod number 10)]

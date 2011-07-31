@@ -1,67 +1,14 @@
 (ns inflections.test.irregular
   (:use clojure.test inflections.irregular))
 
-(deftest test-add-irregular
-  (reset-irregular-words!)
-  (add-irregular "man")
-  (is (= (seq @*irregular-words*) ["man"]))
-  (add-irregular "man")
-  (add-irregular "men")
-  (is (= (seq @*irregular-words*) ["man" "men"])))
+(deftest test-add-irregular!
+  (add-irregular! "singular" "plural")
+  (is (contains? @*irregular-words* "singular"))
+  (is (contains? @*irregular-words* "plural"))
+  (delete-irregular! "singular" "plural"))
 
-(deftest test-delete-irregular
-  (reset-irregular-words!)
-  (add-irregular "man")
-  (is (= (seq @*irregular-words*) ["man"]))
-  (delete-irregular "man")
-  (is (nil?  (seq @*irregular-words*))))
-
-(deftest test-reset-irregular-words!
-  (add-irregular "man")
-  (reset-irregular-words!)
-  (is (nil?  (seq @*irregular-words*))))
-
-(deftest test-irregular-with-single-rule
-  (reset-irregular-words!)
-  (irregular! "child" "children")
-  (is (irregular? "child"))
-  (is (irregular? "children")))
-
-(deftest test-irregular-with-multiple-rules
-  (reset-irregular-words!)
-  (irregular! "child" "children"
-             "cow" "kine")
-  (is (every? irregular? ["child" "children" "cow" "kine"])))
-
-(deftest test-irregular?
-  (reset-irregular-words!)
-  (is (not (every? irregular? ["child" "children"])))
-  (irregular! "child" "children")
-  (is (every? irregular? ["child" "children"])))
-
-(deftest test-irregular
-  (reset-irregular-words!)
-  (are [singular plural]
-       (do
-         (is (not (irregular? singular)))
-         (is (not (irregular? plural)))
-         (irregular! singular plural)
-         (is (irregular? singular))
-         (is (irregular? plural)))
-       "amenity" "amenities"
-       "child" "children"
-       "cow" "kine"
-       "foot" "feet"
-       "louse" "lice"
-       "mailman" "mailmen"
-       "man" "men"
-       "mouse" "mice"
-       "move" "moves"
-       "ox" "oxen"
-       "person" "people"
-       "sex" "sexes"
-       "tooth" "teeth"
-       "woman" "women"))
-
-
-
+(deftest test-delete-irregular!
+  (add-irregular! "singular" "plural")
+  (delete-irregular! "singular" "plural")
+  (is (not (contains? @*irregular-words* "singular")))
+  (is (not (contains? @*irregular-words* "plural"))))

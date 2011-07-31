@@ -31,14 +31,11 @@
     (is (= (str (:pattern rule-2)) "(n)ews$"))
     (is (= (:replacement rule-2) "$1ews"))))
 
-(deftest test-slurp-rules-with-too-view-arguments
-  (is (thrown? IllegalArgumentException (slurp-rules #"s$"))))
-
 (deftest test-resolve-rule
   (let [rule (make-rule #"s$" "")]
     (is (nil? (resolve-rule rule "word")))
     (is (= (resolve-rule rule "words") "word"))))
-   
+
 (deftest test-resolve-rules
   (let [rules [(make-rule #"(vir)us$" "$1i") (make-rule #"$" "s")]]
     (is (= (resolve-rules rules "word") "words"))

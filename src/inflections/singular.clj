@@ -6,6 +6,25 @@
 (def ^:dynamic *singular-rules*
   (atom []))
 
+(defprotocol Singular
+  (singular [obj] "Returns the singular of obj."))
+
+(extend-type clojure.lang.Keyword
+  Singular
+  (singular [k]
+    (keyword (singular (name k)))))
+
+(extend-type clojure.lang.Symbol
+  Singular
+  (singular [k]
+    (symbol (singular (name k)))))
+
+(extend-type String
+  Singular
+  (singular [s]
+    (if (or (blank? s) (uncountable? s))
+      s (resolve-rules (rseq @*singular-rules*) s))))
+
 (defn singular!
   "Define rule(s) to map words from singular to plural.\n
   Examples: (singular! #\"(n)ews$(?i)\" \"$1ews\")
@@ -15,20 +34,7 @@
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
     (add-rule! *singular-rules* rule)))
 
-(defn singularize
-  "Returns the singular of the given word.\n
-  Example: (singularize \"mice\") => \"mouse\""
-  [word]
-  (if (or (blank? word) (uncountable? word))
-    word
-    (resolve-rules (rseq @*singular-rules*) word)))
-
-(defn reset-singular-rules!
-  "Resets the rules used to map from plural to singular."
-  [] (reset-rules! *singular-rules*))
-
 (defn init-singular-rules []
-  (reset-singular-rules!)
   (singular!
    #"s$(?i)" ""
    #"(n)ews$(?i)" "$1ews"

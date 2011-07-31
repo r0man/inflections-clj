@@ -1,22 +1,20 @@
 (ns inflections.rules
   (:refer-clojure :exclude [replace])
-  (:use [clojure.string :only (replace)]
-        inflections.helper))
+  (:use [clojure.string :only (replace)]))
 
-(defstruct rule :pattern :replacement)
+(defrecord Rule [pattern replacement])
 
 (defn add-rule! [rules rule]
   (if-not (contains? (set (deref rules)) rule)
     (swap! rules conj rule)))
 
 (defn make-rule [pattern replacement]
-  (struct rule pattern replacement))
+  (Rule. pattern replacement))
 
 (defn slurp-rules
   "Returns a seq of rules, where the pattern and replacement must be
   given in pairs of two elements."
   [& patterns-and-replacements]
-  (assert-even-args patterns-and-replacements)
   (map #(apply make-rule %) (partition 2 patterns-and-replacements)))
 
 (defn resolve-rule [rule word]
@@ -30,7 +28,3 @@
 (defn reset-rules!
   "Resets the list of plural rules."
   [rules] (reset! rules []))
-
-(defmacro with-reset-rules [rules & body]
-  `(do (reset-rules! ~rules)
-       ~@body))

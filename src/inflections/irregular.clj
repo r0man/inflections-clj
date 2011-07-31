@@ -1,5 +1,5 @@
 (ns inflections.irregular
-  (:use inflections.helper
+  (:use [clojure.string :only (lower-case)]
         inflections.plural
         inflections.singular
         inflections.uncountable))
@@ -7,53 +7,65 @@
 (def ^:dynamic *irregular-words*
   (atom (sorted-set)))
 
-(defn add-irregular
-  "Adds the given word to *irregular-words*."
-  [word] (swap! *irregular-words* conj (normalize-word word)))
+(defprotocol Irregular
+  (add-irregular! [singular plural]
+    "Adds obj to the set of *irregular-words*.")
+  (delete-irregular! [singular plural]
+    "Delete obj from the set of *irregular-words*.")
+  (irregular? [obj]
+    "Returns true if obj is an irregular word, otherwise false."))
 
-(defn delete-irregular
-  "Deletes the given word from *irregular-words*."
-  [word] (swap! *irregular-words* disj (normalize-word word)))
+(extend-type clojure.lang.Keyword
+  Irregular
+  (add-irregular! [singular plural]
+    (add-irregular! (name singular) (name plural)))
+  (delete-irregular! [singular plural]
+    (delete-irregular! (name singular) (name plural)))
+  (irregular? [k]
+    (irregular? (name k))))
 
-(defn irregular?
-  "Returns true if the given word is irregular, else false.\n
-  Examples: (irregular? \"child\") => true
-            (irregular? \"word\") => false"
-  [word] (contains? @*irregular-words* (normalize-word word)))
+(extend-type String
+  Irregular
+  (add-irregular! [singular plural]
+    (let [singular (lower-case singular)
+          plural (lower-case (name plural))]
+      (delete-uncountable! singular)
+      (delete-uncountable! plural)
+      (singular! (re-pattern (str "^" plural "$")) singular)
+      (plural! (re-pattern (str "^" singular "$")) plural)
+      (swap! *irregular-words* conj singular)
+      (swap! *irregular-words* conj plural)))
+  (delete-irregular! [singular plural]
+    (let [singular (lower-case singular)
+          plural (lower-case (name plural))]
+      (swap! *irregular-words* disj singular)
+      (swap! *irregular-words* disj plural)))
+  (irregular? [s]
+    (contains? @*irregular-words* (lower-case s))))
 
-(defn irregular!
-  "Define words that are irregular in singular and plural.\n
-  Examples: (irregular! \"child\" \"children\")
-            (irregular! \"cow\" \"kine\"
-                        \"louse\" \"lice\")"
-  [& singulars-and-plurals]
-  (assert-even-args singulars-and-plurals)
-  (doseq [[singular plural] (partition 2 singulars-and-plurals)]
-    (delete-uncountable singular)
-    (delete-uncountable plural)
-    (singular! plural singular)
-    (plural! singular plural)
-    (add-irregular singular)
-    (add-irregular plural)))
-
-(defn reset-irregular-words!
-  "Resets the irregular words."
-  [] (reset! *irregular-words* (sorted-set)))
+(extend-type clojure.lang.Symbol
+  Irregular
+  (add-irregular! [singular plural]
+    (add-irregular! (name singular) (name plural)))
+  (delete-irregular! [singular plural]
+    (delete-irregular! (name singular) (name plural)))
+  (irregular? [k]
+    (irregular? (name k))))
 
 (defn init-irregular-words []
-  (reset-irregular-words!)
-  (irregular!
-   "amenity" "amenities"
-   "child" "children"
-   "cow" "kine"
-   "foot" "feet"
-   "louse" "lice"
-   "mailman" "mailmen"
-   "man" "men"
-   "mouse" "mice"
-   "move" "moves"
-   "ox" "oxen"
-   "person" "people"
-   "sex" "sexes"
-   "tooth" "teeth"
-   "woman" "women"))
+  (doall
+   (map #(add-irregular! (first %) (second %))
+        [["amenity" "amenities"]
+         ["child" "children"]
+         ["cow" "kine"]
+         ["foot" "feet"]
+         ["louse" "lice"]
+         ["mailman" "mailmen"]
+         ["man" "men"]
+         ["mouse" "mice"]
+         ["move" "moves"]
+         ["ox" "oxen"]
+         ["person" "people"]
+         ["sex" "sexes"]
+         ["tooth" "teeth"]
+         ["woman" "women"]])))
