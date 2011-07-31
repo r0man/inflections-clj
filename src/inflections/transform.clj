@@ -71,6 +71,11 @@
   (ordinalize [n]
     (ordinalize (str n))))
 
+(extend-type java.lang.Long
+  Inflection
+  (ordinalize [n]
+    (ordinalize (str n))))
+
 (extend-type clojure.lang.Symbol
   Inflection
   (camelize [s mode]
