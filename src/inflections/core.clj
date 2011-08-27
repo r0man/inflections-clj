@@ -153,6 +153,13 @@
     ;=> \"mouse\""
   [obj] (s/singular obj))
 
+(defn transform-keys
+  "Recursively transform all map keys of m by applying f on them."
+  [m f]
+  (letfn [(transform [[k v]]
+            [(f k) (if (map? v) (transform-keys v f) v)])]
+    (postwalk (fn [x] (if (map? x) (into {} (map transform x)) x)) m)))
+
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
   the expression in the string. Changes \"::\" to \"/\" to convert
@@ -168,11 +175,8 @@
   [obj] (t/underscore obj))
 
 (defn underscore-keys
-  "Recursively replaces all dashes with underscore of all keys in m."
-  [m] (let [f (fn [[k v]]
-                [(underscore k)
-                 (if (map? v) (underscore-keys v) v)])]
-        (postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
+  "Recursively replace all dashes in the keys of m with underscores."
+  [m] (transform-keys m underscore))
 
 (defn uncountable?
   "Returns true if obj is a uncountable word, otherwise false.
