@@ -405,9 +405,19 @@
     'iso-3166-alpha-2 'iso_3166_alpha_2
     :iso-3166-alpha-2 :iso_3166_alpha_2))
 
+(deftest test-hyphenize-keys
+  (are [m expected]
+    (is (= expected (hyphenize-keys m)))
+    {} {}
+    {"aB" {"cD" {"eF" 1}}} {"a-b" {"c-d" {"e-f" 1}}}
+    {:aB {:cD {:eF 1}} } {:a-b {:c-d {:e-f 1}}}
+    {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
+    ))
+
 (deftest test-underscore-keys
   (are [m expected]
     (is (= expected (underscore-keys m)))
+    {} {}
     {"a-1" {"b-2" {"c-3" 1}}} {"a_1" {"b_2" {"c_3" 1}}}
     {'a-1 {'b-2 {'c-3 1}}} {'a_1 {'b_2 {'c_3 1}}}
     {:a-1 {:b-2 {:c-3 1}}} {:a_1 {:b_2 {:c_3 1}}}))

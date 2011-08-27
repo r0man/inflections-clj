@@ -174,8 +174,12 @@
     ;=> \"active_record/errors\""
   [obj] (t/underscore obj))
 
+(defn hyphenize-keys
+  "Recursively apply hyphenize on all keys of m."
+  [m] (transform-keys m hyphenize))
+
 (defn underscore-keys
-  "Recursively replace all dashes in the keys of m with underscores."
+  "Recursively apply underscore on all keys of m."
   [m] (transform-keys m underscore))
 
 (defn uncountable?
