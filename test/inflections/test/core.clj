@@ -412,6 +412,7 @@
   (are [m expected]
     (is (= expected (hyphenize-keys m)))
     {} {}
+    {"name" "Closure"} {"name" "Closure"}
     {"aB" {"cD" {"eF" 1}}} {"a-b" {"c-d" {"e-f" 1}}}
     {:aB {:cD {:eF 1}} } {:a-b {:c-d {:e-f 1}}}
     {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
@@ -421,6 +422,7 @@
   (are [m expected]
     (is (= expected (underscore-keys m)))
     {} {}
+    {"name" "Closure"} {"name" "Closure"}
     {"a-1" {"b-2" {"c-3" 1}}} {"a_1" {"b_2" {"c_3" 1}}}
     {'a-1 {'b-2 {'c-3 1}}} {'a_1 {'b_2 {'c_3 1}}}
     {:a-1 {:b-2 {:c-3 1}}} {:a_1 {:b_2 {:c_3 1}}}

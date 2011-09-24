@@ -160,8 +160,8 @@
    (fn [memo key]
      (let [value (get m key)]
        (-> memo
-           (assoc (f key) (if (map? value) (transform-keys value f) value))
-           (dissoc key))))
+           (dissoc key)
+           (assoc (f key) (if (map? value) (transform-keys value f) value)))))
    m (keys m)))
 
 (defn underscore
