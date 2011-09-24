@@ -418,6 +418,26 @@
     {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
     (Foo. 1 {:c_3 3}) {:a-1 1 :b-2 {:c-3 3}}))
 
+(deftest test-stringify-keys
+  (are [m expected]
+    (is (= expected (stringify-keys m)))
+    {} {}
+    {"name" "Closure"} {"name" "Closure"}
+    {"a-1" {"b-2" {"c-3" 1}}} {"a-1" {"b-2" {"c-3" 1}}}
+    {'a-1 {'b-2 {'c-3 1}}}  {"a-1" {"b-2" {"c-3" 1}}}
+    {:a-1 {:b-2 {:c-3 1}}}  {"a-1" {"b-2" {"c-3" 1}}}
+    (Bar. 1 {:c-3 3}) {"a-1" 1 "b-2" {"c-3" 3}}))
+
+(deftest test-stringify-values
+  (are [m expected]
+    (is (= expected (stringify-values m)))
+    {} {}
+    {"name" "Closure"} {"name" "Closure"}
+    {"a-1" {"b-2" {"c-3" 1}}} {"a-1" {"b-2" {"c-3" "1"}}}
+    {'a-1 {'b-2 {'c-3 1}}}  {'a-1 {'b-2 {'c-3 "1"}}}
+    {:a-1 {:b-2 {:c-3 1}}}  {:a-1 {:b-2 {:c-3 "1"}}}
+    (Bar. 1 {:c-3 3}) (Bar. "1" {:c-3 "3"}) ))
+
 (deftest test-underscore-keys
   (are [m expected]
     (is (= expected (underscore-keys m)))

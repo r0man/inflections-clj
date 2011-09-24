@@ -164,6 +164,15 @@
            (assoc (f key) (if (map? value) (transform-keys value f) value)))))
    m (keys m)))
 
+(defn transform-values
+  "Recursively transform all map values of m by applying f on them."
+  [m f]
+  (reduce
+   (fn [memo key]
+     (let [value (get m key)]
+       (assoc memo key (if (map? value) (transform-values value f) (f value)))))
+   m (keys m)))
+
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
   the expression in the string. Changes \"::\" to \"/\" to convert
@@ -181,6 +190,14 @@
 (defn hyphenize-keys
   "Recursively apply hyphenize on all keys of m."
   [m] (transform-keys m hyphenize))
+
+(defn stringify-keys
+  "Recursively transform all keys of m into strings."
+  [m] (transform-keys m #(if (keyword? %) (name %) (str %))))
+
+(defn stringify-values
+  "Recursively transform all values of m into strings."
+  [m] (transform-values m #(if (keyword? %) (name %) (str %))))
 
 (defn underscore-keys
   "Recursively apply underscore on all keys of m."
