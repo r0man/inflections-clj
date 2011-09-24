@@ -156,9 +156,13 @@
 (defn transform-keys
   "Recursively transform all map keys of m by applying f on them."
   [m f]
-  (letfn [(transform [[k v]]
-            [(f k) (if (map? v) (transform-keys v f) v)])]
-    (postwalk (fn [x] (if (map? x) (into {} (map transform x)) x)) m)))
+  (reduce
+   (fn [memo key]
+     (let [value (get m key)]
+       (-> memo
+           (assoc (f key) (if (map? value) (transform-keys value f) value))
+           (dissoc key))))
+   m (keys m)))
 
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from

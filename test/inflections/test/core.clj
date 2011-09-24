@@ -4,6 +4,9 @@
         [inflections.uncountable :only (*uncountable-words*)]
         inflections.core))
 
+(defrecord Foo [a_1 b_2])
+(defrecord Bar [a-1 b-2])
+
 (deftest test-camelize
   (are [word expected]
     (= (camelize word) expected)
@@ -412,7 +415,7 @@
     {"aB" {"cD" {"eF" 1}}} {"a-b" {"c-d" {"e-f" 1}}}
     {:aB {:cD {:eF 1}} } {:a-b {:c-d {:e-f 1}}}
     {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
-    ))
+    (Foo. 1 {:c_3 3}) {:a-1 1 :b-2 {:c-3 3}}))
 
 (deftest test-underscore-keys
   (are [m expected]
@@ -420,4 +423,5 @@
     {} {}
     {"a-1" {"b-2" {"c-3" 1}}} {"a_1" {"b_2" {"c_3" 1}}}
     {'a-1 {'b-2 {'c-3 1}}} {'a_1 {'b_2 {'c_3 1}}}
-    {:a-1 {:b-2 {:c-3 1}}} {:a_1 {:b_2 {:c_3 1}}}))
+    {:a-1 {:b-2 {:c-3 1}}} {:a_1 {:b_2 {:c_3 1}}}
+    (Bar. 1 {:c-3 3}) {:a_1 1 :b_2 {:c_3 3}}))
