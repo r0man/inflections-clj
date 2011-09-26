@@ -277,6 +277,14 @@
     "wife" "wives"
     "wish" "wishes"))
 
+(deftest test-pluralize
+  (is (= "2 users" (pluralize 2 "person" "users")))
+  (are [count word expected]
+    (is (= expected (pluralize count word)))
+    0 "person" "0 people"
+    1 "person" "1 person"
+    2 "person" "2 people"))
+
 (deftest test-plural-with-irregular-words
   (are [word expected]
     (do (is (= expected (plural word)))

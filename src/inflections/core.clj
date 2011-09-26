@@ -144,6 +144,15 @@
     ; => \"virii\""
   [obj] (p/plural obj))
 
+(defn pluralize
+  "Attempts to pluralize the singular word unless count is 1. If
+  plural is supplied, it will use that when count is > 1, otherwise it
+  will use the inflector to determine the plural form."
+  [count singular & [opt-plural]]
+  (if (= 1 count)
+    (str count " " singular)
+    (str count " " (or opt-plural (plural singular)))))
+
 (defn singular
   "Returns the singular of obj.
 
@@ -222,6 +231,3 @@
   (i/init-irregular-words))
 
 (init-inflections)
-
-(def singularize singular)
-(def pluralize plural)
