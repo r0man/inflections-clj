@@ -63,9 +63,9 @@
     "puni_puni" "puni-puni"
     'puni_puni 'puni-puni
     :puni_puni :puni-puni
-    "street"  "street"
-    'street  'street
-    :street  :street
+    "street" "street"
+    'street 'street
+    :street :street
     "street_address" "street-address"
     'street_address 'street-address
     :street_address :street-address
@@ -74,7 +74,12 @@
     :person_street_address :person-street-address
     "iso_3166_alpha_2" "iso-3166-alpha-2"
     'iso_3166_alpha_2 'iso-3166-alpha-2
-    :iso_3166_alpha_2 :iso-3166-alpha-2))
+    :iso_3166_alpha_2 :iso-3166-alpha-2
+    {} {}
+    {"key_a" {"key_b" "value b"}} {"key-a" {"key-b" "value b"}}
+    {"key_a" [{"key_b" "value b"}]} {"key-a" [{"key-b" "value b"}]}
+    {:key_a {:key_b "value b"}} {:key-a {:key-b "value b"}}
+    {:key_a [{:key_b "value b"}]} {:key-a [{:key-b "value b"}]}))
 
 (deftest test-demodulize
   (are [word expected]
@@ -111,16 +116,24 @@
     "MyApplication::Billing::Account" "" "accountid"))
 
 (deftest test-hyphenize
-  (are [word expected]
-    (= (hyphenize word) expected)
+  (are [obj expected]
+    (= (hyphenize obj) expected)
     nil nil
     "" ""
-    "street"  "street"
-    'street  'street
-    :street  :street
+    "street" "street"
+    'street 'street
+    :street :street
     "StreetAddress" "street-address"
     'StreetAddress 'street-address
-    :StreetAddress :street-address))
+    :StreetAddress :street-address
+    "Street Address" "street-address"
+    {} {}
+    {"key a" "value a"} {"key-a" "value a"}
+    {"key a" [{"key b" "value b"}]} {"key-a" [{"key-b" "value b"}]}
+    {"aB" {"cD" {"eF" 1}}} {"a-b" {"c-d" {"e-f" 1}}}
+    {:aB {:cD {:eF 1}} } {:a-b {:c-d {:e-f 1}}}
+    {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
+    (Foo. 1 {:c_3 3}) {:a-1 1 :b-2 {:c-3 3}}))
 
 (deftest test-irregular?
   (is (not (empty? @*irregular-words*)))
@@ -198,8 +211,8 @@
     1001 "1001st"))
 
 (deftest test-parameterize
-  (are [string expected]
-    (is (= (parameterize string) expected))
+  (are [obj expected]
+    (is (= (parameterize obj) expected))
     "Donald E. Knuth" "donald-e-knuth"
     "Random text with *(bad)* characters" "random-text-with-bad-characters"
     "Trailing bad characters!@#" "trailing-bad-characters"
@@ -207,7 +220,12 @@
     "Squeeze separators" "squeeze-separators"
     "dasherize_underscores" "dasherize-underscores"
     "Test with + sign" "test-with-sign"
-    "Test with malformed utf8 \251" "test-with-malformed-utf8"))
+    "Test with malformed utf8 \251" "test-with-malformed-utf8"
+    :a_1 :a-1
+    {} {}
+    {"key a" "value a"} {"key-a" "value a"}
+    {"key a" [{"key b" "value b"}]} {"key-a" [{"key-b" "value b"}]}
+    (Foo. 1 {:c_3 3}) {:a-1 1 :b-2 {:c-3 3}}))
 
 (deftest test-plural
   (are [word expected]
@@ -414,17 +432,14 @@
     :HTML :html
     "iso-3166-alpha-2" "iso_3166_alpha_2"
     'iso-3166-alpha-2 'iso_3166_alpha_2
-    :iso-3166-alpha-2 :iso_3166_alpha_2))
-
-(deftest test-hyphenize-keys
-  (are [m expected]
-    (is (= expected (hyphenize-keys m)))
+    :iso-3166-alpha-2 :iso_3166_alpha_2
     {} {}
     {"name" "Closure"} {"name" "Closure"}
-    {"aB" {"cD" {"eF" 1}}} {"a-b" {"c-d" {"e-f" 1}}}
-    {:aB {:cD {:eF 1}} } {:a-b {:c-d {:e-f 1}}}
-    {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
-    (Foo. 1 {:c_3 3}) {:a-1 1 :b-2 {:c-3 3}}))
+    {"key-a" [{"key-b" "value b"}]} {"key_a" [{"key_b" "value b"}]}
+    {"a-1" {"b-2" {"c-3" 1}}} {"a_1" {"b_2" {"c_3" 1}}}
+    {'a-1 {'b-2 {'c-3 1}}} {'a_1 {'b_2 {'c_3 1}}}
+    {:a-1 {:b-2 {:c-3 1}}} {:a_1 {:b_2 {:c_3 1}}}
+    (Bar. 1 {:c-3 3}) {:a_1 1 :b_2 {:c_3 3}}))
 
 (deftest test-stringify-keys
   (are [m expected]
@@ -445,13 +460,3 @@
     {'a-1 {'b-2 {'c-3 1}}}  {'a-1 {'b-2 {'c-3 "1"}}}
     {:a-1 {:b-2 {:c-3 1}}}  {:a-1 {:b-2 {:c-3 "1"}}}
     (Bar. 1 {:c-3 3}) (Bar. "1" {:c-3 "3"}) ))
-
-(deftest test-underscore-keys
-  (are [m expected]
-    (is (= expected (underscore-keys m)))
-    {} {}
-    {"name" "Closure"} {"name" "Closure"}
-    {"a-1" {"b-2" {"c-3" 1}}} {"a_1" {"b_2" {"c_3" 1}}}
-    {'a-1 {'b-2 {'c-3 1}}} {'a_1 {'b_2 {'c_3 1}}}
-    {:a-1 {:b-2 {:c-3 1}}} {:a_1 {:b_2 {:c_3 1}}}
-    (Bar. 1 {:c-3 3}) {:a_1 1 :b_2 {:c_3 3}}))

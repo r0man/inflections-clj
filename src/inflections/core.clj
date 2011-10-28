@@ -145,13 +145,11 @@
   [obj] (p/plural obj))
 
 (defn pluralize
-  "Attempts to pluralize the singular word unless count is 1. If
-  plural is supplied, it will use that when count is > 1, otherwise it
-  will use the inflector to determine the plural form."
-  [count singular & [opt-plural]]
-  (if (= 1 count)
-    (str count " " singular)
-    (str count " " (or opt-plural (plural singular)))))
+  "Attempts to pluralize the word unless count is 1. If plural is
+  supplied, it will use that when count is > 1, otherwise it will use
+  the inflector to determine the plural form."
+  [count singular & [plural]]
+  (str count " " (if (= 1 count) singular (or plural (p/plural singular)))))
 
 (defn singular
   "Returns the singular of obj.
@@ -161,26 +159,6 @@
     (singular \"mice\")
     ;=> \"mouse\""
   [obj] (s/singular obj))
-
-(defn transform-keys
-  "Recursively transform all map keys of m by applying f on them."
-  [m f]
-  (reduce
-   (fn [memo key]
-     (let [value (get m key)]
-       (-> memo
-           (dissoc key)
-           (assoc (f key) (if (map? value) (transform-keys value f) value)))))
-   m (keys m)))
-
-(defn transform-values
-  "Recursively transform all map values of m by applying f on them."
-  [m f]
-  (reduce
-   (fn [memo key]
-     (let [value (get m key)]
-       (assoc memo key (if (map? value) (transform-values value f) (f value)))))
-   m (keys m)))
 
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
@@ -196,22 +174,6 @@
     ;=> \"active_record/errors\""
   [obj] (t/underscore obj))
 
-(defn hyphenize-keys
-  "Recursively apply hyphenize on all keys of m."
-  [m] (transform-keys m hyphenize))
-
-(defn stringify-keys
-  "Recursively transform all keys of m into strings."
-  [m] (transform-keys m #(if (keyword? %) (name %) (str %))))
-
-(defn stringify-values
-  "Recursively transform all values of m into strings."
-  [m] (transform-values m #(if (keyword? %) (name %) (str %))))
-
-(defn underscore-keys
-  "Recursively apply underscore on all keys of m."
-  [m] (transform-keys m underscore))
-
 (defn uncountable?
   "Returns true if obj is a uncountable word, otherwise false.
 
@@ -223,6 +185,26 @@
     (uncountable? \"word\")
     ;=> false"
   [obj] (u/uncountable? obj))
+
+(defn hyphenize-keys
+  "Recursively apply hyphenize on all keys of m."
+  [m] (t/transform-keys m hyphenize))
+
+(defn hyphenize-values
+  "Recursively apply hyphenize on all values of m."
+  [m] (t/transform-values m hyphenize))
+
+(defn stringify-keys
+  "Recursively transform all keys of m into strings."
+  [m] (t/transform-keys m #(if (keyword? %) (name %) (str %))))
+
+(defn stringify-values
+  "Recursively transform all values of m into strings."
+  [m] (t/transform-values m #(if (keyword? %) (name %) (str %))))
+
+(defn underscore-keys
+  "Recursively apply underscore on all keys of m."
+  [m] (t/transform-keys m underscore))
 
 (defn init-inflections []
   (p/init-plural-rules)

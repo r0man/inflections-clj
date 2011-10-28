@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [replace])
   (:use [clojure.string :only (blank? lower-case replace upper-case)]))
 
-(defprotocol Inflection
+(defprotocol ITransformation
   (camelize [object mode]
     "Camelize object.")
   (capitalize [object]
@@ -20,12 +20,37 @@
   (parameterize [object sep]
     "Parameterize object.")
   (underscore [object]
-    "Underscore object.")
-  (underscore-keys [object]
-    "Underscore all keys in object."))
+    "Underscore object."))
+
+(defn transform-keys
+  "Recursively transform all map keys of m by applying f on them."
+  [m f]
+  (if (map? m)
+    (reduce
+     (fn [memo key]
+       (let [value (get m key)]
+         (-> (dissoc memo key)
+             (assoc (f key)
+               (cond
+                (map? value) (transform-keys value f)
+                (sequential? value) (map #(transform-keys % f) value)
+                :else value)))))
+     m (keys m))
+    m))
+
+(defn transform-values
+  "Recursively transform all map values of m by applying f on them."
+  [m f]
+  (if (map? m)
+    (reduce
+     (fn [memo key]
+       (let [value (get m key)]
+         (assoc memo key (if (map? value) (transform-values value f) (f value)))))
+     m (keys m))
+    m))
 
 (extend-type nil
-  Inflection
+  ITransformation
   (camelize [_ mode]
     nil)
   (capitalize [_]
@@ -46,7 +71,7 @@
     nil))
 
 (extend-type clojure.lang.Keyword
-  Inflection
+  ITransformation
   (camelize [k mode]
     (keyword (camelize (name k) mode)))
   (capitalize [k]
@@ -62,22 +87,22 @@
   (ordinalize [k]
     (keyword (ordinalize (name k))))
   (parameterize [k sep]
-    (keyword (parameterize (name k sep) sep)))
+    (keyword (parameterize (name k) sep)))
   (underscore [k]
     (keyword (underscore (name k)))))
 
 (extend-type java.lang.Integer
-  Inflection
+  ITransformation
   (ordinalize [n]
     (ordinalize (str n))))
 
 (extend-type java.lang.Long
-  Inflection
+  ITransformation
   (ordinalize [n]
     (ordinalize (str n))))
 
 (extend-type clojure.lang.Symbol
-  Inflection
+  ITransformation
   (camelize [s mode]
     (symbol (camelize (name s) mode)))
   (capitalize [s]
@@ -98,7 +123,7 @@
     (symbol (underscore (name s)))))
 
 (extend-type java.lang.String
-  Inflection
+  ITransformation
 
   (camelize [s mode]
     (cond
@@ -125,7 +150,9 @@
       (str (underscore (demodulize s)) (or sep "_") "id")))
 
   (hyphenize [s]
-    (-> s underscore dasherize))
+    (-> (underscore s)
+        (dasherize)
+        (replace #"\s+" "-")))
 
   (ordinalize [s]
     (let [number (Integer/parseInt s)]
@@ -154,3 +181,24 @@
         (replace #"([a-z\d])([A-Z])" "$1_$2")
         (replace #"-" "_")
         (lower-case))))
+
+(extend-type clojure.lang.IPersistentMap
+  ITransformation
+  (camelize [m mode]
+    (transform-keys m #(camelize % mode)))
+  (capitalize [m]
+    (transform-keys m capitalize))
+  (dasherize [m]
+    (transform-keys m dasherize))
+  (demodulize [m]
+    (transform-keys m demodulize))
+  (foreign-key [m sep]
+    (transform-keys m #(foreign-key % sep)))
+  (hyphenize [m]
+    (transform-keys m hyphenize))
+  (ordinalize [m]
+    (transform-keys m ordinalize))
+  (parameterize [m sep]
+    (transform-keys m #(parameterize % sep)))
+  (underscore [m]
+    (transform-keys m underscore)))
