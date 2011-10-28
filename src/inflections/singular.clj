@@ -3,7 +3,7 @@
         inflections.rules
         inflections.uncountable))
 
-(def ^:dynamic *singular-rules*
+(def ^{:dynamic true} *singular-rules*
   (atom []))
 
 (defprotocol Singular

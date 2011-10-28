@@ -1,7 +1,7 @@
 (ns inflections.uncountable
   (:use [clojure.string :only (lower-case)]))
 
-(def ^:dynamic *uncountable-words*
+(def ^{:dynamic true} *uncountable-words*
   (atom (sorted-set)))
 
 (defprotocol Uncountable

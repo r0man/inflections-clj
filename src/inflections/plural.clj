@@ -3,7 +3,7 @@
         inflections.rules
         inflections.uncountable))
 
-(def ^:dynamic *plural-rules*
+(def ^{:dynamic true} *plural-rules*
   (atom []))
 
 (defprotocol Plural

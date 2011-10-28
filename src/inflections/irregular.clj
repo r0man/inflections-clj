@@ -4,7 +4,7 @@
         inflections.singular
         inflections.uncountable))
 
-(def ^:dynamic *irregular-words*
+(def ^{:dynamic true} *irregular-words*
   (atom (sorted-set)))
 
 (defprotocol Irregular
