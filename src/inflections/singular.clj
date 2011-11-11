@@ -23,7 +23,7 @@
   Singular
   (singular [s]
     (if (or (blank? s) (uncountable? s))
-      s (resolve-rules (rseq @*singular-rules*) s))))
+      s (or (resolve-rules (rseq @*singular-rules*) s) s))))
 
 (defn singular!
   "Define rule(s) to map words from singular to plural.\n

@@ -393,7 +393,7 @@
     "viri" "virus"
     "wives" "wife"
     "wishes" "wish"
-    ))
+    "weather" "weather"))
 
 (deftest test-uncountable?
   (is (not (empty? @*uncountable-words*)))
