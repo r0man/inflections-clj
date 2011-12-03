@@ -22,7 +22,7 @@
 (extend-type String
   Singular
   (singular [s]
-    (if (or (blank? s) (uncountable? s))
+    (if (uncountable? s)
       s (or (resolve-rules (rseq @*singular-rules*) s) s))))
 
 (defn singular!
