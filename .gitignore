@@ -9,3 +9,4 @@ lib
 /inflections-0.4.2-SNAPSHOT.jar
 /.lein-failures
 /multi-lib
+/.lein-deps-sum

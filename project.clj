@@ -1,7 +1,6 @@
-(defproject inflections "0.6.6-SNAPSHOT"
-  :author "Roman Scherer"
-  :autodoc {:copyright "Copyright (c) 2011 Roman Scherer" :name "inflections"}
+(defproject inflections "0.7.0-SNAPSHOT"
   :description "Rails-like inflections for Clojure."
-  :url "http://github.com/r0man/inflections-clj"
   :dependencies [[org.clojure/clojure "1.3.0"]]
-  :multi-deps {"1.2.1" [[org.clojure/clojure "1.2.1"]]})
+  :author "Roman Scherer"
+  :url "http://github.com/r0man/inflections-clj"
+  :min-lein-version "2.0.0")
