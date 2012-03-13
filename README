@@ -6,10 +6,6 @@ Rails-like inflections for Clojure.
 
 Via Clojars: http://clojars.org/inflections.
 
-## Documentation
-
-The API documentation is available at: http://r0man.github.com/inflections-clj.
-
 ## Examples
 
 (use 'inflections.core)
@@ -40,4 +36,3 @@ The API documentation is available at: http://r0man.github.com/inflections-clj.
 Copyright (C) 2011 Roman Scherer
 
 Distributed under the Eclipse Public License, the same as Clojure.
-

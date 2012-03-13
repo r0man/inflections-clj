@@ -1,12 +1,7 @@
-/inflections-standalone.jar
-/inflections.jar
 /pom.xml
 autodoc
 classes
 lib
-/inflections-0.4-SNAPSHOT.jar
-/inflections-0.4.1-SNAPSHOT.jar
-/inflections-0.4.2-SNAPSHOT.jar
 /.lein-failures
-/multi-lib
 /.lein-deps-sum
+/target
