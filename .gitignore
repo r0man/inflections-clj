@@ -6,3 +6,6 @@ lib
 /.lein-deps-sum
 /target
 /.lein-cljsbuild-compiler-*
+/.lein-cljsbuild-repl
+/crossover-cljs
+/.lein-plugins
