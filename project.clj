@@ -6,9 +6,9 @@
   :min-lein-version "2.0.0"
   :plugins [[lein-cljsbuild "0.1.3"]]
   :hooks [leiningen.cljsbuild]
-  :cljsbuild {:builds [{:source-path "src"
+  :cljsbuild {:builds [{:source-path "crossover-cljs"
                         :compiler {:output-to "target/inflections-debug.js"}}
-                       {:source-path "src"
+                       {:source-path "crossover-cljs"
                         :compiler {:output-to "target/inflections.js"
                                    :optimizations :advanced
                                    :pretty-print false}
@@ -20,7 +20,6 @@
                            inflections.singular
                            inflections.transform
                            inflections.uncountable]
-              :crossover-jar true
-              :crossover-path "src/cljs"}
+              :crossover-jar true}
   :source-paths ["src/clj"]
   :test-paths ["test/clj"])
