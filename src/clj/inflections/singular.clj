@@ -1,7 +1,7 @@
 (ns inflections.singular
   (:use [clojure.string :only (blank?)]
-        inflections.rules
-        inflections.uncountable))
+        [inflections.rules :only (add-rule! resolve-rules slurp-rules)]
+        [inflections.uncountable :only (uncountable?)]))
 
 (def ^{:dynamic true} *singular-rules*
   (atom []))
