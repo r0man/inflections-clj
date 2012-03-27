@@ -5,3 +5,4 @@ lib
 /.lein-failures
 /.lein-deps-sum
 /target
+/.lein-cljsbuild-compiler-*
