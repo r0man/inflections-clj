@@ -4,7 +4,7 @@
   :author "Roman Scherer"
   :url "http://github.com/r0man/inflections-clj"
   :plugins [[lein-cljsbuild "0.1.3"]]
-  :hooks [leiningen.cljsbuild]
+  ;; :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:source-path "src/cljs"
                         :compiler {:output-to "target/inflections-debug.js"}}
                        {:source-path "src/cljs"
