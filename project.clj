@@ -1,6 +1,6 @@
 (defproject inflections "0.7.0-SNAPSHOT"
   :description "Rails-like inflections for Clojure."
-  :dependencies [[org.clojure/clojure "1.3.0"]]
+  :dependencies [[org.clojure/clojure "1.4.0"]]
   :author "Roman Scherer"
   :url "http://github.com/r0man/inflections-clj"
   :plugins [[lein-cljsbuild "0.1.3"]]
