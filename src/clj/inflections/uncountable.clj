@@ -2,9 +2,18 @@
   (:use [clojure.string :only (lower-case)]))
 
 (def ^{:dynamic true} *uncountable-words*
-  (atom (sorted-set)))
+  (atom #{"air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"
+          "confusion" "cotton" "education" "electricity" "entertainment" "equipment"
+          "experience" "fiction" "fish" "food" "forgiveness" "fresh" "gold" "gossip" "grass"
+          "ground" "gum" "happiness" "history" "homework" "honey" "ice" "information" "jam"
+          "knowledge" "lightning" "liquid" "literature" "love" "luck" "luggage" "meat" "milk"
+          "mist" "money" "music" "news" "oil" "oxygen" "paper" "patience" "peanut" "pepper"
+          "petrol" "pork" "power" "pressure" "research" "rice" "sadness" "series" "sheep"
+          "shopping" "silver" "snow" "space" "species" "speed" "steam" "sugar" "sunshine" "tea"
+          "tennis" "thunder" "time" "toothpaste" "traffic" "up" "vinegar" "washing" "wine"
+          "wood" "wool"}))
 
-(defprotocol Uncountable
+(defprotocol IUncountable
   (add-uncountable! [obj]
     "Adds obj to the set of *uncountable-words*.")
   (delete-uncountable! [obj]
@@ -13,7 +22,7 @@
     "Returns true if obj is an uncountable word, otherwise false."))
 
 (extend-type clojure.lang.Keyword
-  Uncountable
+  IUncountable
   (add-uncountable! [k]
     (add-uncountable! (name k)))
   (delete-uncountable! [k]
@@ -22,7 +31,7 @@
     (uncountable? (name k))))
 
 (extend-type String
-  Uncountable
+  IUncountable
   (uncountable? [s]
     (contains? @*uncountable-words* (lower-case s)))
   (add-uncountable! [s]
@@ -31,24 +40,10 @@
     (swap! *uncountable-words* disj (lower-case s))))
 
 (extend-type clojure.lang.Symbol
-  Uncountable
+  IUncountable
   (add-uncountable! [k]
     (add-uncountable! (str k)))
   (delete-uncountable! [k]
     (delete-uncountable! (str k)))
   (uncountable? [k]
     (uncountable? (str k))))
-
-(defn init-uncountable-words []
-  (doall
-   (map add-uncountable!
-        ["air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"
-         "confusion" "cotton" "education" "electricity" "entertainment" "equipment"
-         "experience" "fiction" "fish" "food" "forgiveness" "fresh" "gold" "gossip" "grass"
-         "ground" "gum" "happiness" "history" "homework" "honey" "ice" "information" "jam"
-         "knowledge" "lightning" "liquid" "literature" "love" "luck" "luggage" "meat" "milk"
-         "mist" "money" "music" "news" "oil" "oxygen" "paper" "patience" "peanut" "pepper"
-         "petrol" "pork" "power" "pressure" "research" "rice" "sadness" "series" "sheep"
-         "shopping" "silver" "snow" "space" "species" "speed" "steam" "sugar" "sunshine" "tea"
-         "tennis" "thunder" "time" "toothpaste" "traffic" "up" "vinegar" "washing" "wine"
-         "wood" "wool"])))

@@ -209,7 +209,6 @@
 (defn init-inflections []
   (p/init-plural-rules)
   (s/init-singular-rules)
-  (u/init-uncountable-words)
   (i/init-irregular-words))
 
 (init-inflections)
