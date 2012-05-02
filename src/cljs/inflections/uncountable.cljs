@@ -16,6 +16,8 @@
 (defprotocol IUncountable
   (add-uncountable! [obj]
     "Adds obj to the set of *uncountable-words*.")
+  (countable? [obj]
+    "Returns true if obj is countable, otherwise false.")
   (delete-uncountable! [obj]
     "Delete obj from the set of *uncountable-words*.")
   (uncountable? [obj]
@@ -23,9 +25,11 @@
 
 (extend-type string
   IUncountable
-  (uncountable? [s]
-    (contains? @*uncountable-words* (lower-case (name s))))
+  (countable? [s]
+    (not (uncountable? s)))
   (add-uncountable! [s]
     (swap! *uncountable-words* conj (lower-case (name s))))
   (delete-uncountable! [s]
-    (swap! *uncountable-words* disj (lower-case (name s)))))
+    (swap! *uncountable-words* disj (lower-case (name s))))
+  (uncountable? [s]
+    (contains? @*uncountable-words* (lower-case (name s)))))

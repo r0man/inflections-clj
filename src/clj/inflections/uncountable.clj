@@ -16,15 +16,19 @@
 (defprotocol IUncountable
   (add-uncountable! [obj]
     "Adds obj to the set of *uncountable-words*.")
+  (countable? [obj]
+    "Returns true if obj is countable, otherwise false.")
   (delete-uncountable! [obj]
     "Delete obj from the set of *uncountable-words*.")
   (uncountable? [obj]
-    "Returns true if obj is an uncountable word, otherwise false."))
+    "Returns true if obj is uncountable, otherwise false."))
 
 (extend-type clojure.lang.Keyword
   IUncountable
   (add-uncountable! [k]
     (add-uncountable! (name k)))
+  (countable? [s]
+    (not (uncountable? s)))
   (delete-uncountable! [k]
     (delete-uncountable! (name k)))
   (uncountable? [k]
@@ -32,17 +36,21 @@
 
 (extend-type String
   IUncountable
-  (uncountable? [s]
-    (contains? @*uncountable-words* (lower-case s)))
   (add-uncountable! [s]
     (swap! *uncountable-words* conj (lower-case s)))
+  (countable? [s]
+    (not (uncountable? s)))
   (delete-uncountable! [s]
-    (swap! *uncountable-words* disj (lower-case s))))
+    (swap! *uncountable-words* disj (lower-case s)))
+  (uncountable? [s]
+    (contains? @*uncountable-words* (lower-case s))))
 
 (extend-type clojure.lang.Symbol
   IUncountable
   (add-uncountable! [k]
     (add-uncountable! (str k)))
+  (countable? [s]
+    (not (uncountable? s)))
   (delete-uncountable! [k]
     (delete-uncountable! (str k)))
   (uncountable? [k]
