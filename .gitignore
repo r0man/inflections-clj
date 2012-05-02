@@ -9,3 +9,4 @@ lib
 /.lein-cljsbuild-repl
 /crossover-cljs
 /.lein-plugins
+/.crossover-cljs
