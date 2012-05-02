@@ -13,14 +13,6 @@
                                    :optimizations :advanced
                                    :pretty-print false}
                         :jar true}]
-              :crossovers [inflections.core
-                           inflections.irregular
-                           inflections.plural
-                           inflections.rules
-                           inflections.singular
-                           inflections.transform
-                           inflections.uncountable]
-              :crossover-jar true
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "test-resources/index.html"]
