@@ -1,6 +1,6 @@
 # Clojure Inflection Library
 
-Rails-like inflections for Clojure.
+Rails-like inflection library for Clojure and ClojureScript.
 
 ## Installation
 
