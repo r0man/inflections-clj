@@ -10,3 +10,4 @@ lib
 /crossover-cljs
 /.lein-plugins
 /.crossover-cljs
+/stale/dependencies
