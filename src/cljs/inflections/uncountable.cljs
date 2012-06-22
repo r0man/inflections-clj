@@ -1,5 +1,5 @@
 (ns inflections.uncountable
-  (:use [clojure.string :only (lower-case)]))
+  (:use [clojure.string :only [lower-case]]))
 
 (def ^{:dynamic true} *uncountable-words*
   (atom #{"air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"

@@ -1,6 +1,6 @@
 (ns inflections.transform
   (:refer-clojure :exclude [replace])
-  (:use [clojure.string :only (blank? lower-case replace upper-case)]))
+  (:use [clojure.string :only [blank? lower-case replace upper-case]]))
 
 (defprotocol ITransformation
   (camelize [object mode]

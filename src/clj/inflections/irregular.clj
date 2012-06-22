@@ -1,8 +1,8 @@
 (ns inflections.irregular
-  (:use [clojure.string :only (lower-case)]
-        [inflections.plural :only (plural!)]
-        [inflections.singular :only (singular!)]
-        [inflections.uncountable :only (delete-uncountable!)]))
+  (:use [clojure.string :only [lower-case]]
+        [inflections.plural :only [plural!]]
+        [inflections.singular :only [singular!]]
+        [inflections.uncountable :only [delete-uncountable!]]))
 
 (def ^{:dynamic true} *irregular-words*
   (atom (sorted-set)))

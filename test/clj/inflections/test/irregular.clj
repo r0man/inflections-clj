@@ -1,5 +1,6 @@
 (ns inflections.test.irregular
-  (:use clojure.test inflections.irregular))
+  (:use clojure.test
+        inflections.irregular))
 
 (deftest test-add-irregular!
   (add-irregular! "singular" "plural")

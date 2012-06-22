@@ -3,7 +3,8 @@
   :url "http://github.com/r0man/inflections-clj"
   :author "Roman Scherer"
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.4.0"]]
+  :dependencies [[org.clojure/clojure "1.4.0"]
+                 [org.clojure/clojurescript "0.0-1424"]]
   :plugins [[lein-cljsbuild "0.2.1"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:source-path "src/cljs"
@@ -16,6 +17,6 @@
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
-               "firefox" ["firefox" "http://http://localhost:9000/"]}}
+               "firefox" ["firefox" "http://localhost:9000/"]}}
   :source-paths ["src/clj"]
   :test-paths ["test/clj"])

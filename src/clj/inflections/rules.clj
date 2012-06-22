@@ -1,6 +1,6 @@
 (ns inflections.rules
   (:refer-clojure :exclude [replace])
-  (:use [clojure.string :only (replace)]))
+  (:use [clojure.string :only [replace]]))
 
 (defrecord Rule [pattern replacement])
 

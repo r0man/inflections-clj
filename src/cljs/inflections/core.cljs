@@ -5,7 +5,7 @@
             [inflections.uncountable :as u]
             [inflections.plural :as p]
             [inflections.singular :as s])
-  (:use [clojure.walk :only (postwalk)]))
+  (:use [clojure.walk :only [postwalk]]))
 
 (defn camelize
   "Convert obj to camel case. By default, camelize converts to

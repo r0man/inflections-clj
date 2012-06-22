@@ -1,7 +1,7 @@
 (ns inflections.test.core
   (:use clojure.test
-        [inflections.irregular :only (*irregular-words*)]
-        [inflections.uncountable :only (*uncountable-words*)]
+        [inflections.irregular :only [*irregular-words*]]
+        [inflections.uncountable :only [*uncountable-words*]]
         inflections.core))
 
 (defrecord Foo [a_1 b_2])
