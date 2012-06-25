@@ -7,12 +7,12 @@
                  [org.clojure/clojurescript "0.0-1424"]]
   :plugins [[lein-cljsbuild "0.2.1"]]
   :hooks [leiningen.cljsbuild]
-  :cljsbuild {:builds [{:source-path "src/cljs"
-                        :compiler {:output-to "target/inflections-debug.js"}}
-                       {:source-path "src/cljs"
-                        :compiler {:output-to "target/inflections.js"
+  :cljsbuild {:builds [{:compiler {:output-to "target/inflections-debug.js"}
+                        :source-path "src/cljs"}
+                       {:compiler {:output-to "target/inflections.js"
                                    :optimizations :advanced
                                    :pretty-print false}
+                        :source-path "src/cljs"
                         :jar true}]
               :repl-listen-port 9000
               :repl-launch-commands
