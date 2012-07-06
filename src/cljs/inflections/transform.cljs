@@ -81,6 +81,7 @@
   ;; TODO: Fix me!
   (camelize [s mode]
     (cond
+     (blank? s) s
      (= mode :lower) (camelize s lower-case)
      (= mode :upper) (camelize s upper-case)
      (fn? mode) (str (mode (str (first s)))

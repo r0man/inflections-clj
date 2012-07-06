@@ -9,8 +9,8 @@
 (defrecord Bar [a-1 b-2])
 
 (defn test-camelize []
-  ;; (assert (nil? (camelize nil)))
-  ;; (assert (= "" (camelize "")))
+  (assert (nil? (camelize nil)))
+  (assert (= "" (camelize "")))
   ;; (assert (= "active_record" (camelize "ActiveRecord")))
   ;; (assert (= 'active_record (camelize 'ActiveRecord)))
   ;; (assert (= :active_record (camelize :ActiveRecord)))
