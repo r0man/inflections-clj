@@ -1,6 +1,7 @@
 (ns inflections.test.core
   (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
             [inflections.core :refer [hyphenize irregular? ordinalize parameterize plural pluralize singular]]
+            [inflections.core :refer [uncountable?]]
             [inflections.irregular :refer [*irregular-words*]]
             [inflections.uncountable :refer [*uncountable-words*]]))
 
@@ -284,6 +285,12 @@
   (assert (= "wish" (singular "wishes")))
   (assert (= "weather" (singular "weather"))))
 
+(defn test-uncountable? []
+  (assert (not (empty? @*uncountable-words*)))
+  (assert (every? uncountable? @*uncountable-words*))
+  (assert (every? uncountable? (map keyword @*uncountable-words*)))
+  (assert (every? uncountable? (map symbol @*uncountable-words*))))
+
 (defn test []
   (init-inflections)
   (test-camelize)
@@ -299,4 +306,5 @@
   (test-plural-with-irregular-words)
   (test-plural-with-uncountable-words)
   (test-pluralize)
-  (test-singular))
+  (test-singular)
+  (test-uncountable?))
