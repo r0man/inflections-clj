@@ -11,3 +11,4 @@ lib
 /.lein-plugins
 /.crossover-cljs
 /stale/dependencies
+/out
