@@ -1,7 +1,7 @@
 (ns inflections.test.core
   (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
             [inflections.core :refer [hyphenize irregular? ordinalize parameterize plural pluralize singular]]
-            [inflections.core :refer [uncountable?]]
+            [inflections.core :refer [uncountable? underscore]]
             [inflections.irregular :refer [*irregular-words*]]
             [inflections.uncountable :refer [*uncountable-words*]]))
 
@@ -291,6 +291,19 @@
   (assert (every? uncountable? (map keyword @*uncountable-words*)))
   (assert (every? uncountable? (map symbol @*uncountable-words*))))
 
+(defn test-underscore []
+  (assert (= nil (underscore nil)))
+  (assert (= "" (underscore "")))
+  (assert (= "product" (underscore "Product")))
+  (assert (= "special_guest" (underscore "SpecialGuest")))
+  (assert (= "application_controller" (underscore "ApplicationController")))
+  (assert (= "area51_controller" (underscore "Area51Controller")))
+  (assert (= "html_tidy" (underscore "HTMLTidy")))
+  (assert (= "html_tidy_generator" (underscore "HTMLTidyGenerator")))
+  (assert (= "free_bsd" (underscore "FreeBSD")))
+  (assert (= "html" (underscore "HTML")))
+  (assert (= "iso_3166_alpha_2" (underscore "iso-3166-alpha-2"))))
+
 (defn test []
   (init-inflections)
   (test-camelize)
@@ -307,4 +320,5 @@
   (test-plural-with-uncountable-words)
   (test-pluralize)
   (test-singular)
-  (test-uncountable?))
+  (test-uncountable?)
+  (test-underscore))
