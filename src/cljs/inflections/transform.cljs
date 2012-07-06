@@ -90,8 +90,11 @@
                (replace #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
 
   (capitalize [s]
-    (str (upper-case (str (first s)))
-         (lower-case (apply str (rest s)))))
+    (let [result (str (upper-case (str (first s)))
+                      (lower-case (apply str (rest s))))]
+      (cond (keyword? s) (keyword result)
+            (symbol? s) (symbol result)
+            :else result)))
 
   (dasherize [s]
     (replace s #"_" "-"))
