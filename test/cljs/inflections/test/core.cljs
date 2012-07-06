@@ -195,6 +195,22 @@
   (assert (= "wives" (plural "wife")))
   (assert (= "wishes" (plural "wish"))))
 
+(defn test-plural-with-irregular-words []
+  (assert (= "amenities" (plural "amenity")))
+  (assert (= "children" (plural "child")))
+  (assert (= "kine" (plural "cow")))
+  (assert (= "feet" (plural "foot")))
+  (assert (= "lice" (plural "louse")))
+  (assert (= "mailmen" (plural "mailman")))
+  (assert (= "men" (plural "man")))
+  (assert (= "mice" (plural "mouse")))
+  (assert (= "moves" (plural "move")))
+  (assert (= "oxen" (plural "ox")))
+  (assert (= "people" (plural "person")))
+  (assert (= "sexes" (plural "sex")))
+  (assert (= "teeth" (plural "tooth")))
+  (assert (= "women" (plural "woman"))))
+
 (defn test-pluralize []
   (assert (= "2 users" (pluralize 2 "person" "users")))
   (assert (= "0 people" (pluralize 0 "person")))
@@ -213,4 +229,5 @@
   (test-ordinalize)
   (test-parameterize)
   (test-plural)
+  (test-plural-with-irregular-words)
   (test-pluralize))
