@@ -1,9 +1,12 @@
 (ns inflections.test.core
   (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
             [inflections.core :refer [hyphenize irregular? ordinalize parameterize plural pluralize singular]]
-            [inflections.core :refer [uncountable? underscore]]
+            [inflections.core :refer [uncountable? underscore stringify-keys stringify-values]]
             [inflections.irregular :refer [*irregular-words*]]
             [inflections.uncountable :refer [*uncountable-words*]]))
+
+(defrecord Foo [a_1 b_2])
+(defrecord Bar [a-1 b-2])
 
 (defn test-camelize []
   ;; (assert (nil? (camelize nil)))
@@ -304,6 +307,22 @@
   (assert (= "html" (underscore "HTML")))
   (assert (= "iso_3166_alpha_2" (underscore "iso-3166-alpha-2"))))
 
+(defn test-stringify-keys []
+  (assert (= {} (stringify-keys {})))
+  (assert (= {"name" "Closure"} (stringify-keys {"name" "Closure"})))
+  (assert (= {"a-1" {"b-2" {"c-3" 1}}} (stringify-keys {"a-1" {"b-2" {"c-3" 1}}})))
+  (assert (= {"a-1" {"b-2" {"c-3" 1}}} (stringify-keys {'a-1 {'b-2 {'c-3 1}}}) ))
+  (assert (= {"a-1" {"b-2" {"c-3" 1}}} (stringify-keys {:a-1 {:b-2 {:c-3 1}}}) ))
+  (assert (= {"a-1" 1 "b-2" {"c-3" 3}} (stringify-keys (Bar. 1 {:c-3 3})))))
+
+(defn test-stringify-values []
+  (assert (= {} (stringify-values {})))
+  (assert (= {"name" "Closure"} (stringify-values {"name" "Closure"})))
+  (assert (= {"a-1" {"b-2" {"c-3" "1"}}} (stringify-values {"a-1" {"b-2" {"c-3" 1}}})))
+  (assert (= {'a-1 {'b-2 {'c-3 "1"}}} (stringify-values {'a-1 {'b-2 {'c-3 1}}}) ))
+  (assert (= {:a-1 {:b-2 {:c-3 "1"}}} (stringify-values {:a-1 {:b-2 {:c-3 1}}}) ))
+  (assert (= (Bar. "1" {:c-3 "3"})  (stringify-values (Bar. 1 {:c-3 3})))))
+
 (defn test []
   (init-inflections)
   (test-camelize)
@@ -321,4 +340,6 @@
   (test-pluralize)
   (test-singular)
   (test-uncountable?)
-  (test-underscore))
+  (test-underscore)
+  (test-stringify-keys)
+  (test-stringify-values))
