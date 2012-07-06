@@ -1,5 +1,7 @@
 (ns inflections.test.core
-  (:require [inflections.core :refer [camelize capitalize dasherize demodulize foreign-key]]))
+  (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
+            [inflections.core :refer [hyphenize irregular?]]
+            [inflections.irregular :refer [*irregular-words*]]))
 
 (defn test-camelize []
   ;; (assert (nil? (camelize nil)))
@@ -37,11 +39,28 @@
   (assert (nil? (foreign-key "")))
   (assert (= "message_id" (foreign-key "Message")))
   (assert (= "post_id" (foreign-key "Admin::Post")))
-  (assert (= "account_id" (foreign-key "MyApplication::Billing::Account"))))
+  (assert (= "account_id" (foreign-key "MyApplication::Billing::Account")))
+  (assert (= "account-id" (foreign-key "MyApplication::Billing::Account" "-"))))
+
+(defn test-hyphenize []
+  (assert (= nil (hyphenize nil)))
+  (assert (= "" (hyphenize "")))
+  (assert (= "street" (hyphenize "street")))
+  (assert (= "street-address" (hyphenize "streetAddress")))
+  (assert (= "iso-3166-alpha-2" (hyphenize "iso_3166_alpha_2"))))
+
+(defn test-irregular? []
+  (assert (not (empty? @*irregular-words*)))
+  (assert (every? irregular? @*irregular-words*))
+  (assert (every? irregular? (map keyword @*irregular-words*)))
+  (assert (every? irregular? (map symbol @*irregular-words*))))
 
 (defn test []
+  (init-inflections)
   (test-camelize)
   (test-capitalize)
   (test-dasherize)
   (test-demodulize)
-  (test-foreign-key))
+  (test-foreign-key)
+  (test-hyphenize)
+  (test-irregular?))
