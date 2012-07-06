@@ -1,7 +1,8 @@
 (ns inflections.test.core
   (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
             [inflections.core :refer [hyphenize irregular? ordinalize parameterize plural pluralize]]
-            [inflections.irregular :refer [*irregular-words*]]))
+            [inflections.irregular :refer [*irregular-words*]]
+            [inflections.uncountable :refer [*uncountable-words*]]))
 
 (defn test-camelize []
   ;; (assert (nil? (camelize nil)))
@@ -211,6 +212,10 @@
   (assert (= "teeth" (plural "tooth")))
   (assert (= "women" (plural "woman"))))
 
+(defn test-plural-with-uncountable-words []
+  (doseq [word @*uncountable-words*]
+    (assert (= word (plural word)))))
+
 (defn test-pluralize []
   (assert (= "2 users" (pluralize 2 "person" "users")))
   (assert (= "0 people" (pluralize 0 "person")))
@@ -230,4 +235,5 @@
   (test-parameterize)
   (test-plural)
   (test-plural-with-irregular-words)
+  (test-plural-with-uncountable-words)
   (test-pluralize))
