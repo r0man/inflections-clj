@@ -1,6 +1,6 @@
 (ns inflections.test.core
   (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
-            [inflections.core :refer [hyphenize irregular? ordinalize parameterize plural]]
+            [inflections.core :refer [hyphenize irregular? ordinalize parameterize plural pluralize]]
             [inflections.irregular :refer [*irregular-words*]]))
 
 (defn test-camelize []
@@ -193,8 +193,13 @@
   (assert (= "vertices" (plural "vertex")))
   (assert (= "viri" (plural "virus")))
   (assert (= "wives" (plural "wife")))
-  (assert (= "wishes" (plural "wish")))
-  )
+  (assert (= "wishes" (plural "wish"))))
+
+(defn test-pluralize []
+  (assert (= "2 users" (pluralize 2 "person" "users")))
+  (assert (= "0 people" (pluralize 0 "person")))
+  (assert (= "1 person" (pluralize 1 "person")))
+  (assert (= "2 people" (pluralize 2 "person"))))
 
 (defn test []
   (init-inflections)
@@ -207,4 +212,5 @@
   (test-irregular?)
   (test-ordinalize)
   (test-parameterize)
-  (test-plural))
+  (test-plural)
+  (test-pluralize))
