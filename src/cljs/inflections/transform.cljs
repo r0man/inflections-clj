@@ -125,7 +125,7 @@
   (parameterize [s sep]
     (let [sep (or sep "-")]
       (-> s
-          (replace #"(?i)[^a-z0-9]+" sep)
+          (replace #"[^A-Za-z0-9]+" sep)
           (replace #"\++" sep)
           (replace (re-pattern (str sep "{2,}")) sep)
           (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")

@@ -1,6 +1,6 @@
 (ns inflections.test.core
   (:require [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key]]
-            [inflections.core :refer [hyphenize irregular? ordinalize]]
+            [inflections.core :refer [hyphenize irregular? ordinalize parameterize]]
             [inflections.irregular :refer [*irregular-words*]]))
 
 (defn test-camelize []
@@ -120,6 +120,16 @@
   (assert (= "1000th" (ordinalize 1000)))
   (assert (= "1001st" (ordinalize 1001))))
 
+(defn test-parameterize []
+  (assert (= "donald-e-knuth" (parameterize "Donald E. Knuth")))
+  (assert (= "random-text-with-bad-characters" (parameterize "Random text with *(bad)* characters")))
+  (assert (= "trailing-bad-characters" (parameterize "Trailing bad characters!@#")))
+  (assert (= "leading-bad-characters" (parameterize "!@#Leading bad characters")))
+  (assert (= "squeeze-separators" (parameterize "Squeeze separators")))
+  (assert (= "dasherize-underscores" (parameterize "dasherize_underscores")))
+  (assert (= "test-with-sign" (parameterize "Test with + sign")))
+  (assert (= "test-with-malformed-utf8" (parameterize "Test with malformed utf8 \251"))))
+
 (defn test []
   (init-inflections)
   (test-camelize)
@@ -129,4 +139,5 @@
   (test-foreign-key)
   (test-hyphenize)
   (test-irregular?)
-  (test-ordinalize))
+  (test-ordinalize)
+  (test-parameterize))
