@@ -7,6 +7,8 @@
                  [org.clojure/clojurescript "0.0-1443"]]
   :plugins [[lein-cljsbuild "0.2.4"]]
   :hooks [leiningen.cljsbuild]
+  :source-paths ["src/clj"]
+  :test-paths ["test/clj"]
   :cljsbuild {:builds [{:compiler {:output-to "target/inflections-test.js"
                                    :optimizations :advanced
                                    :pretty-print true}
@@ -23,6 +25,5 @@
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
-               "firefox" ["firefox" "http://localhost:9000/"]}}
-  :source-paths ["src/clj"]
-  :test-paths ["test/clj"])
+               "firefox" ["firefox" "http://localhost:9000/"]}
+              :test-commands {"unit" ["./test-cljs.sh"]}})
