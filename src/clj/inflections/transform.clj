@@ -70,6 +70,27 @@
   (underscore [_]
     nil))
 
+(extend-type Object
+  ITransformation
+  (camelize [obj mode]
+    (camelize (str obj) mode))
+  (capitalize [obj]
+    (capitalize (str obj)))
+  (dasherize [obj]
+    (dasherize (str obj)))
+  (demodulize [obj]
+    (demodulize (str obj)))
+  (foreign-key [obj sep]
+    (foreign-key (str obj) sep))
+  (hyphenize [obj]
+    (hyphenize (str obj)))
+  (ordinalize [obj]
+    (ordinalize (str obj)))
+  (parameterize [obj sep]
+    (parameterize (str obj) sep))
+  (underscore [obj]
+    (underscore (str obj))))
+
 (extend-type clojure.lang.Keyword
   ITransformation
   (camelize [k mode]
@@ -90,16 +111,6 @@
     (keyword (parameterize (name k) sep)))
   (underscore [k]
     (keyword (underscore (name k)))))
-
-(extend-type java.lang.Integer
-  ITransformation
-  (ordinalize [n]
-    (ordinalize (str n))))
-
-(extend-type java.lang.Long
-  ITransformation
-  (ordinalize [n]
-    (ordinalize (str n))))
 
 (extend-type clojure.lang.Symbol
   ITransformation
