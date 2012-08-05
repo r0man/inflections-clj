@@ -1,4 +1,5 @@
-(ns inflections.number)
+(ns inflections.number
+  (:require [clojure.string :refer [split]]))
 
 (defn parse-double
   "Parse `s` as a double number."
@@ -19,3 +20,9 @@
   "Parse `s` as a long."
   [s] (try (Long/parseLong (str s))
            (catch NumberFormatException _ nil)))
+
+(defn parse-location
+  "Parse `s` as a latitude/longitude location map."
+  [s] (let [[lat lon] (map parse-double (split (str s) #"(,)|(\s+)"))]
+        (if (and lat lon)
+          {:latitude lat :longitude lon})))

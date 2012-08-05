@@ -1,5 +1,5 @@
 (ns inflections.test.number
-  (:require [inflections.number :refer [parse-float parse-integer]]))
+  (:require [inflections.number :refer [parse-double parse-float parse-integer parse-location]]))
 
 (defn test-parse-double []
   (assert (nil? (parse-double nil)))
@@ -22,6 +22,16 @@
   (assert (= 10 (parse-integer "10")))
   (assert (= -10 (parse-integer "-10"))))
 
+(defn test-parse-location []
+  (assert (nil? (parse-location nil)))
+  (assert (nil? (parse-location "")))
+  (assert (nil? (parse-location "a,b")))
+  (assert (= {:latitude 1.0 :longitude -2.0} (parse-location "1,-2")))
+  (assert (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0,-2.0")))
+  (assert (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0 -2.0"))))
+
 (defn test []
+  (test-parse-double)
   (test-parse-float)
-  (test-parse-integer))
+  (test-parse-integer)
+  (test-parse-location))
