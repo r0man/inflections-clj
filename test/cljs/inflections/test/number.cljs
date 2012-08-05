@@ -1,6 +1,13 @@
 (ns inflections.test.number
   (:require [inflections.number :refer [parse-float parse-integer]]))
 
+(defn test-parse-double []
+  (assert (nil? (parse-double nil)))
+  (assert (nil? (parse-double "")))
+  (assert (= 1.0 (parse-double "1")))
+  (assert (= 10.0 (parse-double "10.0")))
+  (assert (= -10.0 (parse-double "-10.0"))))
+
 (defn test-parse-float []
   (assert (nil? (parse-float nil)))
   (assert (nil? (parse-float "")))

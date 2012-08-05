@@ -2,6 +2,13 @@
   (:use clojure.test
         inflections.number))
 
+(deftest test-parse-double
+  (is (nil? (parse-double nil)))
+  (is (nil? (parse-double "")))
+  (is (= 1.0 (parse-double "1")))
+  (is (= 10.0 (parse-double "10.0")))
+  (is (= -10.0 (parse-double "-10.0"))))
+
 (deftest test-parse-float
   (is (nil? (parse-float nil)))
   (is (nil? (parse-float "")))

@@ -1,5 +1,10 @@
 (ns inflections.number)
 
+(defn parse-double
+  "Parse `s` as a double number."
+  [s] (try (Double/parseDouble (str s))
+           (catch NumberFormatException _ nil)))
+
 (defn parse-float
   "Parse `s` as a float number."
   [s] (try (Float/parseFloat (str s))
