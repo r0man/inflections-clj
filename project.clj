@@ -3,9 +3,8 @@
   :url "http://github.com/r0man/inflections-clj"
   :author "Roman Scherer"
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.4.0"]
-                 [org.clojure/clojurescript "0.0-1443"]]
-  :plugins [[lein-cljsbuild "0.2.4"]]
+  :dependencies [[org.clojure/clojure "1.4.0"]]
+  :plugins [[lein-cljsbuild "0.2.5"]]
   :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
