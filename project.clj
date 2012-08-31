@@ -1,10 +1,10 @@
-(defproject inflections "0.7.1-SNAPSHOT"
+(defproject inflections "0.7.2-SNAPSHOT"
   :description "Rails-like inflections for Clojure(Script)."
   :url "http://github.com/r0man/inflections-clj"
   :author "Roman Scherer"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.4.0"]]
-  :plugins [[lein-cljsbuild "0.2.5"]]
+  :plugins [[lein-cljsbuild "0.2.7"]]
   :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]

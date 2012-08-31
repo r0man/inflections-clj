@@ -1,5 +1,5 @@
-(ns inflections.test.number
-  (:require [inflections.number :refer [parse-double parse-float parse-integer parse-location]]))
+(ns inflections.test.util
+  (:require [inflections.util :refer [parse-double parse-float parse-integer parse-location parse-url]]))
 
 (defn test-parse-double []
   (assert (nil? (parse-double nil)))
@@ -30,8 +30,24 @@
   (assert (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0,-2.0")))
   (assert (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0 -2.0"))))
 
+(defn test-parse-url []
+  (let [spec (parse-url "postgresql://localhost/example")]
+    (assert (= "postgresql" (:scheme spec)))
+    (assert (= "localhost" (:server-name spec)))
+    (assert (= "/example" (:uri spec))))
+  (let [spec (parse-url "postgresql://tiger:scotch@localhost:5432/example?a=1&b=2")]
+    (assert (= "postgresql" (:scheme spec)))
+    (assert (= "tiger" (:user spec)))
+    (assert (= "scotch" (:password spec)))
+    (assert (= "localhost" (:server-name spec)))
+    (assert (= 5432 (:server-port spec)))
+    (assert (= "/example" (:uri spec)))
+    (assert (= "a=1&b=2" (:query-string spec)))
+    (assert (= {:a "1", :b "2"} (:params spec)))))
+
 (defn test []
   (test-parse-double)
   (test-parse-float)
   (test-parse-integer)
-  (test-parse-location))
+  (test-parse-location)
+  (test-parse-url))

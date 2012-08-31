@@ -1,8 +1,8 @@
 (ns inflections.test
   (:require [inflections.test.core :as core]
-            [inflections.test.number :as number]))
+            [inflections.test.util :as util]))
 
 (defn ^:export run []
   (core/test)
-  (number/test)
+  (util/test)
   "All tests passed.")
