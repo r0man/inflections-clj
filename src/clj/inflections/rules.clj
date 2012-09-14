@@ -18,9 +18,10 @@
   (map #(apply make-rule %) (partition 2 patterns-and-replacements)))
 
 (defn resolve-rule [rule word]
-  (let [inflection (replace word (:pattern rule) (:replacement rule))]
-    (if-not (= inflection word)
-      inflection)))
+  (let [pattern (:pattern rule)
+        replacement (:replacement rule)]
+    (if (re-find pattern word)
+      (replace word pattern replacement))))
 
 (defn resolve-rules [rules word]
   (first (remove nil? (map #(resolve-rule % word) rules))))
