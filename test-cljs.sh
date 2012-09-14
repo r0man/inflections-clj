@@ -4,10 +4,6 @@ JS_TESTS="target/inflections-test.js"
 
 [ ! -f $JS_TESTS ] && lein cljsbuild once
 
-which v8
-
-which d8
-
 if [ -n "`type d8 2> /dev/null`" ] ; then
     echo "inflections.test.run()" | d8 --shell $JS_TESTS
 elif [ -n "`type v8 2> /dev/null`" ] ; then
