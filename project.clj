@@ -4,7 +4,7 @@
   :author "Roman Scherer"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.4.0"]]
-  :plugins [[lein-cljsbuild "0.2.7"]]
+  :plugins [[lein-cljsbuild "0.2.9"]]
   :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
