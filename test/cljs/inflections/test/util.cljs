@@ -43,7 +43,16 @@
     (assert (= 5432 (:server-port spec)))
     (assert (= "/example" (:uri spec)))
     (assert (= "a=1&b=2" (:query-string spec)))
-    (assert (= {:a "1", :b "2"} (:params spec)))))
+    (assert (= {:a "1", :b "2"} (:params spec))))
+  (let [spec (parse-url "rabbitmq://tiger:scotch@localhost:5672")]
+    (assert (= "rabbitmq" (:scheme spec)))
+    (assert (= "tiger" (:user spec)))
+    (assert (= "scotch" (:password spec)))
+    (assert (= "localhost" (:server-name spec)))
+    (assert (= 5672 (:server-port spec)))
+    (assert (nil? (:uri spec)))
+    (assert (nil? (:params spec)))
+    (assert (nil? (:query-string spec)))))
 
 (defn test []
   (test-parse-double)

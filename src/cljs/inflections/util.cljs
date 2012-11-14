@@ -32,15 +32,16 @@
 (defn parse-url
   "Parse `s` as a url and return a Ring compatible map."
   [s]
-  (if-let [matches (re-matches #"([^:]+)://(([^:]+):([^@]+)@)?(([^:/]+)(:([0-9]+))?((/[^?]*)(\?(.*))?))" s)]
+  (if-let [matches (re-matches #"([^:]+)://(([^:]+):([^@]+)@)?(([^:/]+)(:([0-9]+))?((/[^?]*)(\?(.*))?)?)" s)]
     {:scheme (nth matches 1)
      :user (nth matches 3)
      :password (nth matches 4)
      :server-name (nth matches 6)
      :server-port (parse-integer (nth matches 8))
      :uri (nth matches 10)
-     :params (->> (split (or (nth matches 12) "") #"&")
-                  (map #(split %1 #"="))
-                  (mapcat #(vector (keyword (first %1)) (second %1)))
-                  (apply hash-map))
+     :params (if (nth matches 12)
+               (->> (split (or (nth matches 12) "") #"&")
+                    (map #(split %1 #"="))
+                    (mapcat #(vector (keyword (first %1)) (second %1)))
+                    (apply hash-map)))
      :query-string (nth matches 12)}))
