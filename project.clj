@@ -25,4 +25,9 @@
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
                "firefox" ["firefox" "http://localhost:9000/"]}
-              :test-commands {"unit" ["./test-cljs.sh"]}})
+              ;; :test-commands {"unit" ["./test-cljs.sh"]}
+              :test-commands
+              {"unit" ["phantomjs"
+                       "phantom/unit-test.js"
+                       "resources/private/html/unit-test.html"]}
+              })

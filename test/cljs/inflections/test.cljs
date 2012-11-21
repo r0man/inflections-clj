@@ -5,4 +5,4 @@
 (defn ^:export run []
   (core/test)
   (util/test)
-  "All tests passed.")
+  0)
