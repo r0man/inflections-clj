@@ -22,10 +22,10 @@ page.open(url, function (status) {
   });
 
   if (result != 0) {
-    console.log("*** Tests failed! ***");
+    console.log("*** PhantomJS Tests failed! ***");
     phantom.exit(1);
   }
 
-  console.log("Tests succeeded.");
+  console.log("PhantomJS Tests succeeded.");
   phantom.exit(0);
 });

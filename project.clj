@@ -24,10 +24,11 @@
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
-               "firefox" ["firefox" "http://localhost:9000/"]}
-              ;; :test-commands {"unit" ["./test-cljs.sh"]}
-              :test-commands
-              {"unit" ["phantomjs"
-                       "phantom/unit-test.js"
-                       "resources/private/html/unit-test.html"]}
-              })
+               "firefox" ["firefox" "http://localhost:9000/"]
+               "phantomjs" ["phantomjs"
+                            "resources/repl.js"
+                            "resources/repl.html"
+                            :stdout ".repl-phantom-naked-out"
+                            :stderr ".repl-phantom-naked-err"]}
+              :test-commands {"phantomjs" ["bin/phantomjs-test"]
+                              "v8" ["bin/v8-test"]}})
