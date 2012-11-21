@@ -1,0 +1,5 @@
+Loading URL: resources/repl.html
+TypeError: 'undefined' is not an object (evaluating 'inflections.repl.connect')
+
+  file:///home/roman/workspace/inflections-clj/resources/repl.html:7
+Loaded successfully.
