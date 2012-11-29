@@ -1,5 +1,6 @@
 (ns inflections.util
-  (:require [clojure.string :refer [split]]))
+  (:refer-clojure :exclude [replace])
+  (:require [clojure.string :refer [replace split]]))
 
 (defn parse-double
   "Parse `s` as a double number."
@@ -43,3 +44,7 @@
                     (mapcat #(vector (keyword (first %1)) (second %1)))
                     (apply hash-map)))
      :query-string (nth matches 12)}))
+
+(defn parse-percent
+  "Parse `s` as a percentage."
+  [s] (parse-double (replace s "%" "")))

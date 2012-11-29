@@ -61,3 +61,9 @@
     (is (nil? (:uri spec)))
     (is (nil? (:params spec)))
     (is (nil? (:query-string spec)))))
+
+(deftest test-parse-percent
+  (are [string expected]
+       (is (= expected (parse-percent string)))
+       "+18.84" 18.84
+       "+18.84%" 18.84))
