@@ -1,5 +1,5 @@
 (ns inflections.test.util
-  (:require [inflections.util :refer [parse-double parse-float parse-integer parse-location parse-url]]))
+  (:require [inflections.util :refer [parse-double parse-float parse-integer parse-long parse-location parse-url]]))
 
 (defn test-parse-double []
   (assert (nil? (parse-double nil)))
@@ -18,17 +18,28 @@
   (assert (= 1.0 (parse-float "1")))
   (assert (= 10.0 (parse-float "10.0")))
   (assert (= -10.0 (parse-float "-10.0")))
-  (assert (= 1000000.0 (parse-double "1M")))
-  (assert (= 1000000.0 (parse-double "1.0M")))
-  (assert (= 1000000000.0 (parse-double "1B")))
-  (assert (= 1000000000.0 (parse-double "1.0B"))))
+  (assert (= 1000000.0 (parse-float "1M")))
+  (assert (= 1000000.0 (parse-float "1.0M")))
+  (assert (= 1000000000.0 (parse-float "1B")))
+  (assert (= 1000000000.0 (parse-float "1.0B"))) )
 
 (defn test-parse-integer []
   (assert (nil? (parse-integer nil)))
   (assert (nil? (parse-integer "")))
   (assert (= 1 (parse-integer "1")))
   (assert (= 10 (parse-integer "10")))
-  (assert (= -10 (parse-integer "-10"))))
+  (assert (= -10 (parse-integer "-10")))
+  (assert (= 1000000 (parse-integer "1M")))
+  (assert (= 1000000000 (parse-integer "1B"))))
+
+(defn test-parse-long []
+  (assert (nil? (parse-long nil)))
+  (assert (nil? (parse-long "")))
+  (assert (= 1 (parse-long "1")))
+  (assert (= 10 (parse-long "10")))
+  (assert (= -10 (parse-long "-10")))
+  (assert (= 1000000 (parse-long "1M")))
+  (assert (= 1000000000 (parse-long "1B"))))
 
 (defn test-parse-location []
   (assert (nil? (parse-location nil)))

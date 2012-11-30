@@ -1,24 +1,37 @@
 (ns inflections.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [blank? replace split]]))
+  (:require [clojure.string :refer [blank? replace split upper-case]]))
 
-(defn parse-float [s]
+(defn- apply-unit [number unit]
+  (if (string? unit)
+    (case (upper-case unit)
+      (case unit
+        "M" (* number 1000000)
+        "B" (* number 1000000000)))
+    number))
+
+(defn- parse-number [s parse-fn]
   (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
-    (let [number (js/parseFloat (nth matches 1))]
-      (if-let [unit (nth matches 3)]
-        (case unit
-          "M" (* number (.pow js/Math 10 6))
-          "B" (* number (.pow js/Math 10 9)))
-        number))))
+    (let [number (parse-fn (nth matches 1))
+          unit (nth matches 3)]
+      (if-not (js/isNaN number)
+        (apply-unit number unit)))))
 
 (defn parse-double
-  "Parse `s` as a floating-point number."
-  [s] (parse-float s))
+  "Parse `s` as a double number."
+  [s] (parse-number s #(js/parseFloat %1)))
+
+(defn parse-float
+  "Parse `s` as a float number."
+  [s] (parse-number s #(js/parseFloat %1)))
 
 (defn parse-integer
-  "Parse `s` as a integer."
-  [s] (let [n (js/parseInt (str s))]
-        (if-not (js/isNaN n) n)))
+  "Parse `s` as a integer number."
+  [s] (parse-number s #(js/parseInt %1)))
+
+(defn parse-long
+  "Parse `s` as a long number."
+  [s] (parse-number s #(js/parseInt %1)))
 
 (defn parse-location
   "Parse `s` as a latitude/longitude location map."
