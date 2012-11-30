@@ -10,28 +10,31 @@
         "B" (* number 1000000000)))
     number))
 
-(defn- parse-number [s parse-fn]
+(defn parse-float
+  "Parse `s` as a float number."
+  [s]
   (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
-    (let [number (parse-fn (nth matches 1))
+    (let [number (js/parseFloat (nth matches 1))
           unit (nth matches 3)]
+      (if-not (js/isNaN number)
+        (apply-unit number unit)))))
+
+(defn parse-integer
+  "Parse `s` as a integer number."
+  [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]+)(M|B)?\s*" (str s))]
+    (let [number (js/parseInt (nth matches 1))
+          unit (nth matches 2)]
       (if-not (js/isNaN number)
         (apply-unit number unit)))))
 
 (defn parse-double
   "Parse `s` as a double number."
-  [s] (parse-number s #(js/parseFloat %1)))
-
-(defn parse-float
-  "Parse `s` as a float number."
-  [s] (parse-number s #(js/parseFloat %1)))
-
-(defn parse-integer
-  "Parse `s` as a integer number."
-  [s] (parse-number s #(js/parseInt %1)))
+  [s] (parse-float s))
 
 (defn parse-long
   "Parse `s` as a long number."
-  [s] (parse-number s #(js/parseInt %1)))
+  [s] (parse-integer s))
 
 (defn parse-location
   "Parse `s` as a latitude/longitude location map."

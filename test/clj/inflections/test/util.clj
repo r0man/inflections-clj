@@ -27,6 +27,7 @@
 (deftest test-parse-integer
   (is (nil? (parse-integer nil)))
   (is (nil? (parse-integer "")))
+  (is (nil? (parse-integer "1.1")))
   (is (= 1 (parse-integer "1")))
   (is (= 10 (parse-integer "10")))
   (is (= -10 (parse-integer "-10")))
@@ -36,6 +37,7 @@
 (deftest test-parse-long
   (is (nil? (parse-long nil)))
   (is (nil? (parse-long "")))
+  (is (nil? (parse-long "1.1")))
   (is (= 1 (parse-long "1")))
   (is (= 10 (parse-long "10")))
   (is (= -10 (parse-long "-10")))

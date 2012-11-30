@@ -12,9 +12,10 @@
 
 (defn- parse-number [s parse-fn]
   (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
-    (let [number (parse-fn (nth matches 1))
-          unit (nth matches 3)]
-      (apply-unit number unit))))
+    (try (let [number (parse-fn (nth matches 1))
+               unit (nth matches 3)]
+           (apply-unit number unit))
+         (catch NumberFormatException _ nil))))
 
 (defn parse-double
   "Parse `s` as a double number."

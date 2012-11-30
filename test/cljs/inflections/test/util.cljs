@@ -26,6 +26,7 @@
 (defn test-parse-integer []
   (assert (nil? (parse-integer nil)))
   (assert (nil? (parse-integer "")))
+  (assert (nil? (parse-integer "1.1")))
   (assert (= 1 (parse-integer "1")))
   (assert (= 10 (parse-integer "10")))
   (assert (= -10 (parse-integer "-10")))
@@ -35,6 +36,7 @@
 (defn test-parse-long []
   (assert (nil? (parse-long nil)))
   (assert (nil? (parse-long "")))
+  (assert (nil? (parse-long "1.1")))
   (assert (= 1 (parse-long "1")))
   (assert (= 10 (parse-long "10")))
   (assert (= -10 (parse-long "-10")))
