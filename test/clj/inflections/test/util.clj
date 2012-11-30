@@ -7,14 +7,22 @@
   (is (nil? (parse-double "")))
   (is (= 1.0 (parse-double "1")))
   (is (= 10.0 (parse-double "10.0")))
-  (is (= -10.0 (parse-double "-10.0"))))
+  (is (= -10.0 (parse-double "-10.0")))
+  (is (= 1000000.0 (parse-double "1M")))
+  (is (= 1000000.0 (parse-double "1.0M")))
+  (is (= 1000000000.0 (parse-double "1B")))
+  (is (= 1000000000.0 (parse-double "1.0B"))))
 
 (deftest test-parse-float
   (is (nil? (parse-float nil)))
   (is (nil? (parse-float "")))
   (is (= 1.0 (parse-float "1")))
   (is (= 10.0 (parse-float "10.0")))
-  (is (= -10.0 (parse-float "-10.0"))))
+  (is (= -10.0 (parse-float "-10.0")))
+  (is (= 1000000.0 (parse-float "1M")))
+  (is (= 1000000.0 (parse-float "1.0M")))
+  (is (= 1000000000.0 (parse-float "1B")))
+  (is (= 1000000000.0 (parse-float "1.0B")))  )
 
 (deftest test-parse-integer
   (is (nil? (parse-integer nil)))

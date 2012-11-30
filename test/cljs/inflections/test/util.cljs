@@ -6,14 +6,22 @@
   (assert (nil? (parse-double "")))
   (assert (= 1.0 (parse-double "1")))
   (assert (= 10.0 (parse-double "10.0")))
-  (assert (= -10.0 (parse-double "-10.0"))))
+  (assert (= -10.0 (parse-double "-10.0")))
+  (assert (= 1000000.0 (parse-double "1M")))
+  (assert (= 1000000.0 (parse-double "1.0M")))
+  (assert (= 1000000000.0 (parse-double "1B")))
+  (assert (= 1000000000.0 (parse-double "1.0B"))))
 
 (defn test-parse-float []
   (assert (nil? (parse-float nil)))
   (assert (nil? (parse-float "")))
   (assert (= 1.0 (parse-float "1")))
   (assert (= 10.0 (parse-float "10.0")))
-  (assert (= -10.0 (parse-float "-10.0"))))
+  (assert (= -10.0 (parse-float "-10.0")))
+  (assert (= 1000000.0 (parse-double "1M")))
+  (assert (= 1000000.0 (parse-double "1.0M")))
+  (assert (= 1000000000.0 (parse-double "1B")))
+  (assert (= 1000000000.0 (parse-double "1.0B"))))
 
 (defn test-parse-integer []
   (assert (nil? (parse-integer nil)))

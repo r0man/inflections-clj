@@ -2,15 +2,25 @@
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [replace split]]))
 
-(defn parse-double
-  "Parse `s` as a double number."
-  [s] (try (Double/parseDouble (str s))
-           (catch NumberFormatException _ nil)))
+(defn parse-double [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
+    (let [number (Double/parseDouble (nth matches 1))]
+      (if-let [unit (nth matches 3)]
+        (case unit
+          "M" (* number (Math/pow 10 6))
+          "B" (* number (Math/pow 10 9)))
+        number))))
 
 (defn parse-float
   "Parse `s` as a float number."
-  [s] (try (Float/parseFloat (str s))
-           (catch NumberFormatException _ nil)))
+  [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
+    (let [number (Float/parseFloat (nth matches 1))]
+      (if-let [unit (nth matches 3)]
+        (case unit
+          "M" (* number (Math/pow 10 6))
+          "B" (* number (Math/pow 10 9)))
+        number))))
 
 (defn parse-integer
   "Parse `s` as a integer."

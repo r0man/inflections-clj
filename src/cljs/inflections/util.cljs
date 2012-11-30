@@ -1,16 +1,19 @@
 (ns inflections.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [replace split]]))
+  (:require [clojure.string :refer [blank? replace split]]))
+
+(defn parse-float [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
+    (let [number (js/parseFloat (nth matches 1))]
+      (if-let [unit (nth matches 3)]
+        (case unit
+          "M" (* number (.pow js/Math 10 6))
+          "B" (* number (.pow js/Math 10 9)))
+        number))))
 
 (defn parse-double
-  "Parse `s` as a double number."
-  [s] (let [n (js/parseFloat (str s))]
-        (if-not (js/isNaN n) n)))
-
-(defn parse-float
   "Parse `s` as a floating-point number."
-  [s] (let [n (js/parseFloat (str s))]
-        (if-not (js/isNaN n) n)))
+  [s] (parse-float s))
 
 (defn parse-integer
   "Parse `s` as a integer."
@@ -23,9 +26,9 @@
   (let [regex #"(,)|(\s+)"
         [latitude longitude]
         (->> (split (str s) regex)
-              (remove #(or (blank? %1)
-                           (re-matches regex (str %1))))
-              (map parse-double))]
+             (remove #(or (blank? %1)
+                          (re-matches regex (str %1))))
+             (map parse-double))]
     (when (and latitude longitude)
       {:latitude latitude
        :longitude longitude})))
