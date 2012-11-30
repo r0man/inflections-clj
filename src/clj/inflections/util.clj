@@ -7,8 +7,8 @@
     (let [number (Double/parseDouble (nth matches 1))]
       (if-let [unit (nth matches 3)]
         (case unit
-          "M" (* number (Math/pow 10 6))
-          "B" (* number (Math/pow 10 9)))
+          "M" (* number 1000000)
+          "B" (* number 1000000000))
         number))))
 
 (defn parse-float
@@ -18,19 +18,31 @@
     (let [number (Float/parseFloat (nth matches 1))]
       (if-let [unit (nth matches 3)]
         (case unit
-          "M" (* number (Math/pow 10 6))
-          "B" (* number (Math/pow 10 9)))
+          "M" (* number 1000000)
+          "B" (* number 1000000000))
         number))))
 
 (defn parse-integer
   "Parse `s` as a integer."
-  [s] (try (Integer/parseInt (str s))
-           (catch NumberFormatException _ nil)))
+  [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
+    (let [number (Integer/parseInt (nth matches 1))]
+      (if-let [unit (nth matches 3)]
+        (case unit
+          "M" (* number 1000000)
+          "B" (* number 1000000000))
+        number))))
 
 (defn parse-long
   "Parse `s` as a long."
-  [s] (try (Long/parseLong (str s))
-           (catch NumberFormatException _ nil)))
+  [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
+    (let [number (Integer/parseInt (nth matches 1))]
+      (if-let [unit (nth matches 3)]
+        (case unit
+          "M" (* number 1000000)
+          "B" (* number 1000000000))
+        number))))
 
 (defn parse-location
   "Parse `s` as a latitude/longitude location map."

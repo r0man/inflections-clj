@@ -22,21 +22,25 @@
   (is (= 1000000.0 (parse-float "1M")))
   (is (= 1000000.0 (parse-float "1.0M")))
   (is (= 1000000000.0 (parse-float "1B")))
-  (is (= 1000000000.0 (parse-float "1.0B")))  )
+  (is (= 1000000000.0 (parse-float "1.0B"))) )
 
 (deftest test-parse-integer
   (is (nil? (parse-integer nil)))
   (is (nil? (parse-integer "")))
   (is (= 1 (parse-integer "1")))
   (is (= 10 (parse-integer "10")))
-  (is (= -10 (parse-integer "-10"))))
+  (is (= -10 (parse-integer "-10")))
+  (is (= 1000000 (parse-integer "1M")))
+  (is (= 1000000000 (parse-integer "1B"))))
 
 (deftest test-parse-long
   (is (nil? (parse-long nil)))
   (is (nil? (parse-long "")))
   (is (= 1 (parse-long "1")))
   (is (= 10 (parse-long "10")))
-  (is (= -10 (parse-long "-10"))))
+  (is (= -10 (parse-long "-10")))
+  (is (= 1000000 (parse-long "1M")))
+  (is (= 1000000000 (parse-long "1B"))))
 
 (deftest test-parse-location
   (is (nil? (parse-location nil)))
