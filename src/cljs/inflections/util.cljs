@@ -10,23 +10,20 @@
         "B" (* number 1000000000)))
     number))
 
-(defn parse-float
-  "Parse `s` as a float number."
-  [s]
-  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?\s*" (str s))]
-    (let [number (js/parseFloat (nth matches 1))
+(defn- parse-number [s parse-fn]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(M|B)?.*" (str s))]
+    (let [number (parse-fn (nth matches 1))
           unit (nth matches 3)]
       (if-not (js/isNaN number)
         (apply-unit number unit)))))
 
+(defn parse-float
+  "Parse `s` as a float number."
+  [s] (parse-number s js/parseFloat))
+
 (defn parse-integer
   "Parse `s` as a integer number."
-  [s]
-  (if-let [matches (re-matches #"\s*([-+]?[0-9]+)(M|B)?\s*" (str s))]
-    (let [number (js/parseInt (nth matches 1))
-          unit (nth matches 2)]
-      (if-not (js/isNaN number)
-        (apply-unit number unit)))))
+  [s] (parse-number s js/parseInt))
 
 (defn parse-double
   "Parse `s` as a double number."
