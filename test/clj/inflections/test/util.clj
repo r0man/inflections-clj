@@ -83,3 +83,9 @@
        (is (= expected (parse-percent string)))
        "+18.84" 18.84
        "+18.84%" 18.84))
+
+(deftest test-separator
+  (is (nil? (separator "Message")))
+  (is (= "." (separator "twitter.hash-tags")))
+  (is (= "." (separator "twitter.users")))
+  (is (= "::" (separator "Admin::Post"))))

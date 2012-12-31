@@ -59,3 +59,9 @@
 (defn parse-percent
   "Parse `s` as a percentage."
   [s] (parse-double (replace s "%" "")))
+
+(defn separator
+  "Returns the first string that separates the components in `s`."
+  [s]
+  (if-let [matches (re-matches #"(?i)([a-z0-9_-]+)([^a-z0-9_-]+).*" s)]
+    (nth matches 2)))
