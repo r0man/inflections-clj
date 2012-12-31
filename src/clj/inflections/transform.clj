@@ -1,6 +1,7 @@
 (ns inflections.transform
   (:refer-clojure :exclude [replace])
-  (:use [clojure.string :only [blank? lower-case replace upper-case]]))
+  (:use [clojure.string :only [blank? lower-case join replace upper-case split]]
+        [inflections.singular :only [singular]]))
 
 (defprotocol ITransformation
   (camelize [object mode]
@@ -158,7 +159,8 @@
 
   (foreign-key [s sep]
     (if-not (blank? s)
-      (str (underscore (demodulize s)) (or sep "_") "id")))
+      (str (underscore (singular (demodulize s)))
+           (or sep "_") "id")))
 
   (hyphenize [s]
     (-> (underscore s)
