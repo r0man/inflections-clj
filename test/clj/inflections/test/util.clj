@@ -84,6 +84,13 @@
        "+18.84" 18.84
        "+18.84%" 18.84))
 
+(deftest test-pattern-quote
+  (is (= "1" (pattern-quote "1")))
+  (is (= "x" (pattern-quote "x")))
+  (is (= "\\." (pattern-quote ".")))
+  (is (= "\\[" (pattern-quote "[")))
+  (is (= "a\\.b\\.c" (pattern-quote "a.b.c"))))
+
 (deftest test-separator
   (is (nil? (separator "Message")))
   (is (= "." (separator "twitter.hash-tags")))
