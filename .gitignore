@@ -12,3 +12,4 @@ lib
 /.crossover-cljs
 /stale/dependencies
 /out
+/pom.xml.asc
