@@ -45,7 +45,9 @@
   (assert (= "message_id" (foreign-key "Message")))
   (assert (= "post_id" (foreign-key "Admin::Post")))
   (assert (= "account_id" (foreign-key "MyApplication::Billing::Account")))
-  (assert (= "account-id" (foreign-key "MyApplication::Billing::Account" "-"))))
+  (assert (= "account-id" (foreign-key "MyApplication::Billing::Account" "-")))
+  (assert (= "user-id" (foreign-key "users" "-")))
+  (assert (= "user-id" (foreign-key "twitter.users" "-"))))
 
 (defn test-hyphenize []
   (assert (= nil (hyphenize nil)))

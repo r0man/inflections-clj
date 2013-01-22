@@ -59,3 +59,13 @@
 (defn parse-percent
   "Parse `s` as a percentage."
   [s] (parse-double (replace s "%" "")))
+
+(defn pattern-quote
+  "Quote the special characters in `s` that are used in regular expressions."
+  [s] (replace (name s) #"([\[\]\^\$\|\(\)\\\+\*\?\{\}\=\!.])" "\\\\$1"))
+
+(defn separator
+  "Returns the first string that separates the components in `s`."
+  [s]
+  (if-let [matches (re-matches #"(?i)([a-z0-9_-]+)([^a-z0-9_-]+).*" s)]
+    (nth matches 2)))

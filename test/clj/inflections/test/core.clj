@@ -113,7 +113,9 @@
     'Message "-"  'message-id
     :Message "-"  :message-id
     "Admin::Post" ""  "postid"
-    "MyApplication::Billing::Account" "" "accountid"))
+    "MyApplication::Billing::Account" "" "accountid"
+    "users" "_" "user_id"
+    "twitter.users" "_" "user_id"))
 
 (deftest test-hyphenize
   (are [obj expected]
