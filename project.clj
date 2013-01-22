@@ -6,22 +6,22 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]]
-  :plugins [[lein-cljsbuild "0.2.10"]]
+  :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
   :cljsbuild {:builds [{:compiler {:output-to "target/inflections-test.js"
                                    :optimizations :advanced
                                    :pretty-print true}
-                        :source-path "test/cljs"}
+                        :source-paths ["test/cljs"]}
                        {:compiler {:output-to "target/inflections-debug.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-path "src/cljs"}
+                        :source-paths ["src/cljs"]}
                        {:compiler {:output-to "target/inflections.js"
                                    :optimizations :advanced
                                    :pretty-print false}
-                        :source-path "src/cljs"
+                        :source-paths ["src/cljs"]
                         :jar true}]
               :repl-listen-port 9000
               :repl-launch-commands
