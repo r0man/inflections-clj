@@ -32,5 +32,5 @@
                             "resources/repl.html"
                             :stdout ".repl-phantom-naked-out"
                             :stderr ".repl-phantom-naked-err"]}
-              :test-commands {"phantomjs" ["bin/phantomjs-test"]
+              :test-commands {;"phantomjs" ["bin/phantomjs-test"]
                               "v8" ["bin/v8-test"]}})
