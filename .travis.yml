@@ -9,6 +9,7 @@ before_install:
   - echo "Building V8"
   - make dependencies
   - make native
+  - sudo make install
   - cd ./out/native/
   - export V8_HOME=`pwd`
   - cd ../../../
