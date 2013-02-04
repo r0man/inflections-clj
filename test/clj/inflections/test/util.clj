@@ -2,6 +2,18 @@
   (:use clojure.test
         inflections.util))
 
+(deftest test-parse-bytes
+  (is (nil? (parse-bytes nil)))
+  (is (nil? (parse-bytes "")))
+  (is (= 1 (parse-bytes "1")))
+  (is (= 1.0 (parse-bytes "1B")))
+  (is (= 1.0 (parse-bytes "1.0B")))
+  (is (= 10.0 (parse-bytes "10.0")))
+  (is (= -10.0 (parse-bytes "-10.0")))
+  (is (= 1024.0 (parse-bytes "1K")))
+  (is (= 1048576.0 (parse-bytes "1M")))
+  (is (= 1048576.0 (parse-bytes "1.0M"))))
+
 (deftest test-parse-double
   (is (nil? (parse-double nil)))
   (is (nil? (parse-double "")))

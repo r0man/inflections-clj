@@ -1,5 +1,18 @@
 (ns inflections.test.util
-  (:require [inflections.util :refer [parse-double parse-float parse-integer parse-long parse-location parse-url]]))
+  (:require [inflections.util :refer [parse-bytes parse-double parse-float parse-integer]]
+            [inflections.util :refer [parse-long parse-location parse-url]]))
+
+(defn test-parse-bytes []
+  (assert (nil? (parse-bytes nil)))
+  (assert (nil? (parse-bytes "")))
+  (assert (= 1 (parse-bytes "1")))
+  (assert (= 1.0 (parse-bytes "1B")))
+  (assert (= 1.0 (parse-bytes "1.0B")))
+  (assert (= 10.0 (parse-bytes "10.0")))
+  (assert (= -10.0 (parse-bytes "-10.0")))
+  (assert (= 1024.0 (parse-bytes "1K")))
+  (assert (= 1048576.0 (parse-bytes "1M")))
+  (assert (= 1048576.0 (parse-bytes "1.0M"))))
 
 (defn test-parse-double []
   (assert (nil? (parse-double nil)))
@@ -78,6 +91,7 @@
     (assert (nil? (:query-string spec)))))
 
 (defn test []
+  (test-parse-bytes)
   (test-parse-double)
   (test-parse-float)
   (test-parse-integer)

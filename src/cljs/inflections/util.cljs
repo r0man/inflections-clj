@@ -1,6 +1,18 @@
 (ns inflections.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [blank? replace split upper-case]]))
+  (:require [clojure.string :refer [blank? replace split upper-case]]
+            [cljs.reader :refer [read-string]]))
+
+(def byte-scale
+  {"B" (.pow js/Math 1024 0)
+   "K" (.pow js/Math 1024 1)
+   "M" (.pow js/Math 1024 2)
+   "G" (.pow js/Math 1024 3)
+   "T" (.pow js/Math 1024 4)
+   "P" (.pow js/Math 1024 5)
+   "E" (.pow js/Math 1024 6)
+   "Z" (.pow js/Math 1024 7)
+   "Y" (.pow js/Math 1024 8)})
 
 (defn- apply-unit [number unit]
   (if (string? unit)
@@ -16,6 +28,13 @@
           unit (nth matches 3)]
       (if-not (js/isNaN number)
         (apply-unit number unit)))))
+
+(defn parse-bytes [s]
+  (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(B|K|M|G|T|P|E|Z|Y)?.*" (str s))]
+    (let [number (read-string (nth matches 1))
+          unit (nth matches 3)]
+      (* (read-string (nth matches 1))
+         (get byte-scale (upper-case (or unit "")) 1)))))
 
 (defn parse-float
   "Parse `s` as a float number."

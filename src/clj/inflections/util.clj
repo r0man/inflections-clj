@@ -2,6 +2,17 @@
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [upper-case replace split]]))
 
+(def byte-scale
+  {"B" (Math/pow 1024 0)
+   "K" (Math/pow 1024 1)
+   "M" (Math/pow 1024 2)
+   "G" (Math/pow 1024 3)
+   "T" (Math/pow 1024 4)
+   "P" (Math/pow 1024 5)
+   "E" (Math/pow 1024 6)
+   "Z" (Math/pow 1024 7)
+   "Y" (Math/pow 1024 8)})
+
 (defn- apply-unit [number unit]
   (if (string? unit)
     (case (upper-case unit)
@@ -16,6 +27,14 @@
                unit (nth matches 3)]
            (apply-unit number unit))
          (catch NumberFormatException _ nil))))
+
+(defn parse-bytes [s]
+  (binding [*read-eval* false]
+    (if-let [matches (re-matches #"\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)(B|K|M|G|T|P|E|Z|Y)?.*" (str s))]
+      (let [number (read-string (nth matches 1))
+            unit (nth matches 3)]
+        (* (read-string (nth matches 1))
+           (get byte-scale (upper-case (or unit "")) 1))))))
 
 (defn parse-double
   "Parse `s` as a double number."

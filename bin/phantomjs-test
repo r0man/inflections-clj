@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-phantomjs resources/test.js resources/test.html
