@@ -159,13 +159,18 @@
 
   (foreign-key [s sep]
     (if-not (blank? s)
-      (str (underscore (singular (demodulize s)))
+      (str (underscore (hyphenize (singular (demodulize s))))
            (or sep "_") "id")))
 
   (hyphenize [s]
-    (-> (underscore s)
-        (dasherize)
-        (replace #"\s+" "-")))
+    (-> s
+        ;; (underscore s)
+        ;; (dasherize)
+        (replace #"::" "/")
+        (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
+        (replace #"([a-z\d])([A-Z])" "$1-$2")
+        (replace #"\s+" "-")
+        (lower-case)))
 
   (ordinalize [s]
     (let [number (Integer/parseInt s)]
@@ -188,12 +193,7 @@
           lower-case)))
 
   (underscore [s]
-    (-> s
-        (replace #"::" "/")
-        (replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
-        (replace #"([a-z\d])([A-Z])" "$1_$2")
-        (replace #"-" "_")
-        (lower-case))))
+    (replace s #"-" "_")))
 
 (extend-type clojure.lang.IPersistentMap
   ITransformation
