@@ -122,6 +122,8 @@
        (= (hyphenize obj) expected)
        nil nil
        "" ""
+       "-" "-"
+       "_" "-"
        "street" "street"
        'street 'street
        :street :street
