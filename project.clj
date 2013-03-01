@@ -5,7 +5,7 @@
   :min-lein-version "2.0.0"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.4.0"]]
+  :dependencies [[org.clojure/clojure "1.5.0"]]
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
@@ -33,4 +33,4 @@
                             :stdout ".repl-phantom-naked-out"
                             :stderr ".repl-phantom-naked-err"]}
               :test-commands {"phantomjs" ["phantomjs" "resources/test.js" "resources/test.html"]
-                              "v8" ["bin/v8-test"]}})
+                              "v8" ["d8bin/v8-test"]}})
