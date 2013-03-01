@@ -1,4 +1,4 @@
-(defproject inflections "0.7.9-SNAPSHOT"
+(defproject inflections "0.8.0"
   :description "Rails-like inflections for Clojure(Script)."
   :url "http://github.com/r0man/inflections-clj"
   :author "Roman Scherer"
