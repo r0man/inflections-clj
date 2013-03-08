@@ -9,20 +9,18 @@
   :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.1"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
-  :source-paths ["src/clj"]
-  :test-paths ["test/clj"]
   :cljsbuild {:builds [{:compiler {:output-to "target/inflections-test.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-paths ["test/cljs"]}
+                        :source-paths ["test"]}
                        {:compiler {:output-to "target/inflections-debug.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-paths ["src/cljs"]}
+                        :source-paths ["src"]}
                        {:compiler {:output-to "target/inflections.js"
                                    :optimizations :advanced
                                    :pretty-print false}
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src"]
                         :jar true}]
               :repl-listen-port 9000
               :repl-launch-commands
