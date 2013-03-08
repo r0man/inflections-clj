@@ -6,12 +6,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.0"]]
+  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.1"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
   :cljsbuild {:builds [{:compiler {:output-to "target/inflections-test.js"
-                                   :optimizations :advanced
+                                   :optimizations :whitespace
                                    :pretty-print true}
                         :source-paths ["test/cljs"]}
                        {:compiler {:output-to "target/inflections-debug.js"
@@ -32,5 +33,4 @@
                             "resources/repl.html"
                             :stdout ".repl-phantom-naked-out"
                             :stderr ".repl-phantom-naked-err"]}
-              :test-commands {"phantomjs" ["phantomjs" "resources/test.js" "resources/test.html"]
-                              "v8" ["bin/v8-test"]}})
+              :test-commands {"unit-tests" ["runners/phantomjs.js" "target/inflections-test.js"]}})
