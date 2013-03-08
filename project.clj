@@ -20,8 +20,7 @@
                        {:compiler {:output-to "target/inflections.js"
                                    :optimizations :advanced
                                    :pretty-print false}
-                        :source-paths ["src"]
-                        :jar true}]
+                        :source-paths ["src"]}]
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
