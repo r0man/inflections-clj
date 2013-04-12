@@ -5,12 +5,12 @@
   :min-lein-version "2.0.0"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.5.0"]]
-  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.1"]]}}
+  :dependencies [[org.clojure/clojure "1.5.1"]]
+  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.3"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/inflections-test.js"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :pretty-print true}
                         :source-paths ["test"]}
                        {:compiler {:output-to "target/inflections-debug.js"

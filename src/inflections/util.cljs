@@ -69,7 +69,7 @@
   "Parse `s` as a url and return a Ring compatible map."
   [s]
   (if-let [matches (re-matches #"([^:]+)://(([^:]+):([^@]+)@)?(([^:/]+)(:([0-9]+))?((/[^?]*)(\?(.*))?)?)" s)]
-    {:scheme (nth matches 1)
+    {:scheme (keyword (nth matches 1))
      :user (nth matches 3)
      :password (nth matches 4)
      :server-name (nth matches 6)

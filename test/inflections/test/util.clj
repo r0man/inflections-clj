@@ -68,11 +68,11 @@
 
 (deftest test-parse-url
   (let [spec (parse-url "postgresql://localhost/example")]
-    (is (= "postgresql" (:scheme spec)))
+    (is (= :postgresql (:scheme spec)))
     (is (= "localhost" (:server-name spec)))
     (is (= "/example" (:uri spec))))
   (let [spec (parse-url "postgresql://tiger:scotch@localhost:5432/example?a=1&b=2")]
-    (is (= "postgresql" (:scheme spec)))
+    (is (= :postgresql (:scheme spec)))
     (is (= "tiger" (:user spec)))
     (is (= "scotch" (:password spec)))
     (is (= "localhost" (:server-name spec)))
@@ -81,7 +81,7 @@
     (is (= "a=1&b=2" (:query-string spec)))
     (is (= {:a "1", :b "2"} (:params spec))))
   (let [spec (parse-url "rabbitmq://tiger:scotch@localhost:5672")]
-    (is (= "rabbitmq" (:scheme spec)))
+    (is (= :rabbitmq (:scheme spec)))
     (is (= "tiger" (:user spec)))
     (is (= "scotch" (:password spec)))
     (is (= "localhost" (:server-name spec)))
