@@ -19,7 +19,7 @@
     'active_record 'ActiveRecord
     :active_record :ActiveRecord
     "active_record/errors" "ActiveRecord::Errors"
-    ;; 'active_record/errors 'Errors
+    ;; 'active_record/errors 'ActiveRecord::Errors
     :active_record/errors :Errors)
   (are [word expected]
     (= (camelize word :lower) expected)
@@ -27,23 +27,22 @@
     "" ""
     "active_record" "activeRecord"
     'active_record 'activeRecord
-    ;; :active_record :activeRecord
+    :active_record :activeRecord
     "active_record/errors" "activeRecord::Errors"
-    ;; 'active_record/errors 'errors
-    ;; :active_record/errors :errors
+    ;; 'active_record/errors 'activeRecord::Errors
+    :active_record/errors :errors
     "product" "product"
     'product 'product
-    ;; :product :product
+    :product :product
     "special_guest" "specialGuest"
     'special_guest 'specialGuest
-    ;; :special_guest :specialGuest
+    :special_guest :specialGuest
     "application_controller" "applicationController"
     'application_controller 'applicationController
-    ;; :application_controller :applicationController
+    :application_controller :applicationController
     "area51_controller" "area51Controller"
     'area51_controller 'area51Controller
-    ;; :area51_controller :area51Controller
-    ))
+    :area51_controller :area51Controller))
 
 (deftest test-capitalize
   (is (nil? (capitalize nil)))

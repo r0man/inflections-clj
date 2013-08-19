@@ -123,17 +123,18 @@
 
   (camelize [s mode]
     (coerce-keyword
-     s (cond
-        (= mode :lower) (camelize s lower-case)
-        (= mode :upper) (camelize s upper-case)
-        (fn? mode) (str (mode (str (first s)))
-                        (apply str (rest (camelize s nil))))
-        :else (-> (name s)
-                  (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
-                  (replace #"(^|_|-)(.)" #(let [[f r] %]
-                                            (str (if-not (#{\_ \-} f)
-                                                   (upper-case f))
-                                                 (if r (upper-case r)))))))))
+     s (let [s (name s)]
+         (cond
+          (= mode :lower) (camelize s lower-case)
+          (= mode :upper) (camelize s upper-case)
+          (fn? mode) (str (mode (str (first s)))
+                          (apply str (rest (camelize s nil))))
+          :else (-> (str s)
+                    (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
+                    (replace #"(^|_|-)(.)" #(let [[f r] %]
+                                              (str (if-not (#{\_ \-} f)
+                                                     (upper-case f))
+                                                   (if r (upper-case r))))))))))
 
   (capitalize [s]
     (coerce-keyword
