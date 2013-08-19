@@ -145,7 +145,9 @@
                      (apply str (rest (camelize s nil))))
      :else (-> s
                (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
-               (replace #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
+               (replace #"(^|_|-)(.)" #(str (if (#{\_ \-} (nth % 1))
+                                              (nth % 1))
+                                            (upper-case (nth % 2)))))))
 
   (capitalize [s]
     (str (upper-case (str (first s)))
