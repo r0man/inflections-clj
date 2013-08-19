@@ -173,11 +173,11 @@
   (is (every? irregular? (map symbol @*irregular-words*))))
 
 (deftest test-ordinalize
-  (is (thrown? IllegalArgumentException (ordinalize "")))
-  (is (thrown? IllegalArgumentException (ordinalize "x")))
   (are [number expected]
     (= (ordinalize number) expected)
     nil nil
+    "" nil
+    "x" nil
     "0" "0th"
     "1" "1st"
     "2" "2nd"
