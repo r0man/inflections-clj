@@ -1,4 +1,4 @@
-(ns inflections.test.irregular
+(ns inflections.irregular-test
   (:use clojure.test
         inflections.irregular))
 

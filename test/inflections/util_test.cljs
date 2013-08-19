@@ -1,6 +1,7 @@
-(ns inflections.test.util
-  (:use clojure.test
-        inflections.util))
+(ns inflections.util-test
+  (:require-macros [cemerick.cljs.test :refer [is deftest]])
+  (:require [cemerick.cljs.test :as t]
+            [inflections.util :refer [parse-bytes parse-double parse-float parse-integer parse-long parse-location parse-url]]))
 
 (deftest test-parse-bytes
   (is (nil? (parse-bytes nil)))
@@ -39,7 +40,7 @@
 (deftest test-parse-integer
   (is (nil? (parse-integer nil)))
   (is (nil? (parse-integer "")))
-  (is (nil? (parse-integer "1.1")))
+  (is (= 1 (parse-integer "1.1")))
   (is (= 1 (parse-integer "1")))
   (is (= 1 (parse-integer "1-europe")))
   (is (= 10 (parse-integer "10")))
@@ -50,7 +51,7 @@
 (deftest test-parse-long
   (is (nil? (parse-long nil)))
   (is (nil? (parse-long "")))
-  (is (nil? (parse-long "1.1")))
+  (is (= 1 (parse-long "1.1")))
   (is (= 1 (parse-long "1")))
   (is (= 1 (parse-long "1-europe")))
   (is (= 10 (parse-long "10")))
@@ -58,13 +59,13 @@
   (is (= 1000000 (parse-long "1M")))
   (is (= 1000000000 (parse-long "1B"))))
 
-(deftest test-parse-location
-  (is (nil? (parse-location nil)))
-  (is (nil? (parse-location "")))
-  (is (nil? (parse-location "a,b")))
-  (is (= {:latitude 1.0 :longitude -2.0} (parse-location "1,-2")))
-  (is (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0,-2.0")))
-  (is (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0 -2.0"))))
+;; (deftest test-parse-location
+;;   (is (nil? (parse-location nil)))
+;;   (is (nil? (parse-location "")))
+;;   (is (nil? (parse-location "a,b")))
+;;   (is (= {:latitude 1.0 :longitude -2.0} (parse-location "1,-2")))
+;;   (is (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0,-2.0")))
+;;   (is (= {:latitude 1.0 :longitude -2.0} (parse-location "1.0 -2.0"))))
 
 (deftest test-parse-url
   (let [spec (parse-url "postgresql://localhost/example")]
@@ -89,22 +90,3 @@
     (is (nil? (:uri spec)))
     (is (nil? (:params spec)))
     (is (nil? (:query-string spec)))))
-
-(deftest test-parse-percent
-  (are [string expected]
-       (is (= expected (parse-percent string)))
-       "+18.84" 18.84
-       "+18.84%" 18.84))
-
-(deftest test-pattern-quote
-  (is (= "1" (pattern-quote "1")))
-  (is (= "x" (pattern-quote "x")))
-  (is (= "\\." (pattern-quote ".")))
-  (is (= "\\[" (pattern-quote "[")))
-  (is (= "a\\.b\\.c" (pattern-quote "a.b.c"))))
-
-(deftest test-separator
-  (is (nil? (separator "Message")))
-  (is (= "." (separator "twitter.hash-tags")))
-  (is (= "." (separator "twitter.users")))
-  (is (= "::" (separator "Admin::Post"))))

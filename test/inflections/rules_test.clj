@@ -1,4 +1,4 @@
-(ns inflections.test.rules
+(ns inflections.rules-test
   (:use clojure.test inflections.rules))
 
 (defn make-example-rule []

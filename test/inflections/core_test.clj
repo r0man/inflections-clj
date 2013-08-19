@@ -1,4 +1,4 @@
-(ns inflections.test.core
+(ns inflections.core-test
   (:use clojure.test
         [inflections.irregular :only [*irregular-words*]]
         [inflections.uncountable :only [*uncountable-words*]]

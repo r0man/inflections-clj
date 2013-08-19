@@ -1,4 +1,4 @@
-(ns inflections.test.uncountable
+(ns inflections.uncountable-test
   (:use clojure.test
         inflections.uncountable))
 

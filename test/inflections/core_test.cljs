@@ -1,4 +1,4 @@
-(ns inflections.test.core
+(ns inflections.core-test
   (:require-macros [cemerick.cljs.test :refer [are is deftest]])
   (:require [cemerick.cljs.test :as t]
             [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key
