@@ -1,7 +1,7 @@
 (ns inflections.core-test
   (:require-macros [cemerick.cljs.test :refer [are is deftest]])
   (:require [cemerick.cljs.test :as t]
-            [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key
+            [inflections.core :refer [init-inflections camelize camelize-keys capitalize dasherize demodulize foreign-key
                                       hyphenize irregular? ordinalize parameterize plural pluralize singular
                                       uncountable? underscore stringify-keys stringify-values]]
             [inflections.irregular :refer [*irregular-words*]]
@@ -43,6 +43,12 @@
     "area51_controller" "area51Controller"
     'area51_controller 'area51Controller
     :area51_controller :area51Controller))
+
+(deftest test-camelize-keys
+  (is (nil? (camelize-keys nil)))
+  (is (= {} (camelize-keys {})))
+  (is (= {:A1 1 :B2 2} (camelize-keys {:a-1 1 :b_2 2})))
+  (is (= {:a1 1 :b2 2} (camelize-keys {:a-1 1 :b_2 2} :lower))))
 
 (deftest test-capitalize
   (is (nil? (capitalize nil)))
