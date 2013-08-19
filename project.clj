@@ -24,6 +24,5 @@
                                    :pretty-print false}
                         :source-paths ["src"]}]
               :crossover-jar true
-              :crossovers [inflections.core
-                           inflections.string]
+              :crossovers [inflections.core]
               :test-commands {"unit-tests" ["runners/phantomjs.js" "target/inflections-test.js"]}})

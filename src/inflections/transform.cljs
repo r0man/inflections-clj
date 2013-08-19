@@ -1,8 +1,7 @@
 (ns inflections.transform
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [blank? lower-case join replace upper-case split]]
-            [inflections.singular :refer [singular]]
-            [inflections.string :as str]))
+  (:use [clojure.string :only [blank? lower-case replace upper-case]]
+        [inflections.singular :only [singular]]))
 
 (defprotocol ITransformation
   (camelize [object mode]
@@ -101,26 +100,27 @@
 (extend-type cljs.core/Symbol
   ITransformation
   (camelize [s mode]
-    (symbol (str/camelize (str s) mode)))
+    (symbol (camelize (str s) mode)))
   (capitalize [s]
-    (symbol (str/capitalize (str s))))
+    (symbol (capitalize (str s))))
   (dasherize [s]
-    (symbol (str/dasherize (str s))))
+    (symbol (dasherize (str s))))
   (demodulize [s]
-    (symbol (str/demodulize (str s))))
+    (symbol (demodulize (str s))))
   (foreign-key [s sep]
-    (symbol (str/foreign-key (str s) sep)))
+    (symbol (foreign-key (str s) sep)))
   (hyphenize [s]
-    (symbol (str/hyphenize (str s))))
+    (symbol (hyphenize (str s))))
   (ordinalize [s]
-    (symbol (str/ordinalize (str s))))
+    (symbol (ordinalize (str s))))
   (parameterize [s sep]
-    (symbol (str/parameterize (str s) sep)))
+    (symbol (parameterize (str s) sep)))
   (underscore [s]
-    (symbol (str/underscore (str s)))))
+    (symbol (underscore (str s)))))
 
 (extend-type string
   ITransformation
+
   (camelize [s mode]
     (coerce-keyword
      s (let [s (name s)]
@@ -135,22 +135,55 @@
                                               (str (if-not (#{\_ \-} f)
                                                      (upper-case f))
                                                    (if r (upper-case r))))))))))
+
   (capitalize [s]
-    (coerce-keyword s (str/capitalize s)))
+    (coerce-keyword
+     s (str (upper-case (str (first s)))
+            (lower-case (apply str (rest s))))))
+
   (dasherize [s]
-    (coerce-keyword s (str/dasherize s)))
+    (replace s #"_" "-"))
+
   (demodulize [s]
-    (coerce-keyword s (str/demodulize s)))
+    (replace s #"^.*(::|\.)" ""))
+
   (foreign-key [s sep]
-    (coerce-keyword s (str/foreign-key s sep)))
+    (if-not (blank? s)
+      (str (underscore (singular (demodulize s)))
+           (or sep "_") "id")))
+
   (hyphenize [s]
-    (coerce-keyword s (str/hyphenize s)))
+    (-> (underscore s)
+        (dasherize)
+        (replace #"\s+" "-")))
+
   (ordinalize [s]
-    (coerce-keyword s (str/ordinalize s)))
+    (let [number (js/parseInt s)]
+      (if (contains? (set (range 11 14)) (mod number 100))
+        (str number "th")
+        (let [modulus (mod number 10)]
+          (cond
+           (= modulus 1) (str number "st")
+           (= modulus 2) (str number "nd")
+           (= modulus 3) (str number "rd")
+           :else (str number "th"))))))
+
   (parameterize [s sep]
-    (coerce-keyword s (str/parameterize s sep)))
+    (let [sep (or sep "-")]
+      (-> s
+          (replace #"[^A-Za-z0-9]+" sep)
+          (replace #"\++" sep)
+          (replace (re-pattern (str sep "{2,}")) sep)
+          (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")
+          lower-case)))
+
   (underscore [s]
-    (coerce-keyword s (str/underscore s))))
+    (-> s
+        (replace #"::" "/")
+        (replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
+        (replace #"([a-z\d])([A-Z])" "$1_$2")
+        (replace #"-" "_")
+        (lower-case))))
 
 ;; (extend-type clojure.lang.IPersistentMap
 ;;   ITransformation
