@@ -17,11 +17,10 @@
     "" ""
     "active_record" "ActiveRecord"
     'active_record 'ActiveRecord
-    ;; :active_record :ActiveRecord
+    :active_record :ActiveRecord
     "active_record/errors" "ActiveRecord::Errors"
     ;; 'active_record/errors 'Errors
-    ;; :active_record/errors :Errors
-    )
+    :active_record/errors :Errors)
   (are [word expected]
     (= (camelize word :lower) expected)
     nil nil
