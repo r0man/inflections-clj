@@ -23,6 +23,11 @@
   (underscore [object]
     "Underscore object."))
 
+(defn- coerce-keyword [original result]
+  (if (keyword? original)
+    (keyword result)
+    result))
+
 (defn transform-keys
   "Recursively transform all map keys of m by applying f on them."
   [m f]
@@ -92,20 +97,43 @@
   (underscore [obj]
     (underscore (str obj))))
 
+(extend-type cljs.core/Symbol
+  ITransformation
+  (camelize [s mode]
+    (symbol (camelize (str s) mode)))
+  (capitalize [s]
+    (symbol (capitalize (str s))))
+  (dasherize [s]
+    (symbol (dasherize (str s))))
+  (demodulize [s]
+    (symbol (demodulize (str s))))
+  (foreign-key [s sep]
+    (symbol (foreign-key (str s) sep)))
+  (hyphenize [s]
+    (symbol (hyphenize (str s))))
+  (ordinalize [s]
+    (symbol (ordinalize (str s))))
+  (parameterize [s sep]
+    (symbol (parameterize (str s) sep)))
+  (underscore [s]
+    (symbol (underscore (str s)))))
+
 (extend-type string
   ITransformation
 
-  ;; TODO: Fix me!
   (camelize [s mode]
-    (cond
-     (blank? s) s
-     (= mode :lower) (camelize s lower-case)
-     (= mode :upper) (camelize s upper-case)
-     (fn? mode) (str (mode (str (first s)))
-                     (apply str (rest (camelize s nil))))
-     :else (-> s
-               (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
-               (replace #"(?:^|_|-)(.)" #(upper-case (nth % 1))))))
+    (coerce-keyword
+     s (cond
+        (= mode :lower) (camelize s lower-case)
+        (= mode :upper) (camelize s upper-case)
+        (fn? mode) (str (mode (str (first s)))
+                        (apply str (rest (camelize s nil))))
+        :else (-> (name s)
+                  (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
+                  (replace #"(^|_|-)(.)" #(let [[f r] %]
+                                            (str (if-not (#{\_ \-} f)
+                                                   (upper-case f))
+                                                 (if r (upper-case r)))))))))
 
   (capitalize [s]
     (let [result (str (upper-case (str (first s)))
