@@ -1,5 +1,5 @@
 (ns inflections.test.core
-  (:require-macros [cemerick.cljs.test :refer [is deftest]])
+  (:require-macros [cemerick.cljs.test :refer [are is deftest]])
   (:require [cemerick.cljs.test :as t]
             [inflections.core :refer [init-inflections camelize capitalize dasherize demodulize foreign-key
                                       hyphenize irregular? ordinalize parameterize plural pluralize singular
@@ -10,16 +10,40 @@
 (defrecord Foo [a_1 b_2])
 (defrecord Bar [a-1 b-2])
 
-(deftest test-camelize
-  (is (nil? (camelize nil)))
-  (is (= "" (camelize "")))
-  ;; (is (= "active_record" (camelize "ActiveRecord")))
-  ;; (is (= 'active_record (camelize 'ActiveRecord)))
-  ;; (is (= :active_record (camelize :ActiveRecord)))
-  ;; (is (= "active_record/errors" (camelize "ActiveRecord::Errors")))
-  ;; (is (= 'active_record/errors (camelize 'Errors)))
-  ;; (is (= :active_record/errors (camelize :Errors)))
-  )
+(comment
+  (deftest test-camelize
+    (are [word expected]
+      (= (camelize word) expected)
+      nil nil
+      "" ""
+      "active_record" "ActiveRecord"
+      'active_record 'ActiveRecord
+      :active_record :ActiveRecord
+      "active_record/errors" "ActiveRecord::Errors"
+      'active_record/errors 'Errors
+      :active_record/errors :Errors)
+    (are [word expected]
+      (= (camelize word :lower) expected)
+      nil nil
+      "" ""
+      "active_record" "activeRecord"
+      'active_record 'activeRecord
+      :active_record :activeRecord
+      "active_record/errors" "activeRecord::Errors"
+      'active_record/errors 'errors
+      :active_record/errors :errors
+      "product" "product"
+      'product 'product
+      :product :product
+      "special_guest" "specialGuest"
+      'special_guest 'specialGuest
+      :special_guest :specialGuest
+      "application_controller" "applicationController"
+      'application_controller 'applicationController
+      :application_controller :applicationController
+      "area51_controller" "area51Controller"
+      'area51_controller 'area51Controller
+      :area51_controller :area51Controller)))
 
 (deftest test-capitalize
   (is (nil? (capitalize nil)))

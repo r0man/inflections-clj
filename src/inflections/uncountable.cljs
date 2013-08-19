@@ -33,3 +33,14 @@
     (swap! *uncountable-words* disj (lower-case (name s))))
   (uncountable? [s]
     (contains? @*uncountable-words* (lower-case (name s)))))
+
+(extend-type cljs.core/Symbol
+  IUncountable
+  (countable? [s]
+    (countable? (str s)))
+  (add-uncountable! [s]
+    (add-uncountable! (str s)))
+  (delete-uncountable! [s]
+    (delete-uncountable! (str s)))
+  (uncountable? [s]
+    (uncountable? (str s))))

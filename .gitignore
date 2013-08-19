@@ -13,3 +13,4 @@ lib
 /stale/dependencies
 /out
 /pom.xml.asc
+/.repl

@@ -34,6 +34,15 @@
   (irregular? [s]
     (contains? @*irregular-words* (lower-case (name s)))))
 
+(extend-type cljs.core/Symbol
+  Irregular
+  (add-irregular! [singular plural]
+    (add-irregular! (str singular) (str plural)))
+  (delete-irregular! [singular plural]
+    (delete-irregular! (str singular) (str plural)))
+  (irregular? [s]
+    (irregular? (str s))))
+
 (defn init-irregular-words []
   (doall
    (map #(add-irregular! (first %) (second %))
