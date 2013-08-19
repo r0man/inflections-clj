@@ -186,6 +186,10 @@
     ;=> false"
   [obj] (u/uncountable? obj))
 
+(defn camelize-keys
+  "Recursively apply camelize on all keys of m."
+  [m & [mode]] (t/transform-keys m #(camelize %1 mode)))
+
 (defn hyphenize-keys
   "Recursively apply hyphenize on all keys of m."
   [m] (t/transform-keys m hyphenize))
