@@ -1,13 +1,275 @@
-(ns #^{:author "Roman Scherer" :doc "Rails-like inflections for Clojure."}
-  inflections.core
-  ;; (:require [inflections.transform :as t]
-  ;;           [inflections.irregular :as i]
-  ;;           [inflections.uncountable :as u]
-  ;;           [inflections.plural :as p]
-  ;;           [inflections.singular :as s])
+(ns inflections.core
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [lower-case upper-case replace]]
-            [clojure.walk :refer [postwalk]]))
+  (:require [clojure.string :refer [blank? lower-case upper-case replace]]
+            [clojure.walk :refer [postwalk]]
+            [no.en.core :refer [parse-integer]]))
+
+;; RULES
+
+(defrecord Rule [pattern replacement])
+
+(defn add-rule! [rules rule]
+  (if-not (contains? (set (deref rules)) rule)
+    (swap! rules conj rule)))
+
+(defn make-rule [pattern replacement]
+  (->Rule pattern replacement))
+
+(defn slurp-rules
+  "Returns a seq of rules, where the pattern and replacement must be
+  given in pairs of two elements."
+  [& patterns-and-replacements]
+  (map #(apply make-rule %) (partition 2 patterns-and-replacements)))
+
+(defn resolve-rule [rule word]
+  (let [pattern (:pattern rule)
+        replacement (:replacement rule)]
+    (if (re-find pattern word)
+      (replace word pattern replacement))))
+
+(defn resolve-rules [rules word]
+  (first (remove nil? (map #(resolve-rule % word) rules))))
+
+(defn reset-rules!
+  "Resets the list of plural rules."
+  [rules] (reset! rules []))
+
+;; UNCOUNTABLE WORDS
+
+(def ^{:dynamic true} *uncountable-words*
+  (atom #{"air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"
+          "confusion" "cotton" "education" "electricity" "entertainment" "equipment"
+          "experience" "fiction" "fish" "food" "forgiveness" "fresh" "gold" "gossip" "grass"
+          "ground" "gum" "happiness" "history" "homework" "honey" "ice" "information" "jam"
+          "knowledge" "lightning" "liquid" "literature" "love" "luck" "luggage" "meat" "milk"
+          "mist" "money" "music" "news" "oil" "oxygen" "paper" "patience" "peanut" "pepper"
+          "petrol" "pork" "power" "pressure" "research" "rice" "sadness" "series" "sheep"
+          "shopping" "silver" "snow" "space" "species" "speed" "steam" "sugar" "sunshine" "tea"
+          "tennis" "thunder" "time" "toothpaste" "traffic" "up" "vinegar" "washing" "wine"
+          "wood" "wool"}))
+
+(defprotocol IUncountable
+  (add-uncountable! [obj]
+    "Adds obj to the set of *uncountable-words*.")
+  (countable? [obj]
+    "Returns true if obj is countable, otherwise false.")
+  (delete-uncountable! [obj]
+    "Delete obj from the set of *uncountable-words*.")
+  (uncountable? [obj]
+    "Returns true if obj is uncountable, otherwise false."))
+
+(extend-protocol IUncountable
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (add-uncountable! [k]
+    (add-uncountable! (name k)))
+  (countable? [s]
+    (not (uncountable? s)))
+  (delete-uncountable! [k]
+    (delete-uncountable! (name k)))
+  (uncountable? [k]
+    (uncountable? (name k)))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (add-uncountable! [k]
+    (add-uncountable! (str k)))
+  (countable? [s]
+    (not (uncountable? s)))
+  (delete-uncountable! [k]
+    (delete-uncountable! (str k)))
+  (uncountable? [k]
+    (uncountable? (str k)))
+  #+clj java.lang.String
+  #+cljs string
+  (add-uncountable! [s]
+    (swap! *uncountable-words* conj (lower-case s)))
+  (countable? [s]
+    (not (uncountable? s)))
+  (delete-uncountable! [s]
+    (swap! *uncountable-words* disj (lower-case s)))
+  (uncountable? [s]
+    (contains? @*uncountable-words* (lower-case s))))
+
+;; PLURAL
+
+(def ^{:dynamic true} *plural-rules*
+  (atom []))
+
+(defprotocol Plural
+  (plural [obj] "Returns the plural of obj."))
+
+(extend-protocol Plural
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (plural [k]
+    (keyword (plural (name k))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (plural [k]
+    (symbol (plural (name k))))
+  #+clj java.lang.String
+  #+cljs string
+  (plural [s]
+    (if (or (blank? s) (uncountable? s))
+      s (resolve-rules (rseq @*plural-rules*) s))))
+
+(defn plural!
+  "Define rule(s) to map words from singular to plural.\n
+  Examples: (plural! #\"$(?i)\" \"s\")
+            (plural! #\"(ax|test)is$(?i)\" \"$1es\"
+                     #\"(octop|vir)us$(?i)\" \"$1i\")"
+  [& patterns-and-replacements]
+  (doseq [rule (apply slurp-rules patterns-and-replacements)]
+    (add-rule! *plural-rules* rule)))
+
+(defn init-plural-rules []
+  (plural!
+   #"(?i)$" "s"
+   #"(?i)s$" "s"
+   #"(?i)(ax|test)is$" "$1es"
+   #"(?i)(octop|vir)us$" "$1i"
+   #"(?i)(alias|status)$" "$1es"
+   #"(?i)(bu)s$" "$1ses"
+   #"(?i)(buffal|tomat)o$" "$1oes"
+   #"(?i)([ti])um$" "$1a"
+   #"(?i)sis$" "ses"
+   #"(?i)(?:([^f])fe|([lr])f)$" "$1$2ves"
+   #"(?i)(hive)$" "$1s"
+   #"(?i)([^aeiouy]|qu)y$" "$1ies"
+   #"(?i)(x|ch|ss|sh)$" "$1es"
+   #"(?i)(matr|vert|ind)(?:ix|ex)$" "$1ices"
+   #"(?i)([m|l])ouse$" "$1ice"
+   #"(?i)^(ox)$" "$1en"
+   #"(?i)(quiz)$" "$1zes"))
+
+;; SINGULAR
+
+(def ^{:dynamic true} *singular-rules*
+  (atom []))
+
+(defprotocol Singular
+  (singular [obj] "Returns the singular of obj."))
+
+(extend-protocol Singular
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (singular [k]
+    (keyword (singular (name k))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (singular [k]
+    (symbol (singular (name k))))
+  #+clj java.lang.String
+  #+cljs string
+  (singular [s]
+    (if (uncountable? s)
+      s (or (resolve-rules (rseq @*singular-rules*) s) s))))
+
+(defn singular!
+  "Define rule(s) to map words from singular to plural.\n
+  Examples: (singular! #\"(n)ews$(?i)\" \"$1ews\")
+            (singular! #\"(m)ovies$(?i)\" \"$1ovie\"
+                       #\"([m|l])ice$(?i)\" \"$1ouse\")"
+  [& patterns-and-replacements]
+  (doseq [rule (apply slurp-rules patterns-and-replacements)]
+    (add-rule! *singular-rules* rule)))
+
+(defn init-singular-rules []
+  (singular!
+   #"(?i)s$" ""
+   #"(?i)(ss)$" "$1"
+   #"(?i)(n)ews$" "$1ews"
+   #"(?i)([ti])a$" "$1um"
+   #"(?i)((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)(sis|ses)$" "$1$2sis"
+   #"(?i)(^analy)(sis|ses)$" "$1sis"
+   #"(?i)([^f])ves$" "$1fe"
+   #"(?i)(hive)s$" "$1"
+   #"(?i)(tive)s$" "$1"
+   #"(?i)([lr])ves$" "$1f"
+   #"(?i)([^aeiouy]|qu)ies$" "$1y"
+   #"(?i)(s)eries$" "$1eries"
+   #"(?i)(m)ovies$" "$1ovie"
+   #"(?i)(x|ch|ss|sh)es$" "$1"
+   #"(?i)([m|l])ice$" "$1ouse"
+   #"(?i)(bus)(es)?$" "$1"
+   #"(?i)(o)es$" "$1"
+   #"(?i)(shoe)s$" "$1"
+   #"(?i)(cris|ax|test)(is|es)$" "$1is"
+   #"(?i)(octop|vir)(us|i)$" "$1us"
+   #"(?i)(alias|status)(es)?$" "$1"
+   #"(?i)^(ox)en" "$1"
+   #"(?i)(vert|ind)ices$" "$1ex"
+   #"(?i)(matr)ices$" "$1ix"
+   #"(?i)(quiz)zes$" "$1"
+   #"(?i)(database)s$" "$1"))
+
+;; IRREGULAR
+
+(def ^{:dynamic true} *irregular-words*
+  (atom (sorted-set)))
+
+(defprotocol Irregular
+  (add-irregular! [singular plural]
+    "Adds obj to the set of *irregular-words*.")
+  (delete-irregular! [singular plural]
+    "Delete obj from the set of *irregular-words*.")
+  (irregular? [obj]
+    "Returns true if obj is an irregular word, otherwise false."))
+
+(extend-protocol Irregular
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (add-irregular! [singular plural]
+    (add-irregular! (name singular) (name plural)))
+  (delete-irregular! [singular plural]
+    (delete-irregular! (name singular) (name plural)))
+  (irregular? [k]
+    (irregular? (name k)))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (add-irregular! [singular plural]
+    (add-irregular! (name singular) (name plural)))
+  (delete-irregular! [singular plural]
+    (delete-irregular! (name singular) (name plural)))
+  (irregular? [k]
+    (irregular? (name k)))
+  #+clj java.lang.String
+  #+cljs string
+  (add-irregular! [singular plural]
+    (let [singular (lower-case singular)
+          plural (lower-case (name plural))]
+      (delete-uncountable! singular)
+      (delete-uncountable! plural)
+      (singular! (re-pattern (str "^" plural "$")) singular)
+      (plural! (re-pattern (str "^" singular "$")) plural)
+      (swap! *irregular-words* conj singular)
+      (swap! *irregular-words* conj plural)))
+  (delete-irregular! [singular plural]
+    (let [singular (lower-case singular)
+          plural (lower-case (name plural))]
+      (swap! *irregular-words* disj singular)
+      (swap! *irregular-words* disj plural)))
+  (irregular? [s]
+    (contains? @*irregular-words* (lower-case s))))
+
+(defn init-irregular-words []
+  (doall
+   (map #(add-irregular! (first %) (second %))
+        [["amenity" "amenities"]
+         ["child" "children"]
+         ["cow" "kine"]
+         ["foot" "feet"]
+         ["louse" "lice"]
+         ["mailman" "mailmen"]
+         ["man" "men"]
+         ["mouse" "mice"]
+         ["move" "moves"]
+         ["ox" "oxen"]
+         ["person" "people"]
+         ["sex" "sexes"]
+         ["tooth" "teeth"]
+         ["woman" "women"]])))
+
 
 ;; CAMELIZE
 
@@ -105,14 +367,35 @@
     ;=> \"Abc123\""
   [obj] (-capitalize obj))
 
-;; (defn dasherize
-;;   "Replaces all underscores in obj with dashes.
+;; DASHERIZE
 
-;;   Examples:
+(defprotocol IDasherize
+  (-dasherize [object] "Dasherize an object."))
 
-;;     (dasherize \"puni_puni\")
-;;     ;=> \"puni-puni\""
-;;   [obj] (t/dasherize obj))
+(extend-protocol IDasherize
+  nil
+  (-dasherize [_] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-dasherize [obj]
+    (keyword (-dasherize (name obj))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-dasherize [obj]
+    (symbol (-dasherize (str obj))))
+  #+clj java.lang.String
+  #+cljs string
+  (-dasherize [obj]
+    (replace obj #"_" "-")))
+
+(defn dasherize
+  "Replaces all underscores in obj with dashes.
+
+  Examples:
+
+    (dasherize \"puni_puni\")
+    ;=> \"puni-puni\""
+  [obj] (-dasherize obj))
 
 
 ;; DEMODULIZE
@@ -151,124 +434,215 @@
     ;=> \"Inflections\""
   [obj] (-demodulize obj))
 
-;; (defn foreign-key
-;;   "Converts obj into a foreign key. The default separator \"_\" is
-;;   placed between the name and \"id\".
+;; HYPHENIZE
+
+(defprotocol IHyphenize
+  (-hyphenize [object] "Hyphenize an object."))
+
+(extend-protocol IHyphenize
+  nil
+  (-hyphenize [_] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-hyphenize [obj]
+    (keyword (-hyphenize (name obj))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-hyphenize [obj]
+    (symbol (-hyphenize (str obj))))
+  #+clj java.lang.String
+  #+cljs string
+  (-hyphenize [obj]
+    (-> (replace obj #"::" "/")
+        (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
+        (replace #"([a-z\d])([A-Z])" "$1-$2")
+        (replace #"\s+" "-")
+        (replace #"_" "-")
+        (lower-case))))
+
+(defn hyphenize
+  "Hyphenize obj, which is the same as threading obj through the str,
+  underscore and dasherize fns.
+
+  Examples:
+
+    (hyphenize 'Continent)
+    ; => \"continent\"
+
+    (hyphenize \"CountryFlag\")
+    ; => \"country-flag\""
+  [obj] (-hyphenize obj))
+
+;; ORDINALIZE
+
+(defprotocol IOrdinalize
+  (-ordinalize [object] "Ordinalize an object."))
+
+(extend-protocol IOrdinalize
+  nil
+  (-ordinalize [_] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-ordinalize [obj]
+    (keyword (-ordinalize (name obj))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-ordinalize [obj]
+    (symbol (-ordinalize (str obj))))
+  #+clj java.lang.Number
+  #+cljs number
+  (-ordinalize [obj]
+    (-ordinalize (str obj)))
+  #+clj java.lang.String
+  #+cljs string
+  (-ordinalize [obj]
+    (if-let [number (parse-integer obj)]
+      (if (contains? (set (range 11 14)) (mod number 100))
+        (str number "th")
+        (let [modulus (mod number 10)]
+          (cond
+           (= modulus 1) (str number "st")
+           (= modulus 2) (str number "nd")
+           (= modulus 3) (str number "rd")
+           :else (str number "th")))))))
+
+(defn ordinalize
+  "Turns obj into an ordinal string used to denote the position in an
+  ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
+
+  Examples:
+
+    (ordinalize \"1\")
+    ;=> \"1st\"
+
+    (ordinalize \"23\")
+    ;=> \"23rd\""
+  [obj] (-ordinalize obj))
+
+;; PARAMETERIZE
+
+(defprotocol IParameterize
+  (-parameterize [object sep] "Parameterize an object."))
+
+(extend-protocol IParameterize
+  nil
+  (-parameterize [_ _] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-parameterize [obj sep]
+    (keyword (-parameterize (name obj) sep)))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-parameterize [obj sep]
+    (symbol (-parameterize (str obj) sep)))
+  #+clj java.lang.String
+  #+cljs string
+  (-parameterize [obj sep]
+    (let [sep (or sep "-")]
+      (-> obj
+          #+clj (replace #"(?i)[^a-z0-9]+" sep)
+          #+cljs (replace #"[^A-Za-z0-9]+" sep)
+          (replace #"\++" sep)
+          (replace (re-pattern (str sep "{2,}")) sep)
+          (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")
+          lower-case))))
+
+(defn parameterize
+  "Replaces special characters in obj with the default separator
+  \"-\". so that it may be used as part of a pretty URL.
+
+  Examples:
+
+    (parameterize \"Donald E. Knuth\")
+    ; => \"donald-e-knuth\"
+
+    (parameterize \"Donald E. Knuth\" \"_\")
+    ; => \"donald_e_knuth\""
+  [obj & [separator]] (-parameterize obj separator))
+
+(defn pluralize
+  "Attempts to pluralize the word unless count is 1. If plural is
+  supplied, it will use that when count is > 1, otherwise it will use
+  the inflector to determine the plural form."
+  [count singular & [plural]]
+  (str count " " (if (= 1 count) singular (or plural (inflections.core/plural singular)))))
+
+;; UNDERSCORE
+
+(defprotocol IUnderscore
+  (-underscore [object] "Underscore an object."))
+
+(extend-protocol IUnderscore
+  nil
+  (-underscore [_] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-underscore [obj]
+    (keyword (-underscore (name obj))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-underscore [obj]
+    (symbol (-underscore (str obj))))
+  #+clj java.lang.String
+  #+cljs string
+  (-underscore [obj]
+    (replace obj #"-" "_")))
+
+(defn underscore
+  "The reverse of camelize. Makes an underscored, lowercase form from
+  the expression in the string. Changes \"::\" to \"/\" to convert
+  namespaces to paths.
+
+  Examples:
+
+    (underscore \"ActiveRecord\")
+    ;=> \"active_record\"
+
+    (underscore \"ActiveRecord::Errors\")
+    ;=> \"active_record/errors\""
+  [obj] (-underscore obj))
+
+;; FOREIGN KEY
+
+(defprotocol IForeignKey
+  (-foreign-key [object sep] "Demodulize an object."))
+
+(extend-protocol IForeignKey
+  nil
+  (-foreign-key [_ _] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-foreign-key [obj sep]
+    (keyword (-foreign-key (name obj) sep)))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-foreign-key [obj sep]
+    (symbol (-foreign-key (str obj) sep)))
+  #+clj java.lang.String
+  #+cljs string
+  (-foreign-key [obj sep]
+    (if-not (blank? obj)
+      (str (underscore (hyphenize (singular (demodulize obj))))
+           (or sep "_") "id"))))
+
+(defn foreign-key
+  "Converts obj into a foreign key. The default separator \"_\" is
+  placed between the name and \"id\".
 
 
-;;   Examples:
+  Examples:
 
-;;     (foreign-key \"Message\")
-;;     ;=> \"message_id\"
+    (foreign-key \"Message\")
+    ;=> \"message_id\"
 
-;;     (foreign-key \"Message\" false)
-;;     ;=> \"messageid\"
+    (foreign-key \"Message\" false)
+    ;=> \"messageid\"
 
-;;     (foreign-key \"Admin::Post\")
-;;     ;=> \"post_id\""
-;;   [obj & [separator]] (t/foreign-key obj separator))
+    (foreign-key \"Admin::Post\")
+    ;=> \"post_id\""
+  [obj & [separator]] (-foreign-key obj separator))
 
-;; (defn hyphenize
-;;   "Hyphenize obj, which is the same as threading obj through the str,
-;;   underscore and dasherize fns.
-
-;;   Examples:
-
-;;     (hyphenize 'Continent)
-;;     ; => \"continent\"
-
-;;     (hyphenize \"CountryFlag\")
-;;     ; => \"country-flag\""
-;;   [obj] (t/hyphenize obj))
-
-;; (defn irregular?
-;;   "Returns true if obj is a irregular word, otherwise false
-
-;;   Examples:
-
-;;     (irregular? \"child\")
-;;     ;=> true
-
-;;     (irregular? \"word\")
-;;     ;=> false"
-;;   [obj] (i/irregular? obj))
-
-;; (defn ordinalize
-;;   "Turns obj into an ordinal string used to denote the position in an
-;;   ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
-
-;;   Examples:
-
-;;     (ordinalize \"1\")
-;;     ;=> \"1st\"
-
-;;     (ordinalize \"23\")
-;;     ;=> \"23rd\""
-;;   [obj] (t/ordinalize obj))
-
-;; (defn parameterize
-;;   "Replaces special characters in obj with the default separator
-;;   \"-\". so that it may be used as part of a pretty URL.
-
-;;   Examples:
-
-;;     (parameterize \"Donald E. Knuth\")
-;;     ; => \"donald-e-knuth\"
-
-;;     (parameterize \"Donald E. Knuth\" \"_\")
-;;     ; => \"donald_e_knuth\""
-;;   [obj & [separator]] (t/parameterize obj separator))
-
-;; (defn plural
-;;   "Returns the plural of obj.
-
-;;   Example:
-
-;;     (plural \"virus\")
-;;     ; => \"virii\""
-;;   [obj] (p/plural obj))
-
-;; (defn pluralize
-;;   "Attempts to pluralize the word unless count is 1. If plural is
-;;   supplied, it will use that when count is > 1, otherwise it will use
-;;   the inflector to determine the plural form."
-;;   [count singular & [plural]]
-;;   (str count " " (if (= 1 count) singular (or plural (p/plural singular)))))
-
-;; (defn singular
-;;   "Returns the singular of obj.
-
-;;   Example:
-
-;;     (singular \"mice\")
-;;     ;=> \"mouse\""
-;;   [obj] (s/singular obj))
-
-;; (defn underscore
-;;   "The reverse of camelize. Makes an underscored, lowercase form from
-;;   the expression in the string. Changes \"::\" to \"/\" to convert
-;;   namespaces to paths.
-
-;;   Examples:
-
-;;     (underscore \"ActiveRecord\")
-;;     ;=> \"active_record\"
-
-;;     (underscore \"ActiveRecord::Errors\")
-;;     ;=> \"active_record/errors\""
-;;   [obj] (t/underscore obj))
-
-;; (defn uncountable?
-;;   "Returns true if obj is a uncountable word, otherwise false.
-
-;;   Examples:
-
-;;     (uncountable? \"alcohol\")
-;;     ;=> true
-
-;;     (uncountable? \"word\")
-;;     ;=> false"
-;;   [obj] (u/uncountable? obj))
+;; TRANSFORMATIONS ON MAPS
 
 (defn transform-keys
   "Recursively transform all keys in the map `m` by applying `f` on them."
@@ -286,33 +660,44 @@
      m (keys m))
     m))
 
+(defn transform-values
+  "Recursively transform all map values of m by applying f on them."
+  [m f]
+  (if (map? m)
+    (reduce
+     (fn [memo key]
+       (let [value (get m key)]
+         (assoc memo key (if (map? value) (transform-values value f) (f value)))))
+     m (keys m))
+    m))
+
 (defn camelize-keys
   "Recursively apply camelize on all keys of m."
   [m & [mode]] (transform-keys m #(camelize %1 mode)))
 
-;; (defn hyphenize-keys
-;;   "Recursively apply hyphenize on all keys of m."
-;;   [m] (t/transform-keys m hyphenize))
+(defn hyphenize-keys
+  "Recursively apply hyphenize on all keys of m."
+  [m] (transform-keys m hyphenize))
 
-;; (defn hyphenize-values
-;;   "Recursively apply hyphenize on all values of m."
-;;   [m] (t/transform-values m hyphenize))
+(defn hyphenize-values
+  "Recursively apply hyphenize on all values of m."
+  [m] (transform-values m hyphenize))
 
-;; (defn stringify-keys
-;;   "Recursively transform all keys of m into strings."
-;;   [m] (t/transform-keys m #(if (keyword? %) (name %) (str %))))
+(defn stringify-keys
+  "Recursively transform all keys of m into strings."
+  [m] (transform-keys m #(if (keyword? %) (name %) (str %))))
 
-;; (defn stringify-values
-;;   "Recursively transform all values of m into strings."
-;;   [m] (t/transform-values m #(if (keyword? %) (name %) (str %))))
+(defn stringify-values
+  "Recursively transform all values of m into strings."
+  [m] (transform-values m #(if (keyword? %) (name %) (str %))))
 
-;; (defn underscore-keys
-;;   "Recursively apply underscore on all keys of m."
-;;   [m] (t/transform-keys m underscore))
+(defn underscore-keys
+  "Recursively apply underscore on all keys of m."
+  [m] (transform-keys m underscore))
 
-;; (defn init-inflections []
-;;   (p/init-plural-rules)
-;;   (s/init-singular-rules)
-;;   (i/init-irregular-words))
+(defn init-inflections []
+  (init-plural-rules)
+  (init-singular-rules)
+  (init-irregular-words))
 
-;; (init-inflections)
+(init-inflections)

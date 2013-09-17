@@ -8,7 +8,8 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-1889"]]
   :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.4"]
-                                  [com.keminglabs/cljx "0.3.0"]]
+                                  [com.keminglabs/cljx "0.3.0"]
+                                  [noencore "0.1.3"]]
                    :plugins [[com.cemerick/austin "0.1.1"]]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}}}
   :plugins [[com.keminglabs/cljx "0.3.0"]
