@@ -248,9 +248,25 @@
 ;;     ;=> false"
 ;;   [obj] (u/uncountable? obj))
 
-;; (defn camelize-keys
-;;   "Recursively apply camelize on all keys of m."
-;;   [m & [mode]] (t/transform-keys m #(camelize %1 mode)))
+(defn transform-keys
+  "Recursively transform all keys in the map `m` by applying `f` on them."
+  [m f]
+  (if (map? m)
+    (reduce
+     (fn [memo key]
+       (let [value (get m key)]
+         (-> (dissoc memo key)
+             (assoc (f key)
+               (cond
+                (map? value) (transform-keys value f)
+                (sequential? value) (map #(transform-keys % f) value)
+                :else value)))))
+     m (keys m))
+    m))
+
+(defn camelize-keys
+  "Recursively apply camelize on all keys of m."
+  [m & [mode]] (transform-keys m #(camelize %1 mode)))
 
 ;; (defn hyphenize-keys
 ;;   "Recursively apply hyphenize on all keys of m."

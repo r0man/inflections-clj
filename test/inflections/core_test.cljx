@@ -46,11 +46,11 @@
     'area51_controller 'area51Controller
     :area51_controller :area51Controller))
 
-;; (deftest test-camelize-keys
-;;   (is (nil? (camelize-keys nil)))
-;;   (is (= {} (camelize-keys {})))
-;;   (is (= {:A1 1 :B2 2} (camelize-keys {:a-1 1 :b_2 2})))
-;;   (is (= {:a1 1 :b2 2} (camelize-keys {:a-1 1 :b_2 2} :lower))))
+(deftest test-camelize-keys
+  (is (nil? (c/camelize-keys nil)))
+  (is (= {} (c/camelize-keys {})))
+  (is (= {:A1 1 :B2 2} (c/camelize-keys {:a-1 1 :b_2 2})))
+  (is (= {:a1 1 :b2 2} (c/camelize-keys {:a-1 1 :b_2 2} :lower))))
 
 (deftest test-capitalize
   (are [word expected]
