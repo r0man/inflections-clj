@@ -2,6 +2,8 @@
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [upper-case replace split]]))
 
+;; DEPRECATED
+
 (def byte-scale
   {"B" (Math/pow 1024 0)
    "K" (Math/pow 1024 1)

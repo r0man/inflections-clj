@@ -3,6 +3,8 @@
   (:require [clojure.string :refer [blank? replace split upper-case]]
             [cljs.reader :refer [read-string]]))
 
+;; DEPRECATED
+
 (def byte-scale
   {"B" (.pow js/Math 1024 0)
    "K" (.pow js/Math 1024 1)
