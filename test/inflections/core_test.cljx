@@ -92,18 +92,18 @@
 ;;     {:key_a {:key_b "value b"}} {:key-a {:key-b "value b"}}
 ;;     {:key_a [{:key_b "value b"}]} {:key-a [{:key-b "value b"}]}))
 
-;; (deftest test-demodulize
-;;   (are [word expected]
-;;     (= (demodulize word) expected)
-;;     nil nil
-;;     "" ""
-;;     "inflections.MyRecord" "MyRecord"
-;;     'inflections.MyRecord 'MyRecord
-;;     :inflections.MyRecord :MyRecord
-;;     "Inflections" "Inflections"
-;;     'Inflections 'Inflections
-;;     :Inflections :Inflections
-;;     "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
+(deftest test-demodulize
+  (are [word expected]
+    (= (c/demodulize word) expected)
+    nil nil
+    "" ""
+    "inflections.MyRecord" "MyRecord"
+    'inflections.MyRecord 'MyRecord
+    :inflections.MyRecord :MyRecord
+    "Inflections" "Inflections"
+    'Inflections 'Inflections
+    :Inflections :Inflections
+    "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
 
 ;; (deftest test-foreign-key
 ;;   (are [word expected]

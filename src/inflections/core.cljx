@@ -71,7 +71,7 @@
 ;; CAPITALIZE
 
 (defprotocol ICapitalize
-  (-capitalize [object] "Capitalize object."))
+  (-capitalize [object] "Capitalize an object."))
 
 (extend-protocol ICapitalize
   nil
@@ -114,20 +114,42 @@
 ;;     ;=> \"puni-puni\""
 ;;   [obj] (t/dasherize obj))
 
-;; (defn demodulize
-;;   "Removes the module part from obj.
 
-;;   Examples:
+;; DEMODULIZE
 
-;;     (demodulize \"inflections.MyRecord\")
-;;     ;=> \"MyRecord\"
+(defprotocol IDemodulize
+  (-demodulize [object] "Demodulize an object."))
 
-;;     (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\")
-;;     ;=> \"Inflections\"
+(extend-protocol IDemodulize
+  nil
+  (-demodulize [_] nil)
+  #+clj clojure.lang.Keyword
+  #+cljs cljs.core/Keyword
+  (-demodulize [obj]
+    (keyword (-demodulize (name obj))))
+  #+clj clojure.lang.Symbol
+  #+cljs cljs.core/Symbol
+  (-demodulize [obj]
+    (symbol (-demodulize (str obj))))
+  #+clj java.lang.String
+  #+cljs string
+  (-demodulize [obj]
+    (replace obj #"^.*(::|\.)" "")))
 
-;;     (demodulize \"Inflections\")
-;;     ;=> \"Inflections\""
-;;   [obj] (t/demodulize obj))
+(defn demodulize
+  "Removes the module part from obj.
+
+  Examples:
+
+    (demodulize \"inflections.MyRecord\")
+    ;=> \"MyRecord\"
+
+    (demodulize \"ActiveRecord::CoreExtensions::String::Inflections\")
+    ;=> \"Inflections\"
+
+    (demodulize \"Inflections\")
+    ;=> \"Inflections\""
+  [obj] (-demodulize obj))
 
 ;; (defn foreign-key
 ;;   "Converts obj into a foreign key. The default separator \"_\" is
