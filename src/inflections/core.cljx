@@ -205,7 +205,7 @@
     "Returns true if obj is an irregular word, otherwise false."))
 
 (defn add-irregular!
-  "Adds obj to the set of *irregular-words*."
+  "Add `singular` and `plural` to the set of `*irregular-words*`."
   [singular plural]
   (let [singular (lower-case (name singular))
         plural (lower-case (name plural))]
@@ -217,7 +217,7 @@
     (swap! *irregular-words* conj plural)))
 
 (defn delete-irregular!
-  "Delete obj from the set of *irregular-words*."
+  "Delete `singular` and `plural` from the set of *irregular-words*."
   [singular plural]
   (let [singular (lower-case (name singular))
         plural (lower-case (name plural))]
