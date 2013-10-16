@@ -586,7 +586,12 @@
   #+clj java.lang.String
   #+cljs string
   (-underscore [obj]
-    (replace obj #"-" "_")))
+    (-> obj
+        (replace #"::" "/")
+        (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
+        (replace #"([a-z\d])([A-Z])" "$1_$2")
+        (replace #"-" "_")
+        lower-case)))
 
 (defn underscore
   "The reverse of camelize. Makes an underscored, lowercase form from
