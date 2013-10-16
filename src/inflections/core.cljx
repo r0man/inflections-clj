@@ -201,46 +201,40 @@
   (atom (sorted-set)))
 
 (defprotocol Irregular
-  (add-irregular! [singular plural]
-    "Adds obj to the set of *irregular-words*.")
-  (delete-irregular! [singular plural]
-    "Delete obj from the set of *irregular-words*.")
   (irregular? [obj]
     "Returns true if obj is an irregular word, otherwise false."))
+
+(defn add-irregular!
+  "Adds obj to the set of *irregular-words*."
+  [singular plural]
+  (let [singular (lower-case (name singular))
+        plural (lower-case (name plural))]
+    (delete-uncountable! singular)
+    (delete-uncountable! plural)
+    (singular! (re-pattern (str "^" plural "$")) singular)
+    (plural! (re-pattern (str "^" singular "$")) plural)
+    (swap! *irregular-words* conj singular)
+    (swap! *irregular-words* conj plural)))
+
+(defn delete-irregular!
+  "Delete obj from the set of *irregular-words*."
+  [singular plural]
+  (let [singular (lower-case (name singular))
+        plural (lower-case (name plural))]
+    (swap! *irregular-words* disj singular)
+    (swap! *irregular-words* disj plural)))
 
 (extend-protocol Irregular
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (add-irregular! [singular plural]
-    (add-irregular! (name singular) (name plural)))
-  (delete-irregular! [singular plural]
-    (delete-irregular! (name singular) (name plural)))
   (irregular? [k]
     (irregular? (name k)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (add-irregular! [singular plural]
-    (add-irregular! (name singular) (name plural)))
-  (delete-irregular! [singular plural]
-    (delete-irregular! (name singular) (name plural)))
   (irregular? [k]
     (irregular? (name k)))
   #+clj java.lang.String
   #+cljs string
-  (add-irregular! [singular plural]
-    (let [singular (lower-case singular)
-          plural (lower-case (name plural))]
-      (delete-uncountable! singular)
-      (delete-uncountable! plural)
-      (singular! (re-pattern (str "^" plural "$")) singular)
-      (plural! (re-pattern (str "^" singular "$")) plural)
-      (swap! *irregular-words* conj singular)
-      (swap! *irregular-words* conj plural)))
-  (delete-irregular! [singular plural]
-    (let [singular (lower-case singular)
-          plural (lower-case (name plural))]
-      (swap! *irregular-words* disj singular)
-      (swap! *irregular-words* disj plural)))
   (irregular? [s]
     (contains? @*irregular-words* (lower-case s))))
 
