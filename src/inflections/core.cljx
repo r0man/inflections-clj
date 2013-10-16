@@ -114,7 +114,7 @@
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
     (add-rule! *plural-rules* rule)))
 
-(defn init-plural-rules []
+(defn init-plural-rules! []
   (plural!
    #"(?i)$" "s"
    #"(?i)s$" "s"
@@ -166,7 +166,7 @@
   (doseq [rule (apply slurp-rules patterns-and-replacements)]
     (add-rule! *singular-rules* rule)))
 
-(defn init-singular-rules []
+(defn init-singular-rules! []
   (singular!
    #"(?i)s$" ""
    #"(?i)(ss)$" "$1"
@@ -238,7 +238,7 @@
   (irregular? [s]
     (contains? @*irregular-words* (lower-case s))))
 
-(defn init-irregular-words []
+(defn init-irregular-words! []
   (doall
    (map #(add-irregular! (first %) (second %))
         [["amenity" "amenities"]
@@ -686,9 +686,11 @@
   "Recursively apply underscore on all keys of m."
   [m] (transform-keys m underscore))
 
-(defn init-inflections []
-  (init-plural-rules)
-  (init-singular-rules)
-  (init-irregular-words))
+(defn init-inflections!
+  "Initialize the Inflections library with defaults."
+  []
+  (init-plural-rules!)
+  (init-singular-rules!)
+  (init-irregular-words!))
 
-(init-inflections)
+(init-inflections!)
