@@ -13,7 +13,7 @@
                              [com.cemerick/clojurescript.test "0.1.0"]]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}}}
   :plugins [[com.keminglabs/cljx "0.3.0"]
-            [lein-cljsbuild "0.3.3"]]
+            [lein-cljsbuild "0.3.4"]]
   :hooks [cljx.hooks leiningen.cljsbuild]
   :cljx {:builds [{:source-paths ["src"]
                    :output-path "target/classes"
