@@ -49,44 +49,36 @@
           "wood" "wool"}))
 
 (defprotocol IUncountable
-  (add-uncountable! [obj]
-    "Adds obj to the set of *uncountable-words*.")
   (countable? [obj]
     "Returns true if obj is countable, otherwise false.")
-  (delete-uncountable! [obj]
-    "Delete obj from the set of *uncountable-words*.")
   (uncountable? [obj]
     "Returns true if obj is uncountable, otherwise false."))
+
+(defn add-uncountable!
+  "Adds obj to the set of *uncountable-words*."
+  [word] (swap! *uncountable-words* conj (lower-case (name word))))
+
+(defn delete-uncountable!
+  "Delete obj from the set of *uncountable-words*."
+  [word] (swap! *uncountable-words* disj (lower-case (name word))))
 
 (extend-protocol IUncountable
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (add-uncountable! [k]
-    (add-uncountable! (name k)))
   (countable? [s]
     (not (uncountable? s)))
-  (delete-uncountable! [k]
-    (delete-uncountable! (name k)))
   (uncountable? [k]
     (uncountable? (name k)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (add-uncountable! [k]
-    (add-uncountable! (str k)))
   (countable? [s]
     (not (uncountable? s)))
-  (delete-uncountable! [k]
-    (delete-uncountable! (str k)))
   (uncountable? [k]
     (uncountable? (str k)))
   #+clj java.lang.String
   #+cljs string
-  (add-uncountable! [s]
-    (swap! *uncountable-words* conj (lower-case s)))
   (countable? [s]
     (not (uncountable? s)))
-  (delete-uncountable! [s]
-    (swap! *uncountable-words* disj (lower-case s)))
   (uncountable? [s]
     (contains? @*uncountable-words* (lower-case s))))
 
