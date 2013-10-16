@@ -55,11 +55,11 @@
     "Returns true if obj is uncountable, otherwise false."))
 
 (defn add-uncountable!
-  "Adds obj to the set of *uncountable-words*."
+  "Adds `word` to the set of `*uncountable-words*`."
   [word] (swap! *uncountable-words* conj (lower-case (name word))))
 
 (defn delete-uncountable!
-  "Delete obj from the set of *uncountable-words*."
+  "Delete `word` from the set of `*uncountable-words*`."
   [word] (swap! *uncountable-words* disj (lower-case (name word))))
 
 (extend-protocol IUncountable
