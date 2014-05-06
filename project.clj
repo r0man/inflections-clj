@@ -7,16 +7,16 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [noencore "0.1.13"]]
+                 [noencore "0.1.15"]]
   :cljsbuild {:builds []}
   :cljsbuild {:builds []}
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.5.1"]
-                                  [org.clojure/clojurescript "0.0-2197"]]
+                                  [org.clojure/clojurescript "0.0-2202"]]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
                    :plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
                              [com.cemerick/clojurescript.test "0.3.0"]
                              [com.cemerick/austin "0.1.3"]
-                             [lein-cljsbuild "1.0.2"]]
+                             [lein-cljsbuild "1.0.3"]]
                    :hooks [cljx.hooks leiningen.cljsbuild]
                    :cljx {:builds [{:source-paths ["src"]
                                     :output-path "target/classes"
