@@ -1,4 +1,4 @@
-# Clojure Inflection Library [![Build Status](https://travis-ci.org/r0man/inflections-clj.png)](https://travis-ci.org/r0man/inflections-clj)
+# Clojure Inflection Library [![Build Status](https://travis-ci.org/r0man/inflections-clj.png)](https://travis-ci.org/r0man/inflections-clj) [![Dependencies Status](http://jarkeeper.com/r0man/inflections-clj/status.png)](http://jarkeeper.com/r0man/inflections-clj)
 
 Rails-like inflection library for Clojure and ClojureScript.
 
