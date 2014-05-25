@@ -13,28 +13,30 @@ Via Clojars: http://clojars.org/inflections.
 
 ## Usage
 
-    (use 'inflections.core)
+``` clj
+(use 'inflections.core)
 
-    (plural "word")
-    ;=> "words"
+(plural "word")
+;=> "words"
 
-    (plural "virus")
-    ;=> "viri"
+(plural "virus")
+;=> "viri"
 
-    (singular "apples")
-    ;=> "apple"
+(singular "apples")
+;=> "apple"
 
-    (singular "octopi")
-    ;=> "octopus"
+(singular "octopi")
+;=> "octopus"
 
-    (underscore "puni-puni")
-    ;=> "puni_puni"
+(underscore "puni-puni")
+;=> "puni_puni"
 
-    (ordinalize "52")
-    ;=> "52nd"
+(ordinalize "52")
+;=> "52nd"
 
-    (capitalize "clojure")
-    ;=> "Clojure"
+(capitalize "clojure")
+;=> "Clojure"
+```
 
 ## License
 
