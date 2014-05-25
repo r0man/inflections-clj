@@ -9,6 +9,8 @@ Rails-like inflection library for Clojure and ClojureScript.
 
 Via Clojars: http://clojars.org/inflections.
 
+[![Current Version](https://clojars.org/inflections/latest-version.svg)](https://clojars.org/inflections)
+
 ## Usage
 
     (use 'inflections.core)
