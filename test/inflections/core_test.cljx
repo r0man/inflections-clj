@@ -125,9 +125,9 @@
     "users" "_" "user_id"
     "twitter.users" "_" "user_id"))
 
-(deftest test-hyphenize
+(deftest test-hyphenate
   (are [obj expected]
-    (= (c/hyphenize obj) expected)
+    (= (c/hyphenate obj) expected)
     nil nil
     "" ""
     "-" "-"

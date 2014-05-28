@@ -417,25 +417,25 @@
     ;=> \"Inflections\""
   [obj] (-demodulize obj))
 
-;; HYPHENIZE
+;; HYPHENATE
 
-(defprotocol IHyphenize
-  (-hyphenize [object] "Hyphenize an object."))
+(defprotocol IHyphenate
+  (-hyphenate [object] "Hyphenate an object."))
 
-(extend-protocol IHyphenize
+(extend-protocol IHyphenate
   nil
-  (-hyphenize [_] nil)
+  (-hyphenate [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-hyphenize [obj]
-    (keyword (-hyphenize (name obj))))
+  (-hyphenate [obj]
+    (keyword (-hyphenate (name obj))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-hyphenize [obj]
-    (symbol (-hyphenize (str obj))))
+  (-hyphenate [obj]
+    (symbol (-hyphenate (str obj))))
   #+clj java.lang.String
   #+cljs string
-  (-hyphenize [obj]
+  (-hyphenate [obj]
     (-> (replace obj #"::" "/")
         (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
         (replace #"([a-z\d])([A-Z])" "$1-$2")
@@ -443,18 +443,18 @@
         (replace #"_" "-")
         (lower-case))))
 
-(defn hyphenize
-  "Hyphenize obj, which is the same as threading obj through the str,
+(defn hyphenate
+  "Hyphenate obj, which is the same as threading obj through the str,
   underscore and dasherize fns.
 
   Examples:
 
-    (hyphenize 'Continent)
+    (hyphenate 'Continent)
     ; => \"continent\"
 
-    (hyphenize \"CountryFlag\")
+    (hyphenate \"CountryFlag\")
     ; => \"country-flag\""
-  [obj] (-hyphenize obj))
+  [obj] (-hyphenate obj))
 
 ;; ORDINALIZE
 
@@ -610,7 +610,7 @@
   #+cljs string
   (-foreign-key [obj sep]
     (if-not (blank? obj)
-      (str (underscore (hyphenize (singular (demodulize obj))))
+      (str (underscore (hyphenate (singular (demodulize obj))))
            (or sep "_") "id"))))
 
 (defn foreign-key
@@ -663,13 +663,13 @@
   "Recursively apply camelize on all keys of m."
   [m & [mode]] (transform-keys m #(camelize %1 mode)))
 
-(defn hyphenize-keys
-  "Recursively apply hyphenize on all keys of m."
-  [m] (transform-keys m hyphenize))
+(defn hyphenate-keys
+  "Recursively apply hyphenate on all keys of m."
+  [m] (transform-keys m hyphenate))
 
-(defn hyphenize-values
-  "Recursively apply hyphenize on all values of m."
-  [m] (transform-values m hyphenize))
+(defn hyphenate-values
+  "Recursively apply hyphenate on all values of m."
+  [m] (transform-values m hyphenate))
 
 (defn stringify-keys
   "Recursively transform all keys of m into strings."
