@@ -46,10 +46,10 @@
           "wood" "wool"}))
 
 (defprotocol ICountable
-  (countable? [obj] "Returns true if obj is countable, otherwise false."))
+  (countable? [obj] "Returns true if `obj` is countable, otherwise false."))
 
 (defn uncountable?
-  "Returns true if obj is uncountable, otherwise false."
+  "Returns true if `obj` is uncountable, otherwise false."
   [obj]
   (not (countable? obj)))
 
@@ -195,7 +195,7 @@
 
 (defprotocol Irregular
   (irregular? [obj]
-    "Returns true if obj is an irregular word, otherwise false."))
+    "Returns true if `obj` is an irregular word, otherwise false."))
 
 (defn add-irregular!
   "Add `singular` and `plural` to the set of `*irregular-words*`."
@@ -288,7 +288,7 @@
                                 (if r (upper-case r)))))))))
 
 (defn camel-case
-  "Convert obj to camel case. By default, camel-case converts to
+  "Convert `obj` to camel case. By default, camel-case converts to
   UpperCamelCase. If the argument to camel-case is set to :lower then
   camel-case produces lowerCamelCase. The camel-case fn will also convert
   \"/\" to \"::\" which is useful for converting paths to namespaces.
@@ -332,7 +332,7 @@
          (lower-case (apply str (rest obj))))))
 
 (defn capitalize
-  "Convert the first letter in obj to upper case.
+  "Convert the first letter in `obj` to upper case.
 
   Examples:
 
@@ -368,7 +368,7 @@
     (replace obj #"_" "-")))
 
 (defn dasherize
-  "Replaces all underscores in obj with dashes.
+  "Replaces all underscores in `obj` with dashes.
 
   Examples:
 
@@ -440,7 +440,7 @@
         (lower-case))))
 
 (defn hyphenate
-  "Hyphenate obj, which is the same as threading obj through the str,
+  "Hyphenate obj, which is the same as threading `obj` through the str,
   underscore and dasherize fns.
 
   Examples:
@@ -486,7 +486,7 @@
            :else (str number "th")))))))
 
 (defn ordinalize
-  "Turns obj into an ordinal string used to denote the position in an
+  "Turns `obj` into an ordinal string used to denote the position in an
   ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
 
   Examples:
@@ -527,7 +527,7 @@
           lower-case))))
 
 (defn parameterize
-  "Replaces special characters in obj with the default separator
+  "Replaces special characters in `obj` with the default separator
   \"-\". so that it may be used as part of a pretty URL.
 
   Examples:
@@ -610,7 +610,7 @@
            (or sep "_") "id"))))
 
 (defn foreign-key
-  "Converts obj into a foreign key. The default separator \"_\" is
+  "Converts `obj` into a foreign key. The default separator \"_\" is
   placed between the name and \"id\".
 
 
