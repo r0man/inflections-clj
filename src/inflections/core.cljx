@@ -45,11 +45,13 @@
           "tennis" "thunder" "time" "toothpaste" "traffic" "up" "vinegar" "washing" "wine"
           "wood" "wool"}))
 
-(defprotocol IUncountable
-  (countable? [obj]
-    "Returns true if obj is countable, otherwise false.")
-  (uncountable? [obj]
-    "Returns true if obj is uncountable, otherwise false."))
+(defprotocol ICountable
+  (countable? [obj] "Returns true if obj is countable, otherwise false."))
+
+(defn uncountable?
+  "Returns true if obj is uncountable, otherwise false."
+  [obj]
+  (not (countable? obj)))
 
 (defn add-uncountable!
   "Adds `word` to the set of `*uncountable-words*`."
@@ -59,25 +61,19 @@
   "Delete `word` from the set of `*uncountable-words*`."
   [word] (swap! *uncountable-words* disj (lower-case (name word))))
 
-(extend-protocol IUncountable
+(extend-protocol ICountable
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
   (countable? [s]
-    (not (uncountable? s)))
-  (uncountable? [k]
-    (uncountable? (name k)))
+    (countable? (name s)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
   (countable? [s]
-    (not (uncountable? s)))
-  (uncountable? [k]
-    (uncountable? (str k)))
+    (countable? (str s)))
   #+clj java.lang.String
   #+cljs string
   (countable? [s]
-    (not (uncountable? s)))
-  (uncountable? [s]
-    (contains? @*uncountable-words* (lower-case s))))
+    (not (contains? @*uncountable-words* (lower-case s)))))
 
 ;; PLURAL
 
