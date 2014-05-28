@@ -1,4 +1,4 @@
-# Clojure Inflection Library
+# inflections-clj
   [![Build Status](https://travis-ci.org/r0man/inflections-clj.png)](https://travis-ci.org/r0man/inflections-clj)
   [![Dependencies Status](http://jarkeeper.com/r0man/inflections-clj/status.png)](http://jarkeeper.com/r0man/inflections-clj)
   [![Gittip](http://img.shields.io/gittip/r0man.svg)](https://www.gittip.com/r0man)
