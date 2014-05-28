@@ -46,12 +46,12 @@
           "wood" "wool"}))
 
 (defprotocol ICountable
-  (countable? [obj] "Returns true if `obj` is countable, otherwise false."))
+  (countable? [x] "Returns true if `x` is countable, otherwise false."))
 
 (defn uncountable?
-  "Returns true if `obj` is uncountable, otherwise false."
-  [obj]
-  (not (countable? obj)))
+  "Returns true if `x` is uncountable, otherwise false."
+  [x]
+  (not (countable? x)))
 
 (defn add-uncountable!
   "Adds `word` to the set of `*uncountable-words*`."
@@ -81,7 +81,7 @@
   (atom []))
 
 (defprotocol Plural
-  (plural [obj] "Returns the plural of obj."))
+  (plural [x] "Returns the plural of x."))
 
 (extend-protocol Plural
   #+clj clojure.lang.Keyword
@@ -133,7 +133,7 @@
   (atom []))
 
 (defprotocol Singular
-  (singular [obj] "Returns the singular of obj."))
+  (singular [x] "Returns the singular of x."))
 
 (extend-protocol Singular
   #+clj clojure.lang.Keyword
@@ -194,8 +194,8 @@
   (atom (sorted-set)))
 
 (defprotocol Irregular
-  (irregular? [obj]
-    "Returns true if `obj` is an irregular word, otherwise false."))
+  (irregular? [x]
+    "Returns true if `x` is an irregular word, otherwise false."))
 
 (defn add-irregular!
   "Add `singular` and `plural` to the set of `*irregular-words*`."
@@ -253,28 +253,28 @@
 ;; CAMEL-CASE
 
 (defprotocol ICamel-Case
-  (-camel-case [object mode] "Camel-Case an object."))
+  (-camel-case [x mode] "Camel-Case an x."))
 
 (extend-protocol ICamel-Case
   nil
   (-camel-case [_ _] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-camel-case [obj mode]
-    (keyword (-camel-case (apply str (rest (str obj))) mode)))
+  (-camel-case [x mode]
+    (keyword (-camel-case (apply str (rest (str x))) mode)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-camel-case [obj mode]
-    (symbol (-camel-case (str obj) mode)))
+  (-camel-case [x mode]
+    (symbol (-camel-case (str x) mode)))
   #+clj java.lang.String
   #+cljs string
-  (-camel-case [obj mode]
+  (-camel-case [x mode]
     (cond
-     (= mode :lower) (-camel-case obj lower-case)
-     (= mode :upper) (-camel-case obj upper-case)
-     (fn? mode) (str (mode (str (first obj)))
-                     (apply str (rest (-camel-case obj nil))))
-     :else (-> (str obj)
+     (= mode :lower) (-camel-case x lower-case)
+     (= mode :upper) (-camel-case x upper-case)
+     (fn? mode) (str (mode (str (first x)))
+                     (apply str (rest (-camel-case x nil))))
+     :else (-> (str x)
                (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
                (replace #"(^|_|-)(.)"
                         #+clj
@@ -288,7 +288,7 @@
                                 (if r (upper-case r)))))))))
 
 (defn camel-case
-  "Convert `obj` to camel case. By default, camel-case converts to
+  "Convert `x` to camel case. By default, camel-case converts to
   UpperCamelCase. If the argument to camel-case is set to :lower then
   camel-case produces lowerCamelCase. The camel-case fn will also convert
   \"/\" to \"::\" which is useful for converting paths to namespaces.
@@ -306,33 +306,33 @@
 
     (camel-case \"active_record/errors\" :lower)
     ;=> \"activeRecord::Errors\""
-  [obj & [mode]] (-camel-case obj mode))
+  [x & [mode]] (-camel-case x mode))
 
 
 ;; CAPITALIZE
 
 (defprotocol ICapitalize
-  (-capitalize [object] "Capitalize an object."))
+  (-capitalize [x] "Capitalize an x."))
 
 (extend-protocol ICapitalize
   nil
   (-capitalize [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-capitalize [obj]
-    (keyword (-capitalize (name obj))))
+  (-capitalize [x]
+    (keyword (-capitalize (name x))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-capitalize [obj]
-    (symbol (-capitalize (str obj))))
+  (-capitalize [x]
+    (symbol (-capitalize (str x))))
   #+clj java.lang.String
   #+cljs string
-  (-capitalize [obj]
-    (str (upper-case (str (first obj)))
-         (lower-case (apply str (rest obj))))))
+  (-capitalize [x]
+    (str (upper-case (str (first x)))
+         (lower-case (apply str (rest x))))))
 
 (defn capitalize
-  "Convert the first letter in `obj` to upper case.
+  "Convert the first letter in `x` to upper case.
 
   Examples:
 
@@ -344,62 +344,62 @@
 
     (capitalize \"abc123\")
     ;=> \"Abc123\""
-  [obj] (-capitalize obj))
+  [x] (-capitalize x))
 
 ;; DASHERIZE
 
 (defprotocol IDasherize
-  (-dasherize [object] "Dasherize an object."))
+  (-dasherize [x] "Dasherize an x."))
 
 (extend-protocol IDasherize
   nil
   (-dasherize [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-dasherize [obj]
-    (keyword (-dasherize (name obj))))
+  (-dasherize [x]
+    (keyword (-dasherize (name x))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-dasherize [obj]
-    (symbol (-dasherize (str obj))))
+  (-dasherize [x]
+    (symbol (-dasherize (str x))))
   #+clj java.lang.String
   #+cljs string
-  (-dasherize [obj]
-    (replace obj #"_" "-")))
+  (-dasherize [x]
+    (replace x #"_" "-")))
 
 (defn dasherize
-  "Replaces all underscores in `obj` with dashes.
+  "Replaces all underscores in `x` with dashes.
 
   Examples:
 
     (dasherize \"puni_puni\")
     ;=> \"puni-puni\""
-  [obj] (-dasherize obj))
+  [x] (-dasherize x))
 
 
 ;; DEMODULIZE
 
 (defprotocol IDemodulize
-  (-demodulize [object] "Demodulize an object."))
+  (-demodulize [x] "Demodulize an x."))
 
 (extend-protocol IDemodulize
   nil
   (-demodulize [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-demodulize [obj]
-    (keyword (-demodulize (name obj))))
+  (-demodulize [x]
+    (keyword (-demodulize (name x))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-demodulize [obj]
-    (symbol (-demodulize (str obj))))
+  (-demodulize [x]
+    (symbol (-demodulize (str x))))
   #+clj java.lang.String
   #+cljs string
-  (-demodulize [obj]
-    (replace obj #"^.*(::|\.)" "")))
+  (-demodulize [x]
+    (replace x #"^.*(::|\.)" "")))
 
 (defn demodulize
-  "Removes the module part from obj.
+  "Removes the module part from `x`.
 
   Examples:
 
@@ -411,28 +411,28 @@
 
     (demodulize \"Inflections\")
     ;=> \"Inflections\""
-  [obj] (-demodulize obj))
+  [x] (-demodulize x))
 
 ;; HYPHENATE
 
 (defprotocol IHyphenate
-  (-hyphenate [object] "Hyphenate an object."))
+  (-hyphenate [x] "Hyphenate an x."))
 
 (extend-protocol IHyphenate
   nil
   (-hyphenate [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-hyphenate [obj]
-    (keyword (-hyphenate (name obj))))
+  (-hyphenate [x]
+    (keyword (-hyphenate (name x))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-hyphenate [obj]
-    (symbol (-hyphenate (str obj))))
+  (-hyphenate [x]
+    (symbol (-hyphenate (str x))))
   #+clj java.lang.String
   #+cljs string
-  (-hyphenate [obj]
-    (-> (replace obj #"::" "/")
+  (-hyphenate [x]
+    (-> (replace x #"::" "/")
         (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
         (replace #"([a-z\d])([A-Z])" "$1-$2")
         (replace #"\s+" "-")
@@ -440,7 +440,7 @@
         (lower-case))))
 
 (defn hyphenate
-  "Hyphenate obj, which is the same as threading `obj` through the str,
+  "Hyphenate x, which is the same as threading `x` through the str,
   underscore and dasherize fns.
 
   Examples:
@@ -450,32 +450,32 @@
 
     (hyphenate \"CountryFlag\")
     ; => \"country-flag\""
-  [obj] (-hyphenate obj))
+  [x] (-hyphenate x))
 
 ;; ORDINALIZE
 
 (defprotocol IOrdinalize
-  (-ordinalize [object] "Ordinalize an object."))
+  (-ordinalize [x] "Ordinalize an x."))
 
 (extend-protocol IOrdinalize
   nil
   (-ordinalize [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-ordinalize [obj]
-    (keyword (-ordinalize (name obj))))
+  (-ordinalize [x]
+    (keyword (-ordinalize (name x))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-ordinalize [obj]
-    (symbol (-ordinalize (str obj))))
+  (-ordinalize [x]
+    (symbol (-ordinalize (str x))))
   #+clj java.lang.Number
   #+cljs number
-  (-ordinalize [obj]
-    (-ordinalize (str obj)))
+  (-ordinalize [x]
+    (-ordinalize (str x)))
   #+clj java.lang.String
   #+cljs string
-  (-ordinalize [obj]
-    (if-let [number (parse-integer obj)]
+  (-ordinalize [x]
+    (if-let [number (parse-integer x)]
       (if (contains? (set (range 11 14)) (mod number 100))
         (str number "th")
         (let [modulus (mod number 10)]
@@ -486,7 +486,7 @@
            :else (str number "th")))))))
 
 (defn ordinalize
-  "Turns `obj` into an ordinal string used to denote the position in an
+  "Turns `x` into an ordinal string used to denote the position in an
   ordered sequence such as 1st, 2nd, 3rd, 4th, etc.
 
   Examples:
@@ -496,29 +496,29 @@
 
     (ordinalize \"23\")
     ;=> \"23rd\""
-  [obj] (-ordinalize obj))
+  [x] (-ordinalize x))
 
 ;; PARAMETERIZE
 
 (defprotocol IParameterize
-  (-parameterize [object sep] "Parameterize an object."))
+  (-parameterize [x sep] "Parameterize an x."))
 
 (extend-protocol IParameterize
   nil
   (-parameterize [_ _] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-parameterize [obj sep]
-    (keyword (-parameterize (name obj) sep)))
+  (-parameterize [x sep]
+    (keyword (-parameterize (name x) sep)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-parameterize [obj sep]
-    (symbol (-parameterize (str obj) sep)))
+  (-parameterize [x sep]
+    (symbol (-parameterize (str x) sep)))
   #+clj java.lang.String
   #+cljs string
-  (-parameterize [obj sep]
+  (-parameterize [x sep]
     (let [sep (or sep "-")]
-      (-> obj
+      (-> x
           #+clj (replace #"(?i)[^a-z0-9]+" sep)
           #+cljs (replace #"[^A-Za-z0-9]+" sep)
           (replace #"\++" sep)
@@ -527,7 +527,7 @@
           lower-case))))
 
 (defn parameterize
-  "Replaces special characters in `obj` with the default separator
+  "Replaces special characters in `x` with the default separator
   \"-\". so that it may be used as part of a pretty URL.
 
   Examples:
@@ -537,7 +537,7 @@
 
     (parameterize \"Donald E. Knuth\" \"_\")
     ; => \"donald_e_knuth\""
-  [obj & [separator]] (-parameterize obj separator))
+  [x & [sep]] (-parameterize x sep))
 
 (defn pluralize
   "Attempts to pluralize the word unless count is 1. If plural is
@@ -549,23 +549,23 @@
 ;; UNDERSCORE
 
 (defprotocol IUnderscore
-  (-underscore [object] "Underscore an object."))
+  (-underscore [x] "Underscore an x."))
 
 (extend-protocol IUnderscore
   nil
   (-underscore [_] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-underscore [obj]
-    (keyword (-underscore (name obj))))
+  (-underscore [x]
+    (keyword (-underscore (name x))))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-underscore [obj]
-    (symbol (-underscore (str obj))))
+  (-underscore [x]
+    (symbol (-underscore (str x))))
   #+clj java.lang.String
   #+cljs string
-  (-underscore [obj]
-    (-> obj
+  (-underscore [x]
+    (-> x
         (replace #"::" "/")
         (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
         (replace #"([a-z\d])([A-Z])" "$1_$2")
@@ -584,33 +584,33 @@
 
     (underscore \"ActiveRecord::Errors\")
     ;=> \"active_record/errors\""
-  [obj] (-underscore obj))
+  [x] (-underscore x))
 
 ;; FOREIGN KEY
 
 (defprotocol IForeignKey
-  (-foreign-key [object sep] "Demodulize an object."))
+  (-foreign-key [x sep] "Demodulize an x."))
 
 (extend-protocol IForeignKey
   nil
   (-foreign-key [_ _] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-foreign-key [obj sep]
-    (keyword (-foreign-key (name obj) sep)))
+  (-foreign-key [x sep]
+    (keyword (-foreign-key (name x) sep)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-foreign-key [obj sep]
-    (symbol (-foreign-key (str obj) sep)))
+  (-foreign-key [x sep]
+    (symbol (-foreign-key (str x) sep)))
   #+clj java.lang.String
   #+cljs string
-  (-foreign-key [obj sep]
-    (if-not (blank? obj)
-      (str (underscore (hyphenate (singular (demodulize obj))))
+  (-foreign-key [x sep]
+    (if-not (blank? x)
+      (str (underscore (hyphenate (singular (demodulize x))))
            (or sep "_") "id"))))
 
 (defn foreign-key
-  "Converts `obj` into a foreign key. The default separator \"_\" is
+  "Converts `x` into a foreign key. The default separator \"_\" is
   placed between the name and \"id\".
 
 
@@ -624,7 +624,7 @@
 
     (foreign-key \"Admin::Post\")
     ;=> \"post_id\""
-  [obj & [separator]] (-foreign-key obj separator))
+  [x & [sep]] (-foreign-key x sep))
 
 ;; TRANSFORMATIONS ON MAPS
 
