@@ -12,14 +12,11 @@
   (if-not (contains? (set (deref rules)) rule)
     (swap! rules conj rule)))
 
-(defn make-rule [pattern replacement]
-  (->Rule pattern replacement))
-
 (defn slurp-rules
   "Returns a seq of rules, where the pattern and replacement must be
   given in pairs of two elements."
   [& patterns-and-replacements]
-  (map #(apply make-rule %) (partition 2 patterns-and-replacements)))
+  (map #(apply ->Rule %) (partition 2 patterns-and-replacements)))
 
 (defn resolve-rule [rule word]
   (let [pattern (:pattern rule)
