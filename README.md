@@ -42,6 +42,6 @@ Via Clojars: http://clojars.org/inflections.
 
 ## License
 
-Copyright (C) 2013-2014 Roman Scherer
+Copyright (C) 2013-2014 r0man
 
 Distributed under the Eclipse Public License, the same as Clojure.

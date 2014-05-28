@@ -1,7 +1,7 @@
 (defproject inflections "0.9.9-SNAPSHOT"
   :description "Rails-like inflections for Clojure(Script)."
   :url "http://github.com/r0man/inflections-clj"
-  :author "Roman Scherer"
+  :author "r0man"
   :min-lein-version "2.0.0"
   :lein-release {:deploy-via :clojars}
   :license {:name "Eclipse Public License"
