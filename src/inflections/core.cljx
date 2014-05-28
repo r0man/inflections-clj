@@ -254,30 +254,30 @@
          ["woman" "women"]])))
 
 
-;; CAMELIZE
+;; CAMEL-CASE
 
-(defprotocol ICamelize
-  (-camelize [object mode] "Camelize an object."))
+(defprotocol ICamel-Case
+  (-camel-case [object mode] "Camel-Case an object."))
 
-(extend-protocol ICamelize
+(extend-protocol ICamel-Case
   nil
-  (-camelize [_ _] nil)
+  (-camel-case [_ _] nil)
   #+clj clojure.lang.Keyword
   #+cljs cljs.core/Keyword
-  (-camelize [obj mode]
-    (keyword (-camelize (apply str (rest (str obj))) mode)))
+  (-camel-case [obj mode]
+    (keyword (-camel-case (apply str (rest (str obj))) mode)))
   #+clj clojure.lang.Symbol
   #+cljs cljs.core/Symbol
-  (-camelize [obj mode]
-    (symbol (-camelize (str obj) mode)))
+  (-camel-case [obj mode]
+    (symbol (-camel-case (str obj) mode)))
   #+clj java.lang.String
   #+cljs string
-  (-camelize [obj mode]
+  (-camel-case [obj mode]
     (cond
-     (= mode :lower) (-camelize obj lower-case)
-     (= mode :upper) (-camelize obj upper-case)
+     (= mode :lower) (-camel-case obj lower-case)
+     (= mode :upper) (-camel-case obj upper-case)
      (fn? mode) (str (mode (str (first obj)))
-                     (apply str (rest (-camelize obj nil))))
+                     (apply str (rest (-camel-case obj nil))))
      :else (-> (str obj)
                (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
                (replace #"(^|_|-)(.)"
@@ -291,26 +291,26 @@
                                   (upper-case f))
                                 (if r (upper-case r)))))))))
 
-(defn camelize
-  "Convert obj to camel case. By default, camelize converts to
-  UpperCamelCase. If the argument to camelize is set to :lower then
-  camelize produces lowerCamelCase. The camelize fn will also convert
+(defn camel-case
+  "Convert obj to camel case. By default, camel-case converts to
+  UpperCamelCase. If the argument to camel-case is set to :lower then
+  camel-case produces lowerCamelCase. The camel-case fn will also convert
   \"/\" to \"::\" which is useful for converting paths to namespaces.
 
   Examples:
 
-    (camelize \"active_record\")
+    (camel-case \"active_record\")
     ;=> \"ActiveRecord\"
 
-    (camelize \"active_record\" :lower)
+    (camel-case \"active_record\" :lower)
     ;=> \"activeRecord\"
 
-    (camelize \"active_record/errors\")
+    (camel-case \"active_record/errors\")
     ;=> \"ActiveRecord::Errors\"
 
-    (camelize \"active_record/errors\" :lower)
+    (camel-case \"active_record/errors\" :lower)
     ;=> \"activeRecord::Errors\""
-  [obj & [mode]] (-camelize obj mode))
+  [obj & [mode]] (-camel-case obj mode))
 
 
 ;; CAPITALIZE
@@ -577,7 +577,7 @@
         lower-case)))
 
 (defn underscore
-  "The reverse of camelize. Makes an underscored, lowercase form from
+  "The reverse of camel-case. Makes an underscored, lowercase form from
   the expression in the string. Changes \"::\" to \"/\" to convert
   namespaces to paths.
 
@@ -659,9 +659,9 @@
      m (keys m))
     m))
 
-(defn camelize-keys
-  "Recursively apply camelize on all keys of m."
-  [m & [mode]] (transform-keys m #(camelize %1 mode)))
+(defn camel-case-keys
+  "Recursively apply camel-case on all keys of m."
+  [m & [mode]] (transform-keys m #(camel-case %1 mode)))
 
 (defn hyphenate-keys
   "Recursively apply hyphenate on all keys of m."

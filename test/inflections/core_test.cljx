@@ -7,9 +7,9 @@
 (defrecord Foo [a_1 b_2])
 (defrecord Bar [a-1 b-2])
 
-(deftest test-camelize
+(deftest test-camel-case
   (are [word expected]
-    (= (c/camelize word) expected)
+    (= (c/camel-case word) expected)
     nil nil
     "" ""
     "active_record" "ActiveRecord"
@@ -20,7 +20,7 @@
     :active_record/errors (keyword "ActiveRecord::Errors")
     )
   (are [word expected]
-    (= (c/camelize word :lower) expected)
+    (= (c/camel-case word :lower) expected)
     nil nil
     "" ""
     "active_record" "activeRecord"
@@ -42,11 +42,11 @@
     'area51_controller 'area51Controller
     :area51_controller :area51Controller))
 
-(deftest test-camelize-keys
-  (is (nil? (c/camelize-keys nil)))
-  (is (= {} (c/camelize-keys {})))
-  (is (= {:A1 1 :B2 2} (c/camelize-keys {:a-1 1 :b_2 2})))
-  (is (= {:a1 1 :b2 2} (c/camelize-keys {:a-1 1 :b_2 2} :lower))))
+(deftest test-camel-case-keys
+  (is (nil? (c/camel-case-keys nil)))
+  (is (= {} (c/camel-case-keys {})))
+  (is (= {:A1 1 :B2 2} (c/camel-case-keys {:a-1 1 :b_2 2})))
+  (is (= {:a1 1 :b2 2} (c/camel-case-keys {:a-1 1 :b_2 2} :lower))))
 
 (deftest test-capitalize
   (are [word expected]
