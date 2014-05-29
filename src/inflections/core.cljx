@@ -439,8 +439,7 @@
   #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
   (-ordinalize [x]
     (symbol (-ordinalize (str x))))
-  #+clj java.lang.Number
-  #+cljs number
+  #+clj java.lang.Number #+cljs number
   (-ordinalize [x]
     (-ordinalize (str x)))
   #+clj java.lang.String #+cljs string
