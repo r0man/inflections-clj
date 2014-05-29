@@ -421,8 +421,7 @@
     "" ""
     "weather.nww3-htsgwsfc-2013-02-04T00" "weather.nww3_htsgwsfc_2013_02_04_t00"
     "ActiveRecord" "active_record"
-    "ActiveRecord::Errors" "active_record/errors"
-))
+    "ActiveRecord::Errors" "active_record/errors"))
 
 (deftest test-stringify-keys
   (are [m expected]
