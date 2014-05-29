@@ -177,8 +177,7 @@
 
 (deftest test-ordinalize
   (are [number expected]
-    (is (and (= expected (c/ordinalize number))
-             (= expected (c/ordinalize (str number)))))
+    (= expected (c/ordinalize number))
     nil nil
     "" nil
     "x" nil
