@@ -240,10 +240,10 @@
 
 ;; CAMEL-CASE
 
-(defprotocol ICamel-Case
+(defprotocol ICamelCase
   (-camel-case [x mode] "Camel-Case an x."))
 
-(extend-protocol ICamel-Case
+(extend-protocol ICamelCase
   nil
   (-camel-case [_ _] nil)
   #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
