@@ -3,11 +3,11 @@
   :url "http://github.com/r0man/inflections-clj"
   :author "r0man"
   :min-lein-version "2.0.0"
-  :lein-release {:deploy-via :clojars}
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [noencore "0.1.15"]]
+  :deploy-repositories [["releases" :clojars]]
   :cljsbuild {:builds []}
   :test-paths ["target/test-classes"]
   :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-2234"]]
