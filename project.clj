@@ -10,7 +10,7 @@
                  [noencore "0.1.15"]]
   :cljsbuild {:builds []}
   :test-paths ["target/test-classes"]
-  :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-2227"]]
+  :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-2234"]]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
                    :plugins [[com.cemerick/austin "0.1.4"]
                              [com.cemerick/clojurescript.test "0.3.1"]
