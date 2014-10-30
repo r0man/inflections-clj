@@ -60,7 +60,8 @@
     'HELLO 'Hello
     :HELLO :Hello
     "123ABC" "123abc"
-    :123ABC :123abc))
+    :123ABC :123abc
+    "hsts" "HSTs"))
 
 (deftest test-dasherize
   (are [word expected]
@@ -441,3 +442,25 @@
     {'a-1 {'b-2 {'c-3 1}}}  {'a-1 {'b-2 {'c-3 "1"}}}
     {:a-1 {:b-2 {:c-3 1}}}  {:a-1 {:b-2 {:c-3 "1"}}}
     (Bar. 1 {:c-3 3}) (Bar. "1" {:c-3 "3"}) ))
+
+(deftest test-acronym
+  (is (c/acronym? "hst"))
+  (c/delete-acronym! "hst")
+  (is (not (c/acronym? "hst")))
+  (c/add-acronym! "hst")
+  (is (c/acronym? "hst"))
+  (is (c/acronym? "NASA"))
+  (is (c/acronym? "nasa"))
+  (is (c/acronym? "nAsa"))
+  (is (not (c/acronym? "Blog"))))
+
+(deftest test-titleize
+  (are [word expected]
+       (is (= expected (c/titleize word)))
+       " " ""
+       "" ""
+       "blog-post" "Blog Post"
+       "nasa-budget" "NASA Budget"
+       "included-HST-amount" "Included HST Amount"
+       "word" "Word"
+       "hst" "HST"))

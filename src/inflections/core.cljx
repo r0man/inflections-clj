@@ -1,6 +1,6 @@
 (ns inflections.core
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [blank? lower-case upper-case replace]]
+  (:require [clojure.string :refer [blank? lower-case upper-case replace split join]]
             [clojure.walk :refer [postwalk]]
             [no.en.core :refer [parse-integer]]))
 
@@ -25,7 +25,7 @@
       (replace word pattern replacement))))
 
 (defn resolve-rules [rules word]
-  (first (remove nil? (map #(resolve-rule % word) rules))))
+  (first (keep #(resolve-rule % word) rules)))
 
 (defn reset-rules!
   "Resets the list of plural rules."
@@ -44,6 +44,31 @@
           "shopping" "silver" "snow" "space" "species" "speed" "steam" "sugar" "sunshine" "tea"
           "tennis" "thunder" "time" "toothpaste" "traffic" "up" "vinegar" "washing" "wine"
           "wood" "wool"}))
+
+(def ^{:dynamic true} *acronyms*
+  (atom #{"hst" "nasa"}))
+
+(defprotocol IAcronym
+  (acronym? [x] "Returns true if `x` is an acronym, otherwise false."))
+
+(extend-protocol IAcronym
+  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  (acronym? [s]
+    (acronym? (name s)))
+  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  (acronym? [s]
+    (acronym? (str s)))
+  #+clj java.lang.String #+cljs string
+  (acronym? [s]
+    (contains? @*acronyms* (lower-case s))))
+
+(defn add-acronym!
+  "Adds `word` to the set of `*acronyms*`."
+  [word] (swap! *acronyms* conj (lower-case (name word))))
+
+(defn delete-acronym!
+  "Delete `word` from the set of `*acronyms*`."
+  [word] (swap! *acronyms* disj (lower-case (name word))))
 
 (defprotocol ICountable
   (countable? [x] "Returns true if `x` is countable, otherwise false."))
@@ -299,6 +324,9 @@
 (defprotocol ICapitalize
   (-capitalize [x] "Capitalize an x."))
 
+(defn upper-case? [x]
+  (= x (upper-case x)))
+
 (extend-protocol ICapitalize
   nil
   (-capitalize [_] nil)
@@ -310,8 +338,13 @@
     (symbol (-capitalize (str x))))
   #+clj java.lang.String #+cljs string
   (-capitalize [x]
-    (str (upper-case (str (first x)))
-         (lower-case (apply str (rest x))))))
+    (cond
+      (acronym? x) (upper-case x)
+      (acronym? (singular x)) (plural (upper-case (singular x)))
+      :else
+      (str (upper-case (str (first x)))
+           (when (next x) (lower-case (subs x 1)))))))
+
 
 (defn capitalize
   "Convert the first letter in `x` to upper case.
@@ -327,6 +360,24 @@
     (capitalize \"abc123\")
     ;=> \"Abc123\""
   [x] (-capitalize x))
+
+;; TITLEIZE
+
+(defprotocol ITitleize
+  (titleize [x]))
+
+(extend-protocol ITitleize
+  nil
+  (titleize [_] nil)
+  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  (titleize [x]
+    (titleize (name x)))
+  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  (titleize [x]
+    (titleize (str x)))
+  #+clj java.lang.String #+cljs string
+  (titleize [x]
+    (join " " (map capitalize (split (name x) #"[-_./ ]")))))
 
 ;; DASHERIZE
 
