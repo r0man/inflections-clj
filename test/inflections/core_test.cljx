@@ -60,7 +60,8 @@
     'HELLO 'Hello
     :HELLO :Hello
     "123ABC" "123abc"
-    :123ABC :123abc))
+    :123ABC :123abc
+    "hsts" "HSTs"))
 
 (deftest test-dasherize
   (are [word expected]
