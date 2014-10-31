@@ -341,7 +341,6 @@
   (-capitalize [x]
     (cond
       (acronym x) (acronym x)
-      (acronym (singular x)) (plural (acronym (singular x)))
       :else
       (str (upper-case (str (first x)))
            (when (next x) (lower-case (subs x 1)))))))

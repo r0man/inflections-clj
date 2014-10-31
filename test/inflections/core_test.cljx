@@ -50,6 +50,7 @@
 
 (deftest test-capitalize
   (c/add-acronym! "HST")
+  (c/add-acronym! "PhDs")
   (are [word expected]
     (= (c/capitalize word) expected)
     nil nil
@@ -62,7 +63,8 @@
     :HELLO :Hello
     "123ABC" "123abc"
     :123ABC :123abc
-    "hsts" "HSTs"))
+    "hsts" "Hsts"
+    "phds" "PhDs"))
 
 (deftest test-dasherize
   (are [word expected]
