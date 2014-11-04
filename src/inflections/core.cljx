@@ -46,29 +46,30 @@
           "wood" "wool"}))
 
 (def ^{:dynamic true} *acronyms*
-  (atom #{"hst" "nasa"}))
+  (atom {"hst" "HST"
+         "nasa" "NASA"}))
 
 (defprotocol IAcronym
-  (acronym? [x] "Returns true if `x` is an acronym, otherwise false."))
+  (acronym [x] "Returns the correct version of the acronym if it is one, otherwise nil."))
 
 (extend-protocol IAcronym
   #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
-  (acronym? [s]
-    (acronym? (name s)))
+  (acronym [s]
+    (acronym (name s)))
   #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
-  (acronym? [s]
-    (acronym? (str s)))
+  (acronym [s]
+    (acronym (str s)))
   #+clj java.lang.String #+cljs string
-  (acronym? [s]
-    (contains? @*acronyms* (lower-case s))))
+  (acronym [s]
+    (get @*acronyms* (lower-case s))))
 
 (defn add-acronym!
   "Adds `word` to the set of `*acronyms*`."
-  [word] (swap! *acronyms* conj (lower-case (name word))))
+  [word] (swap! *acronyms* assoc (lower-case (name word)) (name word)))
 
 (defn delete-acronym!
   "Delete `word` from the set of `*acronyms*`."
-  [word] (swap! *acronyms* disj (lower-case (name word))))
+  [word] (swap! *acronyms* dissoc (lower-case (name word))))
 
 (defprotocol ICountable
   (countable? [x] "Returns true if `x` is countable, otherwise false."))
@@ -339,8 +340,7 @@
   #+clj java.lang.String #+cljs string
   (-capitalize [x]
     (cond
-      (acronym? x) (upper-case x)
-      (acronym? (singular x)) (plural (upper-case (singular x)))
+      (acronym x) (acronym x)
       :else
       (str (upper-case (str (first x)))
            (when (next x) (lower-case (subs x 1)))))))

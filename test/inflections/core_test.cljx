@@ -49,6 +49,8 @@
   (is (= {:a1 1 :b2 2} (c/camel-case-keys {:a-1 1 :b_2 2} :lower))))
 
 (deftest test-capitalize
+  (c/add-acronym! "HST")
+  (c/add-acronym! "PhDs")
   (are [word expected]
     (= (c/capitalize word) expected)
     nil nil
@@ -61,7 +63,8 @@
     :HELLO :Hello
     "123ABC" "123abc"
     :123ABC :123abc
-    "hsts" "HSTs"))
+    "hsts" "Hsts"
+    "phds" "PhDs"))
 
 (deftest test-dasherize
   (are [word expected]
@@ -444,17 +447,18 @@
     (Bar. 1 {:c-3 3}) (Bar. "1" {:c-3 "3"}) ))
 
 (deftest test-acronym
-  (is (c/acronym? "hst"))
+  (is (= "HST" (c/acronym "hst")))
   (c/delete-acronym! "hst")
-  (is (not (c/acronym? "hst")))
-  (c/add-acronym! "hst")
-  (is (c/acronym? "hst"))
-  (is (c/acronym? "NASA"))
-  (is (c/acronym? "nasa"))
-  (is (c/acronym? "nAsa"))
-  (is (not (c/acronym? "Blog"))))
+  (is (nil? (c/acronym "hst")))
+  (c/add-acronym! "HsT")
+  (is (= "HsT" (c/acronym "hst")))
+  (is (= "NASA" (c/acronym "NASA")))
+  (is (= "NASA" (c/acronym "nasa")))
+  (is (= "NASA" (c/acronym "nAsa")))
+  (is (nil? (c/acronym "Blog"))))
 
 (deftest test-titleize
+  (c/add-acronym! "HST")
   (are [word expected]
        (is (= expected (c/titleize word)))
        " " ""
