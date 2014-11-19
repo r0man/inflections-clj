@@ -573,7 +573,10 @@
   (-underscore [_] nil)
   #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
   (-underscore [x]
-    (keyword (-underscore (name x))))
+    (keyword
+     (if-let [ns (namespace x)]
+       (-underscore ns))
+     (-underscore (name x))))
   #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
   (-underscore [x]
     (symbol (-underscore (str x))))

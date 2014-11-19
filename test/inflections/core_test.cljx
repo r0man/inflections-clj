@@ -424,7 +424,8 @@
     "" ""
     "weather.nww3-htsgwsfc-2013-02-04T00" "weather.nww3_htsgwsfc_2013_02_04_t00"
     "ActiveRecord" "active_record"
-    "ActiveRecord::Errors" "active_record/errors"))
+    "ActiveRecord::Errors" "active_record/errors"
+    :titles/site-name :titles/site_name))
 
 (deftest test-stringify-keys
   (are [m expected]
@@ -460,11 +461,11 @@
 (deftest test-titleize
   (c/add-acronym! "HST")
   (are [word expected]
-       (is (= expected (c/titleize word)))
-       " " ""
-       "" ""
-       "blog-post" "Blog Post"
-       "nasa-budget" "NASA Budget"
-       "included-HST-amount" "Included HST Amount"
-       "word" "Word"
-       "hst" "HST"))
+    (is (= expected (c/titleize word)))
+    " " ""
+    "" ""
+    "blog-post" "Blog Post"
+    "nasa-budget" "NASA Budget"
+    "included-HST-amount" "Included HST Amount"
+    "word" "Word"
+    "hst" "HST"))
