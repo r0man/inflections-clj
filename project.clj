@@ -6,11 +6,12 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [noencore "0.1.15"]]
+                 [noencore "0.1.17"]]
+  :aliases {"test-ancient" ["test"]}
   :deploy-repositories [["releases" :clojars]]
   :cljsbuild {:builds []}
   :test-paths ["target/test-classes"]
-  :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-2234"]]
+  :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-2371"]]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
                    :plugins [[com.cemerick/austin "0.1.4"]
                              [com.cemerick/clojurescript.test "0.3.1"]
