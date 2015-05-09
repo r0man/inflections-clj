@@ -37,6 +37,5 @@
                              [jonase/eastwood "0.2.1"]
                              [lein-cljsbuild "1.0.5"]
                              [lein-difftest "2.0.0"]]
-                   :hooks [leiningen.cljsbuild]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
                    :test-paths ["target/test-classes"]}})
