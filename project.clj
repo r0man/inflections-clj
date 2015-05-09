@@ -39,5 +39,4 @@
                              [lein-difftest "2.0.0"]]
                    :hooks [leiningen.cljsbuild]
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
-                   :test-paths ["target/test-classes"]}
-             :test {:prep-tasks [["cljsbuild" "once"]]}})
+                   :test-paths ["target/test-classes"]}})
