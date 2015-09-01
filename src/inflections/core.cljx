@@ -1,7 +1,6 @@
 (ns inflections.core
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [blank? lower-case upper-case replace split join]]
-            [clojure.walk :refer [postwalk]]
             [no.en.core :refer [parse-integer]]))
 
 ;; RULES
