@@ -24,6 +24,9 @@ Via Clojars: http://clojars.org/inflections.
 (plural "virus")
 ;=> "viri"
 
+(pluralize 12 "virus")
+;=> "12 viri"
+
 (singular "apples")
 ;=> "apple"
 
