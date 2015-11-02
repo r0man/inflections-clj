@@ -292,10 +292,8 @@
                                 (nth % 1))
                               (upper-case (nth % 2)))
                         #+cljs
-                        #(let [[f r] %]
-                           (str (if-not (#{\_ \-} f)
-                                  (upper-case f))
-                                (if r (upper-case r)))))))))
+                        #(let [[_ _ letter-to-uppercase] %]
+                           (upper-case letter-to-uppercase)))))))
 
 (defn camel-case
   "Convert `x` to camel case. By default, camel-case converts to
