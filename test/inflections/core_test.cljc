@@ -1,15 +1,14 @@
 (ns inflections.core-test
-  #+cljs (:require-macros [cemerick.cljs.test :refer [deftest is are]])
   (:require [inflections.core :as c]
-            #+clj [clojure.test :refer :all]
-            #+cljs [cemerick.cljs.test :as t]))
+            #?(:clj [clojure.test :refer :all]
+               :cljs [cljs.test :refer-macros [are is deftest]])))
 
 (defrecord Foo [a_1 b_2])
 (defrecord Bar [a-1 b-2])
 
 (deftest test-camel-case
   (are [word expected]
-    (= (c/camel-case word) expected)
+      (= (c/camel-case word) expected)
     nil nil
     "" ""
     "active_record" "ActiveRecord"
@@ -17,10 +16,9 @@
     :active_record :ActiveRecord
     "active_record/errors" "ActiveRecord::Errors"
     'active_record/errors (symbol "ActiveRecord::Errors")
-    :active_record/errors (keyword "ActiveRecord::Errors")
-    )
+    :active_record/errors (keyword "ActiveRecord::Errors"))
   (are [word expected]
-    (= (c/camel-case word :lower) expected)
+      (= (c/camel-case word :lower) expected)
     nil nil
     "" ""
     "active_record" "activeRecord"
@@ -52,7 +50,7 @@
   (c/add-acronym! "HST")
   (c/add-acronym! "PhDs")
   (are [word expected]
-    (= (c/capitalize word) expected)
+      (= (c/capitalize word) expected)
     nil nil
     "" ""
     "hello" "Hello"
@@ -68,7 +66,7 @@
 
 (deftest test-dasherize
   (are [word expected]
-    (= (c/dasherize word) expected)
+      (= (c/dasherize word) expected)
     nil nil
     "" ""
     "puni_puni" "puni-puni"
@@ -95,7 +93,7 @@
 
 (deftest test-demodulize
   (are [word expected]
-    (= (c/demodulize word) expected)
+      (= (c/demodulize word) expected)
     nil nil
     "" ""
     "inflections.MyRecord" "MyRecord"
@@ -108,7 +106,7 @@
 
 (deftest test-foreign-key
   (are [word expected]
-    (= (c/foreign-key word) expected)
+      (= (c/foreign-key word) expected)
     nil nil
     "" nil
     "Message" "message_id"
@@ -117,7 +115,7 @@
     "Admin::Post" "post_id"
     "MyApplication::Billing::Account" "account_id")
   (are [word separator expected]
-    (= (c/foreign-key word separator) expected)
+      (= (c/foreign-key word separator) expected)
     "Message" ""  "messageid"
     'Message ""  'messageid
     :Message ""  :messageid
@@ -131,7 +129,7 @@
 
 (deftest test-hyphenate
   (are [obj expected]
-    (= (c/hyphenate obj) expected)
+      (= (c/hyphenate obj) expected)
     nil nil
     "" ""
     "-" "-"
@@ -181,7 +179,7 @@
 
 (deftest test-ordinalize
   (are [number expected]
-    (= expected (c/ordinalize number))
+      (= expected (c/ordinalize number))
     nil nil
     "" nil
     "x" nil
@@ -219,7 +217,7 @@
 
 (deftest test-parameterize
   (are [obj expected]
-    (is (= (c/parameterize obj) expected))
+      (is (= (c/parameterize obj) expected))
     "Donald E. Knuth" "donald-e-knuth"
     "Random text with *(bad)* characters" "random-text-with-bad-characters"
     "Trailing bad characters!@#" "trailing-bad-characters"
@@ -237,9 +235,9 @@
 
 (deftest test-plural
   (are [word expected]
-    (is (and (= expected (c/plural word))
-             (= (keyword expected) (c/plural (keyword word)))
-             (= (symbol expected) (c/plural (symbol word)))))
+      (is (and (= expected (c/plural word))
+               (= (keyword expected) (c/plural (keyword word)))
+               (= (symbol expected) (c/plural (symbol word)))))
     " " " "
     "" ""
     "ability" "abilities"
@@ -306,16 +304,16 @@
 (deftest test-pluralize
   (is (= "2 users" (c/pluralize 2 "person" "users")))
   (are [count word expected]
-    (is (= expected (c/pluralize count word)))
+      (is (= expected (c/pluralize count word)))
     0 "person" "0 people"
     1 "person" "1 person"
     2 "person" "2 people"))
 
 (deftest test-plural-with-irregular-words
   (are [word expected]
-    (is (and (= expected (c/plural word))
-             (= (keyword expected) (c/plural (keyword word)))
-             (= (symbol expected) (c/plural (symbol word)))))
+      (is (and (= expected (c/plural word))
+               (= (keyword expected) (c/plural (keyword word)))
+               (= (symbol expected) (c/plural (symbol word)))))
     "amenity" "amenities"
     "child" "children"
     "cow" "kine"
@@ -339,9 +337,9 @@
 
 (deftest test-singular
   (are [word expected]
-    (is (and (= expected (c/singular word))
-             (= (keyword expected) (c/singular (keyword word)))
-             (= (symbol expected) (c/singular (symbol word)))))
+      (is (and (= expected (c/singular word))
+               (= (keyword expected) (c/singular (keyword word)))
+               (= (symbol expected) (c/singular (symbol word)))))
     " " " "
     "" ""
     "abilities" "ability"
@@ -419,7 +417,7 @@
 
 (deftest test-underscore
   (are [word expected]
-    (= (c/underscore word) expected)
+      (= (c/underscore word) expected)
     nil nil
     "" ""
     "weather.nww3-htsgwsfc-2013-02-04T00" "weather.nww3_htsgwsfc_2013_02_04_t00"
@@ -429,7 +427,7 @@
 
 (deftest test-stringify-keys
   (are [m expected]
-    (is (= expected (c/stringify-keys m)))
+      (is (= expected (c/stringify-keys m)))
     {} {}
     {"name" "Closure"} {"name" "Closure"}
     {"a-1" {"b-2" {"c-3" 1}}} {"a-1" {"b-2" {"c-3" 1}}}
@@ -439,7 +437,7 @@
 
 (deftest test-stringify-values
   (are [m expected]
-    (is (= expected (c/stringify-values m)))
+      (is (= expected (c/stringify-values m)))
     {} {}
     {"name" "Closure"} {"name" "Closure"}
     {"a-1" {"b-2" {"c-3" 1}}} {"a-1" {"b-2" {"c-3" "1"}}}
@@ -461,7 +459,7 @@
 (deftest test-titleize
   (c/add-acronym! "HST")
   (are [word expected]
-    (is (= expected (c/titleize word)))
+      (is (= expected (c/titleize word)))
     " " ""
     "" ""
     "blog-post" "Blog Post"
