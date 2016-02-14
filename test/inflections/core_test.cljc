@@ -6,39 +6,36 @@
 (defrecord Foo [a_1 b_2])
 (defrecord Bar [a-1 b-2])
 
+(deftest test-str-name
+  (are [x expected]
+      (= expected (c/str-name x))
+    nil nil
+    "" ""
+    "x" "x"
+    :x "x"
+    'x "x"
+    :x/y "x/y"
+    'x/y "x/y"))
+
 (deftest test-camel-case
   (are [word expected]
       (= (c/camel-case word) expected)
     nil nil
     "" ""
     "active_record" "ActiveRecord"
-    'active_record 'ActiveRecord
-    :active_record :ActiveRecord
-    "active_record/errors" "ActiveRecord::Errors"
-    'active_record/errors (symbol "ActiveRecord::Errors")
-    :active_record/errors (keyword "ActiveRecord::Errors"))
+    "active_record/errors" "ActiveRecord::Errors")
   (are [word expected]
       (= (c/camel-case word :lower) expected)
     nil nil
     "" ""
     "active_record" "activeRecord"
-    'active_record 'activeRecord
-    :active_record :activeRecord
+    :active_record "activeRecord"
+    'active_record "activeRecord"
     "active_record/errors" "activeRecord::Errors"
-    'active_record/errors (symbol "activeRecord::Errors")
-    :active_record/errors (keyword "activeRecord::Errors")
     "product" "product"
-    'product 'product
-    :product :product
     "special_guest" "specialGuest"
-    'special_guest 'specialGuest
-    :special_guest :specialGuest
     "application_controller" "applicationController"
-    'application_controller 'applicationController
-    :application_controller :applicationController
-    "area51_controller" "area51Controller"
-    'area51_controller 'area51Controller
-    :area51_controller :area51Controller))
+    "area51_controller" "area51Controller"))
 
 (deftest test-camel-case-keys
   (is (nil? (c/camel-case-keys nil)))
@@ -54,13 +51,10 @@
     nil nil
     "" ""
     "hello" "Hello"
-    'hello 'Hello
-    :hello :Hello
+    'hello "Hello"
+    :hello "Hello"
     "HELLO" "Hello"
-    'HELLO 'Hello
-    :HELLO :Hello
     "123ABC" "123abc"
-    :123ABC :123abc
     "hsts" "Hsts"
     "phds" "PhDs"))
 
@@ -70,26 +64,12 @@
     nil nil
     "" ""
     "puni_puni" "puni-puni"
-    'puni_puni 'puni-puni
-    :puni_puni :puni-puni
+    'puni_puni "puni-puni"
+    :puni_puni "puni-puni"
     "street" "street"
-    'street 'street
-    :street :street
     "street_address" "street-address"
-    'street_address 'street-address
-    :street_address :street-address
     "person_street_address" "person-street-address"
-    'person_street_address 'person-street-address
-    :person_street_address :person-street-address
-    "iso_3166_alpha_2" "iso-3166-alpha-2"
-    'iso_3166_alpha_2 'iso-3166-alpha-2
-    :iso_3166_alpha_2 :iso-3166-alpha-2
-    ;; {} {}
-    ;; {"key_a" {"key_b" "value b"}} {"key-a" {"key-b" "value b"}}
-    ;; {"key_a" [{"key_b" "value b"}]} {"key-a" [{"key-b" "value b"}]}
-    ;; {:key_a {:key_b "value b"}} {:key-a {:key-b "value b"}}
-    ;; {:key_a [{:key_b "value b"}]} {:key-a [{:key-b "value b"}]}
-    ))
+    "iso_3166_alpha_2" "iso-3166-alpha-2"))
 
 (deftest test-demodulize
   (are [word expected]
@@ -97,11 +77,9 @@
     nil nil
     "" ""
     "inflections.MyRecord" "MyRecord"
-    'inflections.MyRecord 'MyRecord
-    :inflections.MyRecord :MyRecord
+    'inflections.MyRecord "MyRecord"
+    :inflections.MyRecord "MyRecord"
     "Inflections" "Inflections"
-    'Inflections 'Inflections
-    :Inflections :Inflections
     "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
 
 (deftest test-foreign-key
@@ -110,18 +88,14 @@
     nil nil
     "" nil
     "Message" "message_id"
-    'Message 'message_id
-    :Message :message_id
+    'Message "message_id"
+    :Message "message_id"
     "Admin::Post" "post_id"
     "MyApplication::Billing::Account" "account_id")
   (are [word separator expected]
       (= (c/foreign-key word separator) expected)
     "Message" ""  "messageid"
-    'Message ""  'messageid
-    :Message ""  :messageid
     "Message" "-"  "message-id"
-    'Message "-"  'message-id
-    :Message "-"  :message-id
     "Admin::Post" ""  "postid"
     "MyApplication::Billing::Account" "" "accountid"
     "users" "_" "user_id"
@@ -135,43 +109,21 @@
     "-" "-"
     "_" "-"
     "street" "street"
-    'street 'street
-    :street :street
     "StreetAddress" "street-address"
-    'StreetAddress 'street-address
-    :StreetAddress :street-address
+    'StreetAddress "street-address"
+    :StreetAddress "street-address"
     "Street Address" "street-address"
     "SpecialGuest" "special-guest"
     "ApplicationController" "application-controller"
-    'ApplicationController 'application-controller
-    :ApplicationController :application-controller
     "Area51Controller" "area51-controller"
-    'Area51Controller 'area51-controller
-    :Area51Controller :area51-controller
     "HTMLTidy" "html-tidy"
-    'HTMLTidy 'html-tidy
-    :HTMLTidy :html-tidy
     "HTMLTidyGenerator" "html-tidy-generator"
-    'HTMLTidyGenerator 'html-tidy-generator
-    :HTMLTidyGenerator :html-tidy-generator
     "FreeBSD" "free-bsd"
-    'FreeBSD 'free-bsd
-    :FreeBSD :free-bsd
     "HTML" "html"
-    'HTML 'html
-    :HTML :html
-    "iso-3166-alpha-2" "iso-3166-alpha-2"
-    'iso-3166-alpha-2 'iso-3166-alpha-2
-    :iso-3166-alpha-2 :iso-3166-alpha-2
-    ;; {} {}
-    ;; {"key a" "value a"} {"key-a" "value a"}
-    ;; {"key a" [{"key b" "value b"}]} {"key-a" [{"key-b" "value b"}]}
-    ;; {"aB" {"cD" {"eF" 1}}} {"a-b" {"c-d" {"e-f" 1}}}
-    ;; {:aB {:cD {:eF 1}} } {:a-b {:c-d {:e-f 1}}}
-    ;; {'aB {'cD {'eF 1}} } {'a-b {'c-d {'e-f 1}}}
-    ))
+    "iso-3166-alpha-2" "iso-3166-alpha-2"))
 
 (deftest test-irregular?
+  (is (nil? (c/irregular? nil)))
   (is (not (empty? @c/*irregular-words*)))
   (is (every? c/irregular? @c/*irregular-words*))
   (is (every? c/irregular? (map keyword @c/*irregular-words*)))
@@ -217,7 +169,7 @@
 
 (deftest test-parameterize
   (are [obj expected]
-      (is (= (c/parameterize obj) expected))
+      (= (c/parameterize obj) expected)
     "Donald E. Knuth" "donald-e-knuth"
     "Random text with *(bad)* characters" "random-text-with-bad-characters"
     "Trailing bad characters!@#" "trailing-bad-characters"
@@ -226,18 +178,12 @@
     "dasherize_underscores" "dasherize-underscores"
     "Test with + sign" "test-with-sign"
     "Test with malformed utf8 \251" "test-with-malformed-utf8"
-    :a_1 :a-1
-    ;; {} {}
-    ;; {"key a" "value a"} {"key-a" "value a"}
-    ;; {"key a" [{"key b" "value b"}]} {"key-a" [{"key-b" "value b"}]}
-    ;; (Foo. 1 {:c_3 3}) {:a-1 1 :b-2 {:c-3 3}}
-    ))
+    :a_1 "a-1"))
 
 (deftest test-plural
   (are [word expected]
-      (is (and (= expected (c/plural word))
-               (= (keyword expected) (c/plural (keyword word)))
-               (= (symbol expected) (c/plural (symbol word)))))
+      (= expected (c/plural word))
+    nil nil
     " " " "
     "" ""
     "ability" "abilities"
@@ -304,16 +250,14 @@
 (deftest test-pluralize
   (is (= "2 users" (c/pluralize 2 "person" "users")))
   (are [count word expected]
-      (is (= expected (c/pluralize count word)))
+      (= expected (c/pluralize count word))
     0 "person" "0 people"
     1 "person" "1 person"
     2 "person" "2 people"))
 
 (deftest test-plural-with-irregular-words
   (are [word expected]
-      (is (and (= expected (c/plural word))
-               (= (keyword expected) (c/plural (keyword word)))
-               (= (symbol expected) (c/plural (symbol word)))))
+      (= expected (c/plural word))
     "amenity" "amenities"
     "child" "children"
     "cow" "kine"
@@ -331,15 +275,12 @@
 
 (deftest test-plural-with-uncountable-words
   (doseq [word @c/*uncountable-words*]
-    (is (= word (c/plural word)))
-    (is (= (keyword word) (c/plural (keyword word))))
-    (is (= (symbol word) (c/plural (symbol word))))))
+    (is (= word (c/plural word)))))
 
 (deftest test-singular
   (are [word expected]
-      (is (and (= expected (c/singular word))
-               (= (keyword expected) (c/singular (keyword word)))
-               (= (symbol expected) (c/singular (symbol word)))))
+      (= expected (c/singular word))
+    nil nil
     " " " "
     "" ""
     "abilities" "ability"
@@ -410,6 +351,7 @@
     "weather" "weather"))
 
 (deftest test-uncountable?
+  (is (not (c/uncountable? nil)))
   (is (not (empty? @c/*uncountable-words*)))
   (is (every? c/uncountable? @c/*uncountable-words*))
   (is (every? c/uncountable? (map keyword @c/*uncountable-words*)))
@@ -423,7 +365,7 @@
     "weather.nww3-htsgwsfc-2013-02-04T00" "weather.nww3_htsgwsfc_2013_02_04_t00"
     "ActiveRecord" "active_record"
     "ActiveRecord::Errors" "active_record/errors"
-    :titles/site-name :titles/site_name))
+    :titles/site-name "titles/site_name"))
 
 (deftest test-stringify-keys
   (are [m expected]
@@ -462,6 +404,7 @@
       (is (= expected (c/titleize word)))
     " " ""
     "" ""
+    "hello world" "Hello World"
     "blog-post" "Blog Post"
     "nasa-budget" "NASA Budget"
     "included-HST-amount" "Included HST Amount"

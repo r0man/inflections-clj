@@ -1,6 +1,7 @@
 (ns inflections.core
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [blank? lower-case upper-case replace split join]]
+            [clojure.walk :refer [keywordize-keys]]
             [no.en.core :refer [parse-integer]]))
 
 ;; RULES
@@ -18,10 +19,11 @@
   (map #(apply ->Rule %) (partition 2 patterns-and-replacements)))
 
 (defn resolve-rule [rule word]
-  (let [pattern (:pattern rule)
-        replacement (:replacement rule)]
-    (if (re-find pattern word)
-      (replace word pattern replacement))))
+  (when (and rule word)
+    (let [pattern (:pattern rule)
+          replacement (:replacement rule)]
+      (if (re-find pattern word)
+        (replace word pattern replacement)))))
 
 (defn resolve-rules [rules word]
   (first (keep #(resolve-rule % word) rules)))
@@ -30,7 +32,20 @@
   "Resets the list of plural rules."
   [rules] (reset! rules []))
 
-;; UNCOUNTABLE WORDS
+(defn str-name
+  "Same as `clojure.core/name`, but keeps the namespace for keywords
+  and symbols."
+  [x]
+  (cond
+    (nil? x)
+    x
+    (string? x)
+    x
+    (or (keyword? x)
+        (symbol? x))
+    (if-let [ns (namespace x)]
+      (str ns "/" (name x))
+      (name x))))
 
 (def ^{:dynamic true} *uncountable-words*
   (atom #{"air" "alcohol" "art" "blood" "butter" "cheese" "chewing" "coffee"
@@ -48,74 +63,49 @@
   (atom {"hst" "HST"
          "nasa" "NASA"}))
 
-(defprotocol IAcronym
-  (acronym [x] "Returns the correct version of the acronym if it is one, otherwise nil."))
-
-(extend-protocol IAcronym
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (acronym [s]
-    (acronym (name s)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (acronym [s]
-    (acronym (str s)))
-  #?(:clj java.lang.String :cljs string)
-  (acronym [s]
-    (get @*acronyms* (lower-case s))))
+(defn acronym
+  "Returns the the acronym for `s` if it is one, otherwise nil."
+  [s]
+  (get @*acronyms* (lower-case (str-name s))))
 
 (defn add-acronym!
   "Adds `word` to the set of `*acronyms*`."
-  [word] (swap! *acronyms* assoc (lower-case (name word)) (name word)))
+  [word] (swap! *acronyms* assoc (lower-case (str-name word)) (str-name word)))
 
 (defn delete-acronym!
   "Delete `word` from the set of `*acronyms*`."
-  [word] (swap! *acronyms* dissoc (lower-case (name word))))
+  [word] (swap! *acronyms* dissoc (lower-case (str-name word))))
 
-(defprotocol ICountable
-  (countable? [x] "Returns true if `x` is countable, otherwise false."))
+(defn countable?
+  "Returns true if `s` is countable, otherwise false."
+  [s]
+  (when s (not (contains? @*uncountable-words* (lower-case (str-name s))))))
 
 (defn uncountable?
   "Returns true if `x` is uncountable, otherwise false."
   [x]
-  (not (countable? x)))
+  (when x (not (countable? x))))
 
 (defn add-uncountable!
   "Adds `word` to the set of `*uncountable-words*`."
-  [word] (swap! *uncountable-words* conj (lower-case (name word))))
+  [word] (swap! *uncountable-words* conj (lower-case (str-name word))))
 
 (defn delete-uncountable!
   "Delete `word` from the set of `*uncountable-words*`."
-  [word] (swap! *uncountable-words* disj (lower-case (name word))))
-
-(extend-protocol ICountable
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (countable? [s]
-    (countable? (name s)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (countable? [s]
-    (countable? (str s)))
-  #?(:clj java.lang.String :cljs string)
-  (countable? [s]
-    (not (contains? @*uncountable-words* (lower-case s)))))
+  [word] (swap! *uncountable-words* disj (lower-case (str-name word))))
 
 ;; PLURAL
 
 (def ^{:dynamic true} *plural-rules*
   (atom []))
 
-(defprotocol Plural
-  (plural [x] "Returns the plural of x."))
-
-(extend-protocol Plural
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (plural [k]
-    (keyword (plural (name k))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (plural [k]
-    (symbol (plural (name k))))
-  #?(:clj java.lang.String :cljs string)
-  (plural [s]
-    (if (or (blank? s) (uncountable? s))
-      s (resolve-rules (rseq @*plural-rules*) s))))
+(defn plural
+  "Returns the plural of s."
+  [s]
+  (if (or (blank? s)
+          (uncountable? s))
+    s
+    (resolve-rules (rseq @*plural-rules*) s)))
 
 (defn plural!
   "Define rule(s) to map words from singular to plural.\n
@@ -151,20 +141,12 @@
 (def ^{:dynamic true} *singular-rules*
   (atom []))
 
-(defprotocol Singular
-  (singular [x] "Returns the singular of x."))
-
-(extend-protocol Singular
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (singular [k]
-    (keyword (singular (name k))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (singular [k]
-    (symbol (singular (name k))))
-  #?(:clj java.lang.String :cljs string)
-  (singular [s]
-    (if (uncountable? s)
-      s (or (resolve-rules (rseq @*singular-rules*) s) s))))
+(defn singular
+  "Returns the singular of s."
+  [s]
+  (if (uncountable? s)
+    s
+    (or (resolve-rules (rseq @*singular-rules*) s) s)))
 
 (defn singular!
   "Define rule(s) to map words from singular to plural.\n
@@ -209,15 +191,17 @@
 (def ^{:dynamic true} *irregular-words*
   (atom (sorted-set)))
 
-(defprotocol Irregular
-  (irregular? [x]
-    "Returns true if `x` is an irregular word, otherwise false."))
+(defn irregular?
+  "Returns true if `word` is an irregular word, otherwise false."
+  [word]
+  (when word
+    (contains? @*irregular-words* (lower-case (str-name word)))))
 
 (defn add-irregular!
   "Add `singular` and `plural` to the set of `*irregular-words*`."
   [singular plural]
-  (let [singular (lower-case (name singular))
-        plural (lower-case (name plural))]
+  (let [singular (lower-case (str-name singular))
+        plural (lower-case (str-name plural))]
     (delete-uncountable! singular)
     (delete-uncountable! plural)
     (singular! (re-pattern (str "^" plural "$")) singular)
@@ -228,21 +212,10 @@
 (defn delete-irregular!
   "Delete `singular` and `plural` from the set of *irregular-words*."
   [singular plural]
-  (let [singular (lower-case (name singular))
-        plural (lower-case (name plural))]
+  (let [singular (lower-case (str-name singular))
+        plural (lower-case (str-name plural))]
     (swap! *irregular-words* disj singular)
     (swap! *irregular-words* disj plural)))
-
-(extend-protocol Irregular
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (irregular? [k]
-    (irregular? (name k)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (irregular? [k]
-    (irregular? (name k)))
-  #?(:clj java.lang.String :cljs string)
-  (irregular? [s]
-    (contains? @*irregular-words* (lower-case s))))
 
 (defn init-irregular-words! []
   (doall
@@ -262,44 +235,12 @@
          ["tooth" "teeth"]
          ["woman" "women"]])))
 
-
-;; CAMEL-CASE
-
-(defprotocol ICamelCase
-  (-camel-case [x mode] "Camel-Case an x."))
-
-(extend-protocol ICamelCase
-  nil
-  (-camel-case [_ _] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-camel-case [x mode]
-    (keyword (-camel-case (apply str (rest (str x))) mode)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-camel-case [x mode]
-    (symbol (-camel-case (str x) mode)))
-  #?(:clj java.lang.String :cljs string)
-  (-camel-case [x mode]
-    (cond
-      (= mode :lower) (-camel-case x lower-case)
-      (= mode :upper) (-camel-case x upper-case)
-      (fn? mode) (str (mode (str (first x)))
-                      (apply str (rest (-camel-case x nil))))
-      :else (-> (str x)
-                (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
-                (replace #"(^|_|-)(.)"
-                         #?(:clj
-                            #(str (if (#{\_ \-} (nth % 1))
-                                    (nth % 1))
-                                  (upper-case (nth % 2)))
-                            :cljs
-                            #(let [[_ _ letter-to-uppercase] %]
-                               (upper-case letter-to-uppercase))))))))
-
 (defn camel-case
-  "Convert `x` to camel case. By default, camel-case converts to
+  "Convert `word` to camel case. By default, camel-case converts to
   UpperCamelCase. If the argument to camel-case is set to :lower then
-  camel-case produces lowerCamelCase. The camel-case fn will also convert
-  \"/\" to \"::\" which is useful for converting paths to namespaces.
+  camel-case produces lowerCamelCase. The camel-case fn will also
+  convert \"/\" to \"::\" which is useful for converting paths to
+  namespaces.
 
   Examples:
 
@@ -314,37 +255,26 @@
 
     (camel-case \"active_record/errors\" :lower)
     ;=> \"activeRecord::Errors\""
-  [x & [mode]] (-camel-case x mode))
-
-
-;; CAPITALIZE
-
-(defprotocol ICapitalize
-  (-capitalize [x] "Capitalize an x."))
-
-(defn upper-case? [x]
-  (= x (upper-case x)))
-
-(extend-protocol ICapitalize
-  nil
-  (-capitalize [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-capitalize [x]
-    (keyword (-capitalize (name x))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-capitalize [x]
-    (symbol (-capitalize (str x))))
-  #?(:clj java.lang.String :cljs string)
-  (-capitalize [x]
-    (cond
-      (acronym x) (acronym x)
-      :else
-      (str (upper-case (str (first x)))
-           (when (next x) (lower-case (subs x 1)))))))
-
+  [word & [mode]]
+  (when word
+    (let [word (str-name word)]
+      (cond
+        (= mode :lower) (camel-case word lower-case)
+        (= mode :upper) (camel-case word upper-case)
+        (fn? mode) (str (mode (str (first word)))
+                        (apply str (rest (camel-case word nil))))
+        :else (-> (replace word #"/(.?)" #(str "::" (upper-case (nth % 1))))
+                  (replace #"(^|_|-)(.)"
+                           #?(:clj
+                              #(str (if (#{\_ \-} (nth % 1))
+                                      (nth % 1))
+                                    (upper-case (nth % 2)))
+                              :cljs
+                              #(let [[_ _ letter-to-uppercase] %]
+                                 (upper-case letter-to-uppercase)))))))))
 
 (defn capitalize
-  "Convert the first letter in `x` to upper case.
+  "Convert the first letter in `word` to upper case.
 
   Examples:
 
@@ -356,71 +286,30 @@
 
     (capitalize \"abc123\")
     ;=> \"Abc123\""
-  [x] (-capitalize x))
+  [word]
+  (when word
+    (if-let [acronym (acronym word)]
+      acronym
+      (let [word (str-name word)]
+        (str (upper-case (str (first word)))
+             (when (next word) (lower-case (subs word 1))))))))
 
-;; TITLEIZE
-
-(defprotocol ITitleize
-  (titleize [x]))
-
-(extend-protocol ITitleize
-  nil
-  (titleize [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (titleize [x]
-    (titleize (name x)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (titleize [x]
-    (titleize (str x)))
-  #?(:clj java.lang.String :cljs string)
-  (titleize [x]
-    (join " " (map capitalize (split (name x) #"[-_./ ]")))))
-
-;; DASHERIZE
-
-(defprotocol IDasherize
-  (-dasherize [x] "Dasherize an x."))
-
-(extend-protocol IDasherize
-  nil
-  (-dasherize [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-dasherize [x]
-    (keyword (-dasherize (name x))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-dasherize [x]
-    (symbol (-dasherize (str x))))
-  #?(:clj java.lang.String :cljs string)
-  (-dasherize [x]
-    (replace x #"_" "-")))
+(defn titleize
+  "Convert `s` into a title."
+  [s]
+  (when s
+    (join " " (map capitalize (split (str-name s) #"[-_./ ]")))))
 
 (defn dasherize
-  "Replaces all underscores in `x` with dashes.
+  "Replaces all underscores in `s` with dashes.
 
   Examples:
 
     (dasherize \"puni_puni\")
     ;=> \"puni-puni\""
-  [x] (-dasherize x))
-
-
-;; DEMODULIZE
-
-(defprotocol IDemodulize
-  (-demodulize [x] "Demodulize an x."))
-
-(extend-protocol IDemodulize
-  nil
-  (-demodulize [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-demodulize [x]
-    (keyword (-demodulize (name x))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-demodulize [x]
-    (symbol (-demodulize (str x))))
-  #?(:clj java.lang.String :cljs string)
-  (-demodulize [x]
-    (replace x #"^.*(::|\.)" "")))
+  [s]
+  (when s
+    (replace (str-name s) #"_" "-")))
 
 (defn demodulize
   "Removes the module part from `x`.
@@ -435,30 +324,9 @@
 
     (demodulize \"Inflections\")
     ;=> \"Inflections\""
-  [x] (-demodulize x))
-
-;; HYPHENATE
-
-(defprotocol IHyphenate
-  (-hyphenate [x] "Hyphenate an x."))
-
-(extend-protocol IHyphenate
-  nil
-  (-hyphenate [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-hyphenate [x]
-    (keyword (-hyphenate (name x))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-hyphenate [x]
-    (symbol (-hyphenate (str x))))
-  #?(:clj java.lang.String :cljs string)
-  (-hyphenate [x]
-    (-> (replace x #"::" "/")
-        (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
-        (replace #"([a-z\d])([A-Z])" "$1-$2")
-        (replace #"\s+" "-")
-        (replace #"_" "-")
-        (lower-case))))
+  [x]
+  (when x
+    (replace (str-name x) #"^.*(::|\.)" "")))
 
 (defn hyphenate
   "Hyphenate x, which is the same as threading `x` through the str,
@@ -471,36 +339,15 @@
 
     (hyphenate \"CountryFlag\")
     ; => \"country-flag\""
-  [x] (-hyphenate x))
-
-;; ORDINALIZE
-
-(defprotocol IOrdinalize
-  (-ordinalize [x] "Ordinalize an x."))
-
-(extend-protocol IOrdinalize
-  nil
-  (-ordinalize [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-ordinalize [x]
-    (keyword (-ordinalize (name x))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-ordinalize [x]
-    (symbol (-ordinalize (str x))))
-  #?(:clj java.lang.Number :cljs number)
-  (-ordinalize [x]
-    (-ordinalize (str x)))
-  #?(:clj java.lang.String :cljs string)
-  (-ordinalize [x]
-    (if-let [number (parse-integer x)]
-      (if (contains? (set (range 11 14)) (mod number 100))
-        (str number "th")
-        (let [modulus (mod number 10)]
-          (cond
-            (= modulus 1) (str number "st")
-            (= modulus 2) (str number "nd")
-            (= modulus 3) (str number "rd")
-            :else (str number "th")))))))
+  [x]
+  (some-> x
+          (name)
+          (replace #"::" "/")
+          (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
+          (replace #"([a-z\d])([A-Z])" "$1-$2")
+          (replace #"\s+" "-")
+          (replace #"_" "-")
+          (lower-case)))
 
 (defn ordinalize
   "Turns `x` into an ordinal string used to denote the position in an
@@ -513,32 +360,16 @@
 
     (ordinalize \"23\")
     ;=> \"23rd\""
-  [x] (-ordinalize x))
-
-;; PARAMETERIZE
-
-(defprotocol IParameterize
-  (-parameterize [x sep] "Parameterize an x."))
-
-(extend-protocol IParameterize
-  nil
-  (-parameterize [_ _] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-parameterize [x sep]
-    (keyword (-parameterize (name x) sep)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-parameterize [x sep]
-    (symbol (-parameterize (str x) sep)))
-  #?(:clj java.lang.String :cljs string)
-  (-parameterize [x sep]
-    (let [sep (or sep "-")]
-      (-> x
-          #?(:clj (replace #"(?i)[^a-z0-9]+" sep)
-             :cljs (replace #"[^A-Za-z0-9]+" sep))
-          (replace #"\++" sep)
-          (replace (re-pattern (str sep "{2,}")) sep)
-          (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")
-          lower-case))))
+  [x]
+  (if-let [number (parse-integer x)]
+    (if (contains? (set (range 11 14)) (mod number 100))
+      (str number "th")
+      (let [modulus (mod number 10)]
+        (cond
+          (= modulus 1) (str number "st")
+          (= modulus 2) (str number "nd")
+          (= modulus 3) (str number "rd")
+          :else (str number "th"))))))
 
 (defn parameterize
   "Replaces special characters in `x` with the default separator
@@ -551,7 +382,16 @@
 
     (parameterize \"Donald E. Knuth\" \"_\")
     ; => \"donald_e_knuth\""
-  [x & [sep]] (-parameterize x sep))
+  [x & [sep]]
+  (when x
+    (let [sep (or sep "-")]
+      (-> (str-name x)
+          #?(:clj (replace #"(?i)[^a-z0-9]+" sep)
+             :cljs (replace #"[^A-Za-z0-9]+" sep))
+          (replace #"\++" sep)
+          (replace (re-pattern (str sep "{2,}")) sep)
+          (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")
+          lower-case))))
 
 (defn pluralize
   "Attempts to pluralize the word unless count is 1. If plural is
@@ -559,32 +399,6 @@
   the inflector to determine the plural form."
   [count singular & [plural]]
   (str count " " (if (= 1 count) singular (or plural (inflections.core/plural singular)))))
-
-;; UNDERSCORE
-
-(defprotocol IUnderscore
-  (-underscore [x] "Underscore an x."))
-
-(extend-protocol IUnderscore
-  nil
-  (-underscore [_] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-underscore [x]
-    (keyword
-     (if-let [ns (namespace x)]
-       (-underscore ns))
-     (-underscore (name x))))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-underscore [x]
-    (symbol (-underscore (str x))))
-  #?(:clj java.lang.String :cljs string)
-  (-underscore [x]
-    (-> x
-        (replace #"::" "/")
-        (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
-        (replace #"([a-z\d])([A-Z])" "$1_$2")
-        (replace #"-" "_")
-        lower-case)))
 
 (defn underscore
   "The reverse of camel-case. Makes an underscored, lowercase form from
@@ -598,27 +412,14 @@
 
     (underscore \"ActiveRecord::Errors\")
     ;=> \"active_record/errors\""
-  [x] (-underscore x))
-
-;; FOREIGN KEY
-
-(defprotocol IForeignKey
-  (-foreign-key [x sep] "Demodulize an x."))
-
-(extend-protocol IForeignKey
-  nil
-  (-foreign-key [_ _] nil)
-  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
-  (-foreign-key [x sep]
-    (keyword (-foreign-key (name x) sep)))
-  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
-  (-foreign-key [x sep]
-    (symbol (-foreign-key (str x) sep)))
-  #?(:clj java.lang.String :cljs string)
-  (-foreign-key [x sep]
-    (if-not (blank? x)
-      (str (underscore (hyphenate (singular (demodulize x))))
-           (or sep "_") "id"))))
+  [x]
+  (when x
+    (-> (str-name x)
+        (replace #"::" "/")
+        (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
+        (replace #"([a-z\d])([A-Z])" "$1_$2")
+        (replace #"-" "_")
+        lower-case)))
 
 (defn foreign-key
   "Converts `x` into a foreign key. The default separator \"_\" is
@@ -635,7 +436,11 @@
 
     (foreign-key \"Admin::Post\")
     ;=> \"post_id\""
-  [x & [sep]] (-foreign-key x sep))
+  [x & [sep]]
+  (let [x (str-name x)]
+    (when-not (blank? x)
+      (str (underscore (hyphenate (singular (demodulize x))))
+           (or sep "_") "id"))))
 
 ;; TRANSFORMATIONS ON MAPS
 
@@ -668,7 +473,9 @@
 
 (defn camel-case-keys
   "Recursively apply camel-case on all keys of m."
-  [m & [mode]] (transform-keys m #(camel-case %1 mode)))
+  [m & [mode]]
+  (-> (transform-keys m #(camel-case %1 mode))
+      (keywordize-keys)))
 
 (defn hyphenate-keys
   "Recursively apply hyphenate on all keys of m."
@@ -680,11 +487,11 @@
 
 (defn stringify-keys
   "Recursively transform all keys of m into strings."
-  [m] (transform-keys m #(if (keyword? %) (name %) (str %))))
+  [m] (transform-keys m #(if (keyword? %) (str-name %) (str %))))
 
 (defn stringify-values
   "Recursively transform all values of m into strings."
-  [m] (transform-values m #(if (keyword? %) (name %) (str %))))
+  [m] (transform-values m #(if (keyword? %) (str-name %) (str %))))
 
 (defn underscore-keys
   "Recursively apply underscore on all keys of m."

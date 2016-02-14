@@ -1,4 +1,4 @@
-(defproject inflections "0.10.1-SNAPSHOT"
+(defproject inflections "0.11.0-SNAPSHOT"
   :description "Rails-like inflections for Clojure(Script)."
   :url "http://github.com/r0man/inflections-clj"
   :author "r0man"
@@ -18,15 +18,19 @@
                         :compiler
                         {:main 'inflections.test
                          :optimizations :none
+                         :output-dir "target/none"
                          :output-to "target/none.js"
-                         :pretty-print true}
+                         :pretty-print true
+                         :verbose true}
                         :source-paths ["src" "test"]}
                        {:id "advanced"
                         :compiler
                         {:main 'inflections.test
                          :optimizations :advanced
+                         :output-dir "target/advanced"
                          :output-to "target/advanced.js"
-                         :pretty-print true}
+                         :pretty-print true
+                         :verbose true}
                         :source-paths ["src" "test"]}]}
   :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:plugins [[com.cemerick/piggieback "0.2.1"]

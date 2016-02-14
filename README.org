@@ -1,0 +1,46 @@
+* inflections
+
+  [[https://travis-ci.org/r0man/inflections-clj][https://travis-ci.org/r0man/inflections-clj.svg]]
+  [[http://jarkeeper.com/r0man/inflections-clj][http://jarkeeper.com/r0man/inflections-clj/status.svg]]
+
+  Rails-like inflection library for Clojure and ClojureScript.
+
+** Installation
+
+   [[https://clojars.org/inflections][https://clojars.org/inflections/latest-version.svg]]
+
+** Usage
+
+   #+BEGIN_EXAMPLE
+    (use 'inflections.core)
+
+    (plural "word")
+    ;=> "words"
+
+    (plural "virus")
+    ;=> "viri"
+
+    (pluralize 12 "virus")
+    ;=> "12 viri"
+
+    (singular "apples")
+    ;=> "apple"
+
+    (singular "octopi")
+    ;=> "octopus"
+
+    (underscore "puni-puni")
+    ;=> "puni_puni"
+
+    (ordinalize "52")
+    ;=> "52nd"
+
+    (capitalize "clojure")
+    ;=> "Clojure"
+   #+END_EXAMPLE
+
+** License
+
+   Copyright (C) 2013-2016 [[https://github.com/r0man][r0man]]
+
+   Distributed under the Eclipse Public License, the same as Clojure.
