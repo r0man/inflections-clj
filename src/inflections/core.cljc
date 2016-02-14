@@ -52,13 +52,13 @@
   (acronym [x] "Returns the correct version of the acronym if it is one, otherwise nil."))
 
 (extend-protocol IAcronym
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (acronym [s]
     (acronym (name s)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (acronym [s]
     (acronym (str s)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (acronym [s]
     (get @*acronyms* (lower-case s))))
 
@@ -87,13 +87,13 @@
   [word] (swap! *uncountable-words* disj (lower-case (name word))))
 
 (extend-protocol ICountable
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (countable? [s]
     (countable? (name s)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (countable? [s]
     (countable? (str s)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (countable? [s]
     (not (contains? @*uncountable-words* (lower-case s)))))
 
@@ -106,13 +106,13 @@
   (plural [x] "Returns the plural of x."))
 
 (extend-protocol Plural
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (plural [k]
     (keyword (plural (name k))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (plural [k]
     (symbol (plural (name k))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (plural [s]
     (if (or (blank? s) (uncountable? s))
       s (resolve-rules (rseq @*plural-rules*) s))))
@@ -155,13 +155,13 @@
   (singular [x] "Returns the singular of x."))
 
 (extend-protocol Singular
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (singular [k]
     (keyword (singular (name k))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (singular [k]
     (symbol (singular (name k))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (singular [s]
     (if (uncountable? s)
       s (or (resolve-rules (rseq @*singular-rules*) s) s))))
@@ -234,13 +234,13 @@
     (swap! *irregular-words* disj plural)))
 
 (extend-protocol Irregular
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (irregular? [k]
     (irregular? (name k)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (irregular? [k]
     (irregular? (name k)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (irregular? [s]
     (contains? @*irregular-words* (lower-case s))))
 
@@ -271,29 +271,29 @@
 (extend-protocol ICamelCase
   nil
   (-camel-case [_ _] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-camel-case [x mode]
     (keyword (-camel-case (apply str (rest (str x))) mode)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-camel-case [x mode]
     (symbol (-camel-case (str x) mode)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-camel-case [x mode]
     (cond
-     (= mode :lower) (-camel-case x lower-case)
-     (= mode :upper) (-camel-case x upper-case)
-     (fn? mode) (str (mode (str (first x)))
-                     (apply str (rest (-camel-case x nil))))
-     :else (-> (str x)
-               (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
-               (replace #"(^|_|-)(.)"
-                        #+clj
-                        #(str (if (#{\_ \-} (nth % 1))
-                                (nth % 1))
-                              (upper-case (nth % 2)))
-                        #+cljs
-                        #(let [[_ _ letter-to-uppercase] %]
-                           (upper-case letter-to-uppercase)))))))
+      (= mode :lower) (-camel-case x lower-case)
+      (= mode :upper) (-camel-case x upper-case)
+      (fn? mode) (str (mode (str (first x)))
+                      (apply str (rest (-camel-case x nil))))
+      :else (-> (str x)
+                (replace #"/(.?)" #(str "::" (upper-case (nth % 1))))
+                (replace #"(^|_|-)(.)"
+                         #?(:clj
+                            #(str (if (#{\_ \-} (nth % 1))
+                                    (nth % 1))
+                                  (upper-case (nth % 2)))
+                            :cljs
+                            #(let [[_ _ letter-to-uppercase] %]
+                               (upper-case letter-to-uppercase))))))))
 
 (defn camel-case
   "Convert `x` to camel case. By default, camel-case converts to
@@ -328,13 +328,13 @@
 (extend-protocol ICapitalize
   nil
   (-capitalize [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-capitalize [x]
     (keyword (-capitalize (name x))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-capitalize [x]
     (symbol (-capitalize (str x))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-capitalize [x]
     (cond
       (acronym x) (acronym x)
@@ -366,13 +366,13 @@
 (extend-protocol ITitleize
   nil
   (titleize [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (titleize [x]
     (titleize (name x)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (titleize [x]
     (titleize (str x)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (titleize [x]
     (join " " (map capitalize (split (name x) #"[-_./ ]")))))
 
@@ -384,13 +384,13 @@
 (extend-protocol IDasherize
   nil
   (-dasherize [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-dasherize [x]
     (keyword (-dasherize (name x))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-dasherize [x]
     (symbol (-dasherize (str x))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-dasherize [x]
     (replace x #"_" "-")))
 
@@ -412,13 +412,13 @@
 (extend-protocol IDemodulize
   nil
   (-demodulize [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-demodulize [x]
     (keyword (-demodulize (name x))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-demodulize [x]
     (symbol (-demodulize (str x))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-demodulize [x]
     (replace x #"^.*(::|\.)" "")))
 
@@ -445,13 +445,13 @@
 (extend-protocol IHyphenate
   nil
   (-hyphenate [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-hyphenate [x]
     (keyword (-hyphenate (name x))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-hyphenate [x]
     (symbol (-hyphenate (str x))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-hyphenate [x]
     (-> (replace x #"::" "/")
         (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
@@ -481,26 +481,26 @@
 (extend-protocol IOrdinalize
   nil
   (-ordinalize [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-ordinalize [x]
     (keyword (-ordinalize (name x))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-ordinalize [x]
     (symbol (-ordinalize (str x))))
-  #+clj java.lang.Number #+cljs number
+  #?(:clj java.lang.Number :cljs number)
   (-ordinalize [x]
     (-ordinalize (str x)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-ordinalize [x]
     (if-let [number (parse-integer x)]
       (if (contains? (set (range 11 14)) (mod number 100))
         (str number "th")
         (let [modulus (mod number 10)]
           (cond
-           (= modulus 1) (str number "st")
-           (= modulus 2) (str number "nd")
-           (= modulus 3) (str number "rd")
-           :else (str number "th")))))))
+            (= modulus 1) (str number "st")
+            (= modulus 2) (str number "nd")
+            (= modulus 3) (str number "rd")
+            :else (str number "th")))))))
 
 (defn ordinalize
   "Turns `x` into an ordinal string used to denote the position in an
@@ -523,18 +523,18 @@
 (extend-protocol IParameterize
   nil
   (-parameterize [_ _] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-parameterize [x sep]
     (keyword (-parameterize (name x) sep)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-parameterize [x sep]
     (symbol (-parameterize (str x) sep)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-parameterize [x sep]
     (let [sep (or sep "-")]
       (-> x
-          #+clj (replace #"(?i)[^a-z0-9]+" sep)
-          #+cljs (replace #"[^A-Za-z0-9]+" sep)
+          #?(:clj (replace #"(?i)[^a-z0-9]+" sep)
+             :cljs (replace #"[^A-Za-z0-9]+" sep))
           (replace #"\++" sep)
           (replace (re-pattern (str sep "{2,}")) sep)
           (replace (re-pattern (str "(?i)(^" sep ")|(" sep "$)")) "")
@@ -568,16 +568,16 @@
 (extend-protocol IUnderscore
   nil
   (-underscore [_] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-underscore [x]
     (keyword
      (if-let [ns (namespace x)]
        (-underscore ns))
      (-underscore (name x))))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-underscore [x]
     (symbol (-underscore (str x))))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-underscore [x]
     (-> x
         (replace #"::" "/")
@@ -608,13 +608,13 @@
 (extend-protocol IForeignKey
   nil
   (-foreign-key [_ _] nil)
-  #+clj clojure.lang.Keyword #+cljs cljs.core.Keyword
+  #?(:clj clojure.lang.Keyword :cljs cljs.core.Keyword)
   (-foreign-key [x sep]
     (keyword (-foreign-key (name x) sep)))
-  #+clj clojure.lang.Symbol #+cljs cljs.core.Symbol
+  #?(:clj clojure.lang.Symbol :cljs cljs.core.Symbol)
   (-foreign-key [x sep]
     (symbol (-foreign-key (str x) sep)))
-  #+clj java.lang.String #+cljs string
+  #?(:clj java.lang.String :cljs string)
   (-foreign-key [x sep]
     (if-not (blank? x)
       (str (underscore (hyphenate (singular (demodulize x))))
@@ -648,10 +648,10 @@
        (let [value (get m key)]
          (-> (dissoc memo key)
              (assoc (f key)
-               (cond
-                (map? value) (transform-keys value f)
-                (sequential? value) (map #(transform-keys % f) value)
-                :else value)))))
+                    (cond
+                      (map? value) (transform-keys value f)
+                      (sequential? value) (map #(transform-keys % f) value)
+                      :else value)))))
      m (keys m))
     m))
 

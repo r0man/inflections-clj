@@ -5,37 +5,32 @@
   :min-lein-version "2.0.0"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.145" :scope "provided"]
-                 [noencore "0.1.20"]]
-  :aliases {"cleantest" ["do" "clean," "cljx" "once," "test," "cljsbuild" "test"]
-            "ci" ["do" ["cleantest"] ["lint"]]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.7.228" :scope "provided"]
+                 [noencore "0.2.0"]]
+  :aliases {"ci" ["do"
+                  ["test"]
+                  ["doo" "phantom" "none" "once"]
+                  ["doo" "phantom" "advanced" "once"]
+                  ["lint"]]
             "lint" ["do"  ["eastwood"]]}
-  :cljx {:builds [{:source-paths ["src"]
-                   :output-path "target/classes"
-                   :rules :clj}
-                  {:source-paths ["src"]
-                   :output-path "target/classes"
-                   :rules :cljs}
-                  {:source-paths ["test"]
-                   :output-path "target/test-classes"
-                   :rules :clj}
-                  {:source-paths ["test"]
-                   :output-path "target/test-classes"
-                   :rules :cljs}]}
-  :cljsbuild {:builds [{:source-paths ["target/classes" "target/test-classes"]
-                        :compiler {:output-to "target/testable.js"
-                                   :optimizations :advanced
-                                   :pretty-print true}}]
-              :test-commands {"node" ["node" :node-runner "target/testable.js"]
-                              "phantom" ["phantomjs" :runner "target/testable.js"]}}
+  :cljsbuild {:builds [{:id "none"
+                        :compiler
+                        {:main 'inflections.test
+                         :optimizations :none
+                         :output-to "target/none.js"
+                         :pretty-print true}
+                        :source-paths ["src" "test"]}
+                       {:id "advanced"
+                        :compiler
+                        {:main 'inflections.test
+                         :optimizations :advanced
+                         :output-to "target/advanced.js"
+                         :pretty-print true}
+                        :source-paths ["src" "test"]}]}
   :deploy-repositories [["releases" :clojars]]
-  :prep-tasks [["cljx" "once"] "javac" "compile"]
-  :profiles {:dev {:plugins [[com.cemerick/clojurescript.test "0.3.3"]
-                             [com.cemerick/piggieback "0.2.1"]
-                             [com.keminglabs/cljx "0.6.0"]
+  :profiles {:dev {:plugins [[com.cemerick/piggieback "0.2.1"]
                              [jonase/eastwood "0.2.1"]
-                             [lein-cljsbuild "1.0.5"]
-                             [lein-difftest "2.0.0"]]
-                   :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
-                   :test-paths ["target/test-classes"]}})
+                             [lein-cljsbuild "1.1.2"]
+                             [lein-difftest "2.0.0"]
+                             [lein-doo "0.1.6-rc.1"]]}})
