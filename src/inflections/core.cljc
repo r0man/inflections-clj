@@ -102,10 +102,10 @@
 (defn plural
   "Returns the plural of s."
   [s]
-  (if (or (blank? s)
-          (uncountable? s))
-    s
-    (resolve-rules (rseq @*plural-rules*) s)))
+  (let [s (str-name s)]
+    (if (or (blank? s)
+            (uncountable? s))
+      s (resolve-rules (rseq @*plural-rules*) s))))
 
 (defn plural!
   "Define rule(s) to map words from singular to plural.\n
@@ -144,9 +144,10 @@
 (defn singular
   "Returns the singular of s."
   [s]
-  (if (uncountable? s)
-    s
-    (or (resolve-rules (rseq @*singular-rules*) s) s)))
+  (let [s (str-name s)]
+    (if-not (uncountable? s)
+      (or (resolve-rules (rseq @*singular-rules*) s) s)
+      s)))
 
 (defn singular!
   "Define rule(s) to map words from singular to plural.\n
@@ -341,7 +342,7 @@
     ; => \"country-flag\""
   [x]
   (some-> x
-          (name)
+          (str-name)
           (replace #"::" "/")
           (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
           (replace #"([a-z\d])([A-Z])" "$1-$2")
