@@ -6,6 +6,16 @@
 (defrecord Foo [a_1 b_2])
 (defrecord Bar [a-1 b-2])
 
+(deftest test-coerce
+  (are [obj s expected]
+      (= expected (c/coerce obj s))
+    nil :x  :x
+    :x nil nil
+    nil nil nil
+    :x "x" :x
+    'x "x" 'x
+    "x" "x" "x"))
+
 (deftest test-str-name
   (are [x expected]
       (= expected (c/str-name x))
@@ -29,8 +39,8 @@
     nil nil
     "" ""
     "active_record" "activeRecord"
-    :active_record "activeRecord"
-    'active_record "activeRecord"
+    :active_record :activeRecord
+    'active_record 'activeRecord
     "active_record/errors" "activeRecord::Errors"
     "product" "product"
     "special_guest" "specialGuest"
@@ -51,8 +61,8 @@
     nil nil
     "" ""
     "hello" "Hello"
-    'hello "Hello"
-    :hello "Hello"
+    'hello 'Hello
+    :hello :Hello
     "HELLO" "Hello"
     "123ABC" "123abc"
     "hsts" "Hsts"
@@ -64,8 +74,8 @@
     nil nil
     "" ""
     "puni_puni" "puni-puni"
-    'puni_puni "puni-puni"
-    :puni_puni "puni-puni"
+    'puni_puni 'puni-puni
+    :puni_puni :puni-puni
     "street" "street"
     "street_address" "street-address"
     "person_street_address" "person-street-address"
@@ -77,8 +87,8 @@
     nil nil
     "" ""
     "inflections.MyRecord" "MyRecord"
-    'inflections.MyRecord "MyRecord"
-    :inflections.MyRecord "MyRecord"
+    'inflections.MyRecord 'MyRecord
+    :inflections.MyRecord :MyRecord
     "Inflections" "Inflections"
     "ActiveRecord::CoreExtensions::String::Inflections" "Inflections"))
 
@@ -88,8 +98,8 @@
     nil nil
     "" nil
     "Message" "message_id"
-    'Message "message_id"
-    :Message "message_id"
+    'Message 'message_id
+    :Message :message_id
     "Admin::Post" "post_id"
     "MyApplication::Billing::Account" "account_id")
   (are [word separator expected]
@@ -110,8 +120,8 @@
     "_" "-"
     "street" "street"
     "StreetAddress" "street-address"
-    'StreetAddress "street-address"
-    :StreetAddress "street-address"
+    'StreetAddress 'street-address
+    :StreetAddress :street-address
     "Street Address" "street-address"
     "SpecialGuest" "special-guest"
     "ApplicationController" "application-controller"
@@ -286,8 +296,8 @@
     " " " "
     "" ""
     "abilities" "ability"
-    :abilities "ability"
-    'abilities "ability"
+    :abilities :ability
+    'abilities 'ability
     "addresses" "address"
     "address" "address"
     "agencies" "agency"
@@ -368,12 +378,15 @@
     "" ""
     "weather.nww3-htsgwsfc-2013-02-04T00" "weather.nww3_htsgwsfc_2013_02_04_t00"
     "ActiveRecord" "active_record"
+    :ActiveRecord :active_record
+    'ActiveRecord 'active_record
     "ActiveRecord::Errors" "active_record/errors"
-    :titles/site-name "titles/site_name"))
+    :titles/site-name :titles/site_name))
 
 (deftest test-stringify-keys
   (are [m expected]
       (is (= expected (c/stringify-keys m)))
+    nil nil
     {} {}
     {"name" "Closure"} {"name" "Closure"}
     {"a-1" {"b-2" {"c-3" 1}}} {"a-1" {"b-2" {"c-3" 1}}}
@@ -384,6 +397,7 @@
 (deftest test-stringify-values
   (are [m expected]
       (is (= expected (c/stringify-values m)))
+    nil nil
     {} {}
     {"name" "Closure"} {"name" "Closure"}
     {"a-1" {"b-2" {"c-3" 1}}} {"a-1" {"b-2" {"c-3" "1"}}}
@@ -391,16 +405,39 @@
     {:a-1 {:b-2 {:c-3 1}}}  {:a-1 {:b-2 {:c-3 "1"}}}
     (Bar. 1 {:c-3 3}) (Bar. "1" {:c-3 "3"}) ))
 
+(deftest test-underscore-keys
+  (are [m expected]
+      (is (= expected (c/underscore-keys m)))
+    nil nil
+    {} {}
+    {"a-1" {"b-2" {"c-3" 1}}} {"a_1" {"b_2" {"c_3" 1}}}
+    {'a-1 {'b-2 {'c-3 1}}}  {'a_1 {'b_2 {'c_3 1}}}
+    {:a-1 {:b-2 {:c-3 1}}}  {:a_1 {:b_2 {:c_3 1}}}
+    (Bar. 1 {:c-3 3}) {:a_1 1, :b_2 {:c_3 3}}))
+
+(deftest test-hyphenate-keys
+  (are [m expected]
+      (is (= expected (c/hyphenate-keys m)))
+    nil nil
+    {} {}
+    {"a_1" {:b_2 {'c_3 1}}} {"a-1" {:b-2 {'c-3 1}}}
+    (Bar. 1 {:c_3 3}) {:a-1 1, :b-2 {:c-3 3}}))
+
 (deftest test-acronym
   (is (= "HST" (c/acronym "hst")))
   (c/delete-acronym! "hst")
   (is (nil? (c/acronym "hst")))
   (c/add-acronym! "HsT")
-  (is (= "HsT" (c/acronym "hst")))
-  (is (= "NASA" (c/acronym "NASA")))
-  (is (= "NASA" (c/acronym "nasa")))
-  (is (= "NASA" (c/acronym "nAsa")))
-  (is (nil? (c/acronym "Blog"))))
+  (are [word expected]
+      (= expected (c/acronym word))
+    nil nil
+    "blog" nil
+    "hst" "HsT"
+    "NASA" "NASA"
+    "nasa" "NASA"
+    "nAsa" "NASA"
+    :nasa :NASA
+    'nasa 'NASA))
 
 (deftest test-titleize
   (c/add-acronym! "HST")

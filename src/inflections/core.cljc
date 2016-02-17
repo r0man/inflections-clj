@@ -4,6 +4,16 @@
             [clojure.walk :refer [keywordize-keys]]
             [no.en.core :refer [parse-integer]]))
 
+(defn coerce
+  "Coerce the string `s` to the type of `obj`."
+  [obj s]
+  (cond
+    (keyword? obj)
+    (keyword s)
+    (symbol? obj)
+    (symbol s)
+    :else s))
+
 ;; RULES
 
 (defrecord Rule [pattern replacement])
@@ -66,7 +76,11 @@
 (defn acronym
   "Returns the the acronym for `s` if it is one, otherwise nil."
   [s]
-  (get @*acronyms* (lower-case (str-name s))))
+  (when s
+    (some->> (str-name s)
+             (lower-case)
+             (get @*acronyms*)
+             (coerce s))))
 
 (defn add-acronym!
   "Adds `word` to the set of `*acronyms*`."
@@ -144,9 +158,9 @@
 (defn singular
   "Returns the singular of s."
   [s]
-  (let [s (str-name s)]
-    (if-not (uncountable? s)
-      (or (resolve-rules (rseq @*singular-rules*) s) s)
+  (let [s' (str-name s)]
+    (if-not (uncountable? s')
+      (coerce s (or (resolve-rules (rseq @*singular-rules*) s') s'))
       s)))
 
 (defn singular!
@@ -258,21 +272,22 @@
     ;=> \"activeRecord::Errors\""
   [word & [mode]]
   (when word
-    (let [word (str-name word)]
-      (cond
-        (= mode :lower) (camel-case word lower-case)
-        (= mode :upper) (camel-case word upper-case)
-        (fn? mode) (str (mode (str (first word)))
-                        (apply str (rest (camel-case word nil))))
-        :else (-> (replace word #"/(.?)" #(str "::" (upper-case (nth % 1))))
-                  (replace #"(^|_|-)(.)"
-                           #?(:clj
-                              #(str (if (#{\_ \-} (nth % 1))
-                                      (nth % 1))
-                                    (upper-case (nth % 2)))
-                              :cljs
-                              #(let [[_ _ letter-to-uppercase] %]
-                                 (upper-case letter-to-uppercase)))))))))
+    (->> (let [word (str-name word)]
+           (cond
+             (= mode :lower) (camel-case word lower-case)
+             (= mode :upper) (camel-case word upper-case)
+             (fn? mode) (str (mode (str (first word)))
+                             (apply str (rest (camel-case word nil))))
+             :else (-> (replace word #"/(.?)" #(str "::" (upper-case (nth % 1))))
+                       (replace #"(^|_|-)(.)"
+                                #?(:clj
+                                   #(str (if (#{\_ \-} (nth % 1))
+                                           (nth % 1))
+                                         (upper-case (nth % 2)))
+                                   :cljs
+                                   #(let [[_ _ letter-to-uppercase] %]
+                                      (upper-case letter-to-uppercase)))))))
+         (coerce word))))
 
 (defn capitalize
   "Convert the first letter in `word` to upper case.
@@ -289,17 +304,18 @@
     ;=> \"Abc123\""
   [word]
   (when word
-    (if-let [acronym (acronym word)]
-      acronym
-      (let [word (str-name word)]
-        (str (upper-case (str (first word)))
-             (when (next word) (lower-case (subs word 1))))))))
+    (->> (if-let [acronym (acronym word)]
+           acronym
+           (let [word' (str-name word)]
+             (->> (str (upper-case (str (first word')))
+                       (when (next word') (lower-case (subs word' 1))))
+                  (coerce word)))))))
 
 (defn titleize
   "Convert `s` into a title."
   [s]
   (when s
-    (join " " (map capitalize (split (str-name s) #"[-_./ ]")))))
+    (->> (join " " (map capitalize (split (str-name s) #"[-_./ ]"))))))
 
 (defn dasherize
   "Replaces all underscores in `s` with dashes.
@@ -310,7 +326,8 @@
     ;=> \"puni-puni\""
   [s]
   (when s
-    (replace (str-name s) #"_" "-")))
+    (->> (replace (str-name s) #"_" "-")
+         (coerce s))))
 
 (defn demodulize
   "Removes the module part from `x`.
@@ -327,7 +344,8 @@
     ;=> \"Inflections\""
   [x]
   (when x
-    (replace (str-name x) #"^.*(::|\.)" "")))
+    (->> (replace (str-name x) #"^.*(::|\.)" "")
+         (coerce x))))
 
 (defn hyphenate
   "Hyphenate x, which is the same as threading `x` through the str,
@@ -341,14 +359,14 @@
     (hyphenate \"CountryFlag\")
     ; => \"country-flag\""
   [x]
-  (some-> x
-          (str-name)
-          (replace #"::" "/")
-          (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
-          (replace #"([a-z\d])([A-Z])" "$1-$2")
-          (replace #"\s+" "-")
-          (replace #"_" "-")
-          (lower-case)))
+  (when x
+    (->> (-> (replace (str-name x) #"::" "/")
+             (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
+             (replace #"([a-z\d])([A-Z])" "$1-$2")
+             (replace #"\s+" "-")
+             (replace #"_" "-")
+             (lower-case))
+         (coerce x))))
 
 (defn ordinalize
   "Turns `x` into an ordinal string used to denote the position in an
@@ -415,12 +433,12 @@
     ;=> \"active_record/errors\""
   [x]
   (when x
-    (-> (str-name x)
-        (replace #"::" "/")
-        (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
-        (replace #"([a-z\d])([A-Z])" "$1_$2")
-        (replace #"-" "_")
-        lower-case)))
+    (->> (-> (replace (str-name x) #"::" "/")
+             (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
+             (replace #"([a-z\d])([A-Z])" "$1_$2")
+             (replace #"-" "_")
+             lower-case)
+         (coerce x))))
 
 (defn foreign-key
   "Converts `x` into a foreign key. The default separator \"_\" is
@@ -438,10 +456,11 @@
     (foreign-key \"Admin::Post\")
     ;=> \"post_id\""
   [x & [sep]]
-  (let [x (str-name x)]
-    (when-not (blank? x)
-      (str (underscore (hyphenate (singular (demodulize x))))
-           (or sep "_") "id"))))
+  (let [x' (str-name x)]
+    (when-not (blank? x')
+      (->> (str (underscore (hyphenate (singular (demodulize x'))))
+                (or sep "_") "id")
+           (coerce x)))))
 
 ;; TRANSFORMATIONS ON MAPS
 
