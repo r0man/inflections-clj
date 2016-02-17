@@ -1,4 +1,4 @@
-* inflections
+* Inflections
 
   [[https://travis-ci.org/r0man/inflections-clj][https://travis-ci.org/r0man/inflections-clj.svg]]
   [[http://jarkeeper.com/r0man/inflections-clj][http://jarkeeper.com/r0man/inflections-clj/status.svg]]
