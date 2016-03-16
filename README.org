@@ -7,10 +7,6 @@
 
   Rails-like inflection library for Clojure and ClojureScript.
 
-** Installation
-
-   [[https://clojars.org/inflections][https://clojars.org/inflections/latest-version.svg]]
-
 ** Usage
 
    #+BEGIN_EXAMPLE
