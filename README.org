@@ -1,8 +1,9 @@
 * Inflections
 
+  [[https://clojars.org/inflections][https://img.shields.io/clojars/v/inflections.svg]]
   [[https://travis-ci.org/r0man/inflections-clj][https://travis-ci.org/r0man/inflections-clj.svg]]
   [[http://jarkeeper.com/r0man/inflections-clj][http://jarkeeper.com/r0man/inflections-clj/status.svg]]
-  [[http://jarkeeper.com/r0man/inflections-clj][https://jarkeeper.com/r0man/inflections-clj/downloads.svg]]
+  [[http://jarkeeper.com/r0man/inflections-clj][https://jarkeeper.com/r0man/inflections/downloads.svg]]
 
   Rails-like inflection library for Clojure and ClojureScript.
 
