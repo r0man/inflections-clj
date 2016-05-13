@@ -5,9 +5,9 @@
   :min-lein-version "2.0.0"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[noencore "0.2.1"]
+  :dependencies [[noencore "0.3.0"]
                  [org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.7.228" :scope "provided"]]
+                 [org.clojure/clojurescript "1.8.51" :scope "provided"]]
   :aliases {"ci" ["do"
                   ["test"]
                   ["doo" "phantom" "none" "once"]
