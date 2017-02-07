@@ -253,9 +253,7 @@
 (defn camel-case
   "Convert `word` to camel case. By default, camel-case converts to
   UpperCamelCase. If the argument to camel-case is set to :lower then
-  camel-case produces lowerCamelCase. The camel-case fn will also
-  convert \"/\" to \"::\" which is useful for converting paths to
-  namespaces.
+  camel-case produces lowerCamelCase.
 
   Examples:
 
@@ -266,10 +264,10 @@
     ;=> \"activeRecord\"
 
     (camel-case \"active_record/errors\")
-    ;=> \"ActiveRecord::Errors\"
+    ;=> \"ActiveRecord/Errors\"
 
     (camel-case \"active_record/errors\" :lower)
-    ;=> \"activeRecord::Errors\""
+    ;=> \"activeRecord/Errors\""
   [word & [mode]]
   (when word
     (->> (let [word (str-name word)]
@@ -278,7 +276,7 @@
              (= mode :upper) (camel-case word upper-case)
              (fn? mode) (str (mode (str (first word)))
                              (apply str (rest (camel-case word nil))))
-             :else (-> (replace word #"/(.?)" #(str "::" (upper-case (nth % 1))))
+             :else (-> (replace word #"/(.?)" #(str "/" (upper-case (nth % 1))))
                        (replace #"(^|_|-)(.)"
                                 #?(:clj
                                    #(str (if (#{\_ \-} (nth % 1))
@@ -360,7 +358,7 @@
     ; => \"country-flag\""
   [x]
   (when x
-    (->> (-> (replace (str-name x) #"::" "/")
+    (->> (-> (str-name x)
              (replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
              (replace #"([a-z\d])([A-Z])" "$1-$2")
              (replace #"\s+" "-")
@@ -421,8 +419,7 @@
 
 (defn underscore
   "The reverse of camel-case. Makes an underscored, lowercase form from
-  the expression in the string. Changes \"::\" to \"/\" to convert
-  namespaces to paths.
+  the expression in the string.
 
   Examples:
 
@@ -430,10 +427,10 @@
     ;=> \"active_record\"
 
     (underscore \"ActiveRecord::Errors\")
-    ;=> \"active_record/errors\""
+    ;=> \"active_record::errors\""
   [x]
   (when x
-    (->> (-> (replace (str-name x) #"::" "/")
+    (->> (-> (str-name x)
              (replace #"([A-Z\d]+)([A-Z][a-z])" "$1_$2")
              (replace #"([a-z\d])([A-Z])" "$1_$2")
              (replace #"-" "_")
