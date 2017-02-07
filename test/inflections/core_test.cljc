@@ -33,7 +33,7 @@
     nil nil
     "" ""
     "active_record" "ActiveRecord"
-    "active_record/errors" "ActiveRecord::Errors")
+    "active_record/errors" "ActiveRecord/Errors")
   (are [word expected]
       (= (c/camel-case word :lower) expected)
     nil nil
@@ -41,7 +41,7 @@
     "active_record" "activeRecord"
     :active_record :activeRecord
     'active_record 'activeRecord
-    "active_record/errors" "activeRecord::Errors"
+    "active_record/errors" "activeRecord/Errors"
     "product" "product"
     "special_guest" "specialGuest"
     "application_controller" "applicationController"
@@ -125,6 +125,7 @@
     "Street Address" "street-address"
     "SpecialGuest" "special-guest"
     "ApplicationController" "application-controller"
+    "ActiveRecord::Base" "active-record::base"
     "Area51Controller" "area51-controller"
     "HTMLTidy" "html-tidy"
     "HTMLTidyGenerator" "html-tidy-generator"
@@ -380,7 +381,7 @@
     "ActiveRecord" "active_record"
     :ActiveRecord :active_record
     'ActiveRecord 'active_record
-    "ActiveRecord::Errors" "active_record/errors"
+    "ActiveRecord::Errors" "active_record::errors"
     :titles/site-name :titles/site_name))
 
 (deftest test-stringify-keys
