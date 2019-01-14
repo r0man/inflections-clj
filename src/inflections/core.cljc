@@ -302,18 +302,18 @@
     ;=> \"Abc123\""
   [word]
   (when word
-    (->> (if-let [acronym (acronym word)]
-           acronym
-           (let [word' (str-name word)]
-             (->> (str (upper-case (str (first word')))
-                       (when (next word') (lower-case (subs word' 1))))
-                  (coerce word)))))))
+    (if-let [acronym (acronym word)]
+      acronym
+      (let [word' (str-name word)]
+        (->> (str (upper-case (str (first word')))
+                  (when (next word') (lower-case (subs word' 1))))
+             (coerce word))))))
 
 (defn titleize
   "Convert `s` into a title."
   [s]
   (when s
-    (->> (join " " (map capitalize (split (str-name s) #"[-_./ ]"))))))
+    (join " " (map capitalize (split (str-name s) #"[-_./ ]")))))
 
 (defn dasherize
   "Replaces all underscores in `s` with dashes.
