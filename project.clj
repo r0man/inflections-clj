@@ -28,7 +28,7 @@
                          :output-to "target/advanced.js"}
                         :source-paths ["src" "test"]}]}
   :deploy-repositories [["releases" :clojars]]
-  :profiles {:dev {:plugins [[jonase/eastwood "0.3.4"]
+  :profiles {:dev {:plugins [[jonase/eastwood "1.2.3"]
                              [lein-cljsbuild "1.1.7"]
                              [lein-difftest "2.0.0"]
                              [lein-doo "0.1.11"]]}})
