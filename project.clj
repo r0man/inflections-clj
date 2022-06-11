@@ -34,6 +34,6 @@
   :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.11.54"]]
                    :plugins [[jonase/eastwood "1.2.3"]
-                             [lein-cljsbuild "1.1.7"]
+                             [lein-cljsbuild "1.1.8"]
                              [lein-difftest "2.0.0"]
                              [lein-doo "0.1.11"]]}})
