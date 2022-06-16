@@ -1,7 +1,8 @@
 (ns inflections.core
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [blank? lower-case upper-case replace split join]]
-            [clojure.walk :refer [keywordize-keys]]))
+            [clojure.walk :refer [keywordize-keys]]
+            [no.en.core :refer [parse-integer]]))
 
 (defn coerce
   "Coerce the string `s` to the type of `obj`."
@@ -377,16 +378,15 @@
     (ordinalize \"23\")
     ;=> \"23rd\""
   [x]
-  (when x
-    (if-let [number (if (number? x) x (parse-long x))]
-      (if (contains? (set (range 11 14)) (mod number 100))
-        (str number "th")
-        (let [modulus (mod number 10)]
-          (cond
-            (= modulus 1) (str number "st")
-            (= modulus 2) (str number "nd")
-            (= modulus 3) (str number "rd")
-            :else (str number "th")))))))
+  (if-let [number (parse-integer x)]
+    (if (contains? (set (range 11 14)) (mod number 100))
+      (str number "th")
+      (let [modulus (mod number 10)]
+        (cond
+          (= modulus 1) (str number "st")
+          (= modulus 2) (str number "nd")
+          (= modulus 3) (str number "rd")
+          :else (str number "th"))))))
 
 (defn parameterize
   "Replaces special characters in `x` with the default separator
