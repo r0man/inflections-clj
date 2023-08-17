@@ -225,6 +225,7 @@
     "elf" "elves"
     "fix" "fixes"
     "foobar" "foobars"
+    "goose" "geese"
     "half" "halves"
     "horse" "horses"
     "house" "houses"

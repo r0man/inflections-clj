@@ -239,6 +239,7 @@
          ["child" "children"]
          ["cow" "kine"]
          ["foot" "feet"]
+         ["goose" "geese"]
          ["louse" "lice"]
          ["mailman" "mailmen"]
          ["man" "men"]
