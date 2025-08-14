@@ -6,8 +6,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[noencore "0.4.0"]
-                 [org.clojure/clojure "1.11.3"]
-                 [org.clojure/clojurescript "1.11.132" :scope "provided"]]
+                 [org.clojure/clojure "1.12.1"]
+                 [org.clojure/clojurescript "1.12.42" :scope "provided"]]
   :aliases {"ci" ["do"
                   ["test"]
                   ["doo" "node" "none" "once"]
@@ -34,7 +34,7 @@
                          :target :nodejs}
                         :source-paths ["src" "test"]}]}
   :deploy-repositories [["releases" :clojars]]
-  :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.11.132"]]
+  :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.12.42"]]
                    :plugins [[jonase/eastwood "1.4.3"]
                              [lein-cljsbuild "1.1.8"]
                              [lein-difftest "2.0.0"]
