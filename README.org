@@ -2,8 +2,6 @@
 
   [[https://clojars.org/inflections][https://img.shields.io/clojars/v/inflections.svg]]
   [[https://github.com/r0man/inflections-clj/actions?query=workflow%3A%22Clojure+CI%22][https://github.com/r0man/inflections-clj/workflows/Clojure%20CI/badge.svg]]
-  [[https://versions.deps.co/r0man/inflections-clj][https://versions.deps.co/r0man/inflections-clj/status.svg]]
-  [[https://versions.deps.co/r0man/inflections-clj][https://versions.deps.co/r0man/inflections-clj/downloads.svg]]
 
   Rails-like inflection library for Clojure and ClojureScript.
 
