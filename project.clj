@@ -6,8 +6,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[noencore "0.4.0"]
-                 [org.clojure/clojure "1.12.1"]
-                 [org.clojure/clojurescript "1.12.42" :scope "provided"]]
+                 [org.clojure/clojure "1.12.1"]]
   :aliases {"ci" ["do"
                   ["test"]
                   ["doo" "node" "none" "once"]
