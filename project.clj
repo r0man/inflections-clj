@@ -5,7 +5,7 @@
   :min-lein-version "2.0.0"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[noencore "0.3.8"]
+  :dependencies [[noencore "0.4.0"]
                  [org.clojure/clojure "1.11.3"]
                  [org.clojure/clojurescript "1.11.132" :scope "provided"]]
   :aliases {"ci" ["do"
@@ -35,7 +35,7 @@
                         :source-paths ["src" "test"]}]}
   :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.11.132"]]
-                   :plugins [[jonase/eastwood "1.2.3"]
+                   :plugins [[jonase/eastwood "1.4.3"]
                              [lein-cljsbuild "1.1.8"]
                              [lein-difftest "2.0.0"]
                              [lein-doo "0.1.11"]]}})
