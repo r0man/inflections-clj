@@ -33,8 +33,9 @@
                          :target :nodejs}
                         :source-paths ["src" "test"]}]}
   :deploy-repositories [["releases" :clojars]]
-  :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.12.42"]]
-                   :plugins [[jonase/eastwood "1.4.3"]
+  :profiles {:dev {:dependencies [[cider/piggieback "0.6.0"]
+                                  [org.clojure/clojurescript "1.12.42"]]
+                   :plugins [[jonase/eastwood "1.2.3"]
                              [lein-cljsbuild "1.1.8"]
                              [lein-difftest "2.0.0"]
                              [lein-doo "0.1.11"]]}})
